@@ -1,0 +1,122 @@
+@import url("https://fonts.googleapis.com/css?family=Roboto:400,400i,700");
+ @import url("https://use.fontawesome.com/releases/v5.8.1/css/all.css");
+ *, *:after, *:before {
+	 box-sizing: border-box;
+}
+ .message {
+	 background: #eee;
+	 box-shadow: 4px 4px 8px 0px rgba(0, 0, 0, 0.31);
+	 border-radius: 1em;
+	 overflow: hidden;
+	 flex-wrap: wrap;
+	 margin: 2em auto;
+}
+ .message header {
+	 background: #9e9e9e;
+	 width: 100%;
+	 padding: 0.5em;
+}
+ .message i:after {
+	 font-family: "Font Awesome 5 Free";
+	 font-weight: 900;
+	 content: '\f128';
+	 font-style: normal;
+	 color: #eee;
+	 background: #353535;
+	 padding: 1em 0.75em;
+	 font-size: 1.25em;
+	 display: block;
+	 width: 2.5em;
+	 height: 100%;
+	 text-align: center;
+}
+ .message h2 {
+	 margin: 0.75em;
+	 font-size: 1.25em;
+	 position: relative;
+	 display: block;
+	 width: calc(100% - 2.5em - 1.5em);
+}
+ .message h2 span {
+	 color: #9e9e9e;
+}
+ .message h2:after {
+	 content: '';
+	 border-bottom: 0.1em solid #9e9e9e;
+	 width: 100%;
+	 height: 100%;
+	 position: absolute;
+	 top: 0;
+	 left: 0;
+}
+ .error header {
+	 background: #d50000;
+}
+ .error i:after {
+	 background: #3d1d1d;
+	 color: #ff5656;
+	 content: "\f12a";
+}
+ .error h2 span {
+	 color: #d50000;
+}
+ .error h2:after {
+	 border-bottom: 0.1em solid #d50000;
+}
+ .warning header {
+	 background: #ff6f00;
+}
+ .warning i:after {
+	 background: #432e1d;
+	 color: #ffb780;
+	 content: "\f071";
+}
+ .warning h2 span {
+	 color: #ff6f00;
+}
+ .warning h2:after {
+	 border-bottom: 0.1em solid #ff6f00;
+}
+ .neutral header {
+	 background: #448aff;
+}
+ .neutral i:after {
+	 background: #273243;
+	 color: #c4daff;
+	 content: "\f05a";
+}
+ .neutral h2 span {
+	 color: #448aff;
+}
+ .neutral h2:after {
+	 border-bottom: 0.1em solid #448aff;
+}
+ .success header {
+	 background: #40ed48;
+}
+ .success i:after {
+	 background: #253226;
+	 color: #7bcb7e;
+	 content: "\f058";
+}
+ .success h2 span {
+	 color: #40ed48;
+}
+ .success h2:after {
+	 border-bottom: 0.1em solid #40ed48;
+}
+ .uhm header {
+	 background: #c1610d;
+}
+ .uhm i:after {
+	 background: #3a2b1f;
+	 color: #f4a25a;
+	 content: "\f2fe";
+}
+ .uhm h2 span {
+	 color: #c1610d;
+}
+ .uhm h2:after {
+	 border-bottom: 0.1em solid #c1610d;
+}
+ 
