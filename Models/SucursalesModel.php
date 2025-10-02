@@ -12,11 +12,11 @@ class SucursalesModel extends Query
         return $this->selectAll($sql);
     }
 
-    public function registrar($nombre, $codigo, $direccion, $telefono, $es_bodega)
+    public function registrar($nombre, $codigo, $direccion, $telefono)
     {
-        $sql = "INSERT INTO sucursales (nombre, codigo, direccion, telefono, es_bodega) 
-                VALUES (?, ?, ?, ?, ?)";
-        $array = array($nombre, $codigo, $direccion, $telefono, $es_bodega);
+        $sql = "INSERT INTO sucursales (nombre, codigo, direccion, telefono) 
+                VALUES (?, ?, ?, ?)";
+        $array = array($nombre, $codigo, $direccion, $telefono);
         return $this->insertar($sql, $array);
     }
 
@@ -43,12 +43,12 @@ class SucursalesModel extends Query
         return $this->select($sql);
     }
 
-    public function actualizar($nombre, $codigo, $direccion, $telefono, $es_bodega, $id)
+    public function actualizar($nombre, $codigo, $direccion, $telefono, $id)
     {
         $sql = "UPDATE sucursales 
-                SET nombre = ?, codigo = ?, direccion = ?, telefono = ?, es_bodega = ? 
+                SET nombre = ?, codigo = ?, direccion = ?, telefono = ?
                 WHERE id = ?";
-        $array = array($nombre, $codigo, $direccion, $telefono, $es_bodega, $id);
+        $array = array($nombre, $codigo, $direccion, $telefono, $id);
         return $this->save($sql, $array);
     }
 }

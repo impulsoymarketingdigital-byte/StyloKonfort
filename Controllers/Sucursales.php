@@ -46,7 +46,6 @@ class Sucursales extends Controller
             $codigo = strClean($_POST['codigo']);
             $direccion = strClean($_POST['direccion']);
             $telefono = strClean($_POST['telefono']);
-            $es_bodega = strClean($_POST['es_bodega']);
             if (empty($nombre)) {
                 $respuesta = array('msg' => 'EL NOMBRE ES REQUERIDO', 'icono' => 'warning');
             } else if (empty($codigo)) {
@@ -64,7 +63,6 @@ class Sucursales extends Controller
                             $codigo,
                             $direccion,
                             $telefono,
-                            $es_bodega,
                         );
                         if ($data > 0) {
                             $respuesta = array('msg' => 'SUCURSAL REGISTRADA', 'icono' => 'success');
@@ -82,7 +80,6 @@ class Sucursales extends Controller
                             $codigo,
                             $direccion,
                             $telefono,
-                            $es_bodega,
                             $id
                         );
                         if ($data > 0) {

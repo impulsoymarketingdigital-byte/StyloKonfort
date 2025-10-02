@@ -66,6 +66,10 @@ document.addEventListener("DOMContentLoaded", function () {
   //submit productos
   frm.addEventListener("submit", function (e) {
     e.preventDefault();
+    if(frm.categoria.value === "" || frm.marca.value === ""){
+        alertas("Seleccione categoría y marca", "warning");
+        return;
+    }
     let data = new FormData(this);
     const url = base_url + "productos/registrar";
     const http = new XMLHttpRequest();

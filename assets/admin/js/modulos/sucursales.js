@@ -9,7 +9,6 @@ const nombre = document.querySelector("#nombre");
 const codigo = document.querySelector("#codigo");
 const direccion = document.querySelector("#direccion");
 const telefono = document.querySelector("#telefono");
-const es_bodega = document.querySelector("#es_bodega");
 
 const myModal = new bootstrap.Modal(document.getElementById("nuevoModal"));
 let tblSucursales;
@@ -142,7 +141,6 @@ function editCat(id) {
       document.querySelector("#nombre").value = res.nombre;
       document.querySelector("#direccion").value = res.direccion;
       document.querySelector("#telefono").value = res.telefono;
-      document.querySelector("#es_bodega").value = res.es_bodega;
       btnAccion.textContent = "Actualizar";
       titleModal.textContent = "MODIFICAR SUCURSAL";
       myModal.show();

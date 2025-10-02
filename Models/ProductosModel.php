@@ -46,7 +46,7 @@ class ProductosModel extends Query
         $id_sucursal = $_SESSION['id_sucursal'];
 
         $sql = "INSERT INTO productos (codigo, nombre, slug, descripcion, genero, id_categoria, id_marca, id_sucursal) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         $array = array($codigo, $nombre, $slug, $descripcion, $genero, $categoria, $marca, $id_sucursal);
         return $this->insertar($sql, $array);
     }

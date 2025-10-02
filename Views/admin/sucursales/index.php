@@ -57,14 +57,6 @@
                         <input id="telefono" class="form-control" type="text" name="telefono" placeholder="Teléfono">
                     </div>
 
-                    <div class="form-group mb-2">
-                        <label for="es_bodega">¿Es bodega?</label>
-                        <select id="es_bodega" name="es_bodega" class="form-control">
-                            <option value="0">No</option>
-                            <option value="1">Sí</option>
-                        </select>
-                    </div>
-
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-primary" type="submit" id="btnAccion">Registrar</button>
