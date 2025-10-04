@@ -107,12 +107,12 @@ class Clientes extends Controller
                 //Server settings
                 $mail->SMTPDebug = 0;                      //Enable verbose debug output
                 $mail->isSMTP();                                            //Send using SMTP
-                $mail->Host       = HOST_SMTP;                     //Set the SMTP server to send through
-                $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
-                $mail->Username   = USER_SMTP;                     //SMTP username
-                $mail->Password   = PASS_SMTP;                               //SMTP password
+                $mail->Host = HOST_SMTP;                     //Set the SMTP server to send through
+                $mail->SMTPAuth = true;                                   //Enable SMTP authentication
+                $mail->Username = USER_SMTP;                     //SMTP username
+                $mail->Password = PASS_SMTP;                               //SMTP password
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
-                $mail->Port       = PUERTO_SMTP;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+                $mail->Port = PUERTO_SMTP;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
 
                 //Recipients
                 $mail->setFrom(CORREO, TITLE);
@@ -121,7 +121,7 @@ class Clientes extends Controller
                 //Content
                 $mail->isHTML(true);                                  //Set email format to HTML
                 $mail->Subject = 'Mensaje desde la: ' . TITLE;
-                $mail->Body    = 'Para verificar tu correo en nuestra tienda <a href="' . BASE_URL . 'clientes/verificarCorreo/' . $token . '">CLIC AQUÍ</a>';
+                $mail->Body = 'Para verificar tu correo en nuestra tienda <a href="' . BASE_URL . 'clientes/verificarCorreo/' . $token . '">CLIC AQUÍ</a>';
                 $mail->AltBody = 'GRACIAS POR LA PREFERENCIA';
 
                 $mail->send();
@@ -175,30 +175,40 @@ class Clientes extends Controller
         }
     }
     //registrar pedidos
+    // Agregar este nuevo método en Clientes.php
     public function registrarPedido()
     {
         if (empty($_SESSION['idCliente'])) {
             header('Location: ' . BASE_URL);
             exit;
         }
+
         $datos = file_get_contents('php://input');
         $json = json_decode($datos, true);
-        $pedidos = $json['pedidos'];
         $productos = $json['productos'];
-        if (is_array($pedidos) && is_array($productos)) {
-            $id_transaccion = $pedidos['id'];
-            $monto = $pedidos['purchase_units'][0]['amount']['value'];
-            $estado = $pedidos['status'];
+
+        if (is_array($productos) && count($productos) > 0) {
+            $id_transaccion = 'LLEVAR-' . uniqid();
+            $metodo = 'LLEVAR';
+            $monto = 0;
+            $estado = 'PENDIENTE';
             $fecha = date('Y-m-d H:i:s');
-            $email = $pedidos['payer']['email_address'];
-            $nombre = $pedidos['payer']['name']['given_name'];
-            $apellido = $pedidos['payer']['name']['surname'];
-            $direccion = $pedidos['purchase_units'][0]['shipping']['address']['address_line_1'];
-            $ciudad = $pedidos['purchase_units'][0]['shipping']['address']['admin_area_2'];
+            $email = $_SESSION['correoCliente'];
+            $nombre = $_SESSION['nombreCliente'];
+            $apellido = $_SESSION['apellidoCliente'];
+            $direccion = $_SESSION['dirrecionCliente'];
+            $ciudad = null;
             $id_cliente = $_SESSION['idCliente'];
+
+            // Calcular el monto total
+            foreach ($productos as $producto) {
+                $monto += $producto['precio'] * $producto['cantidad'];
+            }
+
+            // Registrar el pedido
             $data = $this->model->registrarPedido(
                 $id_transaccion,
-                'PAYPAL',
+                $metodo,
                 $monto,
                 $estado,
                 $fecha,
@@ -209,11 +219,13 @@ class Clientes extends Controller
                 $ciudad,
                 $id_cliente
             );
+
             if ($data > 0) {
                 foreach ($productos as $producto) {
-                    $temp = $this->model->getProducto($producto['idProducto']);
+                    $temp = $this->model->getProducto($producto['id']);
+
                     if ($producto['size'] > 0 && $producto['color'] > 0) {
-                        $result = $this->model->getAtributos($producto['size'], $producto['color'], $producto['idProducto']);
+                        $result = $this->model->getAtributos($producto['size'], $producto['color'], $producto['id']);
                         $datos = array(
                             'id_size' => $producto['size'],
                             'id_color' => $producto['color'],
@@ -227,27 +239,22 @@ class Clientes extends Controller
                         $atributos = null;
                         $precio = $temp['precio'];
                     }
-                    $this->model->registrarDetalle($temp['nombre'], $precio, $producto['cantidad'], $atributos, $data, $producto['idProducto']);
-                    if ($producto['size'] > 0 && $producto['color'] > 0) {
-                        $stock = $result['cantidad'] - $producto['cantidad'];
-                        $this->model->actualizarStockDetalle($stock, $producto['size'], $producto['color'], $producto['idProducto']);
 
-                        $total = 0;
-                        if ($producto['idProducto'] == $temp['id']) {
-                            $total += $producto['cantidad'];
-                        }
-                        $totalVentas = $temp['ventas'] + $total;
-                        $totalStock = $temp['cantidad'] - $total;
-                        $this->model->actualizarStockProducto($totalStock, $totalVentas, $temp['id']);
+                    $this->model->registrarDetalle($temp['nombre'], $precio, $producto['cantidad'], $atributos, $data, $producto['id']);
+
+                    if ($producto['size'] > 0 && $producto['color'] > 0) {
+                        $stock = $result['stock'] - $producto['cantidad'];
+                        $this->model->actualizarStockDetalle($stock, $producto['size'], $producto['color'], $producto['id']);
                     }
                 }
+
                 unset($_SESSION['productos']);
-                $mensaje = array('msg' => 'pedido registrado', 'icono' => 'success');
+                $mensaje = array('msg' => 'Pedido registrado exitosamente', 'icono' => 'success');
             } else {
-                $mensaje = array('msg' => 'error al registrar el pedido', 'icono' => 'error');
+                $mensaje = array('msg' => 'Error al registrar el pedido', 'icono' => 'error');
             }
         } else {
-            $mensaje = array('msg' => 'error fatal con los datos', 'icono' => 'error');
+            $mensaje = array('msg' => 'Error fatal con los datos', 'icono' => 'error');
         }
         echo json_encode($mensaje);
         die();
@@ -485,16 +492,8 @@ class Clientes extends Controller
                     $temp = $this->model->getProducto($producto['id']);
                     $this->model->registrarDetalle($temp['nombre'], $producto['precio'], $producto['cantidad'], $atributos, $data, $producto['id']);
                     if ($producto['size'] > 0 && $producto['color'] > 0) {
-                        $stock = $result['cantidad'] - $producto['cantidad'];
+                        $stock = $result['stock'] - $producto['cantidad'];
                         $this->model->actualizarStockDetalle($stock, $producto['size'], $producto['color'], $producto['id']);
-
-                        $total = 0;
-                        if ($producto['id'] == $temp['id']) {
-                            $total += $producto['cantidad'];
-                        }
-                        $ventas = $temp['ventas'] + $total;
-                        $totalStock = $temp['cantidad'] - $total;
-                        $this->model->actualizarStockProducto($totalStock, $ventas, $temp['id']);
                     }
                 }
                 unset($_SESSION['productos']);

@@ -97,9 +97,23 @@ class PrincipalModel extends Query
 
     public function getAtributos($size, $color, $id_producto)
     {
-        $sql = "SELECT d.cantidad, d.precio, t.nombre_corto, c.nombre, c.color FROM tallas_colores d INNER JOIN tallas t ON d.id_talla = t.id INNER JOIN colores c ON d.id_color = c.id WHERE d.id_talla = $size AND d.id_color = $color AND d.id_producto = $id_producto";
+        $sql = "SELECT 
+                d.stock, 
+                p.precio_venta, 
+                t.nombre_corto, 
+                c.nombre, 
+                c.color
+            FROM tallas_colores d
+            INNER JOIN productos p ON p.id = d.id_producto
+            INNER JOIN tallas t ON d.id_talla = t.id
+            INNER JOIN colores c ON d.id_color = c.id
+            WHERE d.id_talla = $size 
+              AND d.id_color = $color 
+              AND d.id_producto = $id_producto";
+
         return $this->select($sql);
     }
+
 
     public function getColorSize($table, $id)
     {
@@ -115,13 +129,13 @@ class PrincipalModel extends Query
 
     public function getFiltroProductos($categorias, $precioMin, $precioMax, $color, $sizes, $desde, $hasta)
     {
-        $sql = "SELECT p.*, pf.id AS id_detalle, pf.id_talla, id_color, pf.precio, t.nombre AS size, c.nombre AS colornombre, c.color
+        $sql = "SELECT p.*, pf.id AS id_detalle, pf.id_talla, id_color, t.nombre AS size, c.nombre AS colornombre, c.color
             FROM productos p 
             INNER JOIN tallas_colores pf ON p.id = pf.id_producto
             LEFT JOIN tallas t ON pf.id_talla = t.id
             LEFT JOIN colores c ON pf.id_color = c.id";
 
-        $sql .= " WHERE p.precio >= $precioMin AND p.precio <= $precioMax AND p.estado = 1";
+        $sql .= " WHERE p.precio_venta >= $precioMin AND p.precio_venta <= $precioMax AND p.estado = 1";
 
         if (!empty($categorias)) {
             $sql .= " AND p.id_categoria IN ($categorias)";
@@ -144,7 +158,7 @@ class PrincipalModel extends Query
             LEFT JOIN tallas t ON pf.id_talla = t.id
             LEFT JOIN colores c ON pf.id_color = c.id";
 
-        $sql .= " WHERE p.precio >= $precioMin AND p.precio <= $precioMax AND p.estado = 1";
+        $sql .= " WHERE p.precio_venta >= $precioMin AND p.precio_venta <= $precioMax AND p.estado = 1";
 
         if (!empty($categorias)) {
             $sql .= " AND p.id_categoria IN ($categorias)";
@@ -163,7 +177,7 @@ class PrincipalModel extends Query
         $sql = "SELECT p.*, pf.id AS id_detalle FROM productos p 
         INNER JOIN tallas_colores pf ON p.id = pf.id_producto";
 
-        $sql .= " WHERE p.nombre LIKE '%" . $busqueda . "' AND p.precio >= $desde AND p.precio <= $hasta AND p.estado = 1";
+        $sql .= " WHERE p.nombre LIKE '%" . $busqueda . "' AND p.precio_venta >= $desde AND p.precio_venta <= $hasta AND p.estado = 1";
 
         if (!empty($categorias)) {
             $sql .= " AND p.id_categoria IN ($categorias)";
@@ -174,7 +188,7 @@ class PrincipalModel extends Query
         if (!empty($sizes)) {
             $sql .= " AND pf.id_talla IN ($sizes)";
         }
-        $sql .= " LIMIT 12"; // Limitar a 12 resultados
+        $sql .= " LIMIT 1"; // Limitar a 12 resultados
 
         return $this->selectAll($sql);
     }

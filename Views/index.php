@@ -59,26 +59,35 @@
               <div id="tab-<?php echo $categoria['id']; ?>" class="tab-content <?php echo ($item == 0) ? 'default' : ''; ?> product">
                 <div class="product-slide-6 product-m no-arrow">
                   <?php foreach ($this->base->getProductosCategoria($categoria['id']) as $producto) {
-                    //CALIFICACION
+                    // CALIFICACION
                     $calificacion = $this->base->getCalificacion('SUM', $producto['id']);
                     $cantidad = $this->base->getCalificacion('COUNT', $producto['id']);
                     $totalCantidad = ($cantidad['total'] == 0) ? 5 : $cantidad['total'];
                     $total = ($calificacion['total'] != null) ? $calificacion['total'] / $totalCantidad : $totalCantidad;
                     $calificacionTotal = round($total);
+                    
+                    // IMAGEN POR DEFECTO SI NO EXISTE
+                    $imagenProducto = (!empty($producto['imagen']) && file_exists($producto['imagen'])) 
+                        ? BASE_URL . $producto['imagen'] 
+                        : BASE_URL . 'assets/images/productos/product.png';
                   ?>
                     <div>
                       <div class="product-box">
                         <div class="product-imgbox">
                           <div class="product-front">
-                            <a href="#"> <img src="<?php echo BASE_URL . $producto['imagen']; ?>" class="img-fluid  " alt="product"> </a>
+                            <a href="#"> 
+                              <img src="<?php echo $imagenProducto; ?>" class="img-fluid" alt="product"> 
+                            </a>
                           </div>
                           <div class="product-back">
-                            <a href="#"> <img src="<?php echo BASE_URL . $producto['imagen']; ?>" class="img-fluid  " alt="product"> </a>
+                            <a href="#"> 
+                              <img src="<?php echo $imagenProducto; ?>" class="img-fluid" alt="product"> 
+                            </a>
                           </div>
                           <div class="new-label3">
                             <div>new</div>
                           </div>
-                          <div class="on-sale3"> on sale </div>
+                          <div class="on-sale3">on sale</div>
                         </div>
                         <div class="product-detail detail-center detail-inverse">
                           <div class="detail-title">
@@ -110,8 +119,12 @@
                             </div>
                           </div>
                           <div class="icon-detail">
-                            <a href="javascript:void(0)" onclick="verDetalle(<?php echo $producto['id']; ?>)" class="tooltip-top" data-tippy-content="Vista previa"> <i data-feather="eye"></i> </a>
-                            <a href="<?php echo BASE_URL . 'principal/detail/' . $producto['slug']; ?>" class="tooltip-top" data-tippy-content="Ver Detalle"><i data-feather="refresh-cw"></i></a>
+                            <a href="javascript:void(0)" onclick="verDetalle(<?php echo $producto['id']; ?>)" class="tooltip-top" data-tippy-content="Vista previa"> 
+                              <i data-feather="eye"></i> 
+                            </a>
+                            <a href="<?php echo BASE_URL . 'principal/detail/' . $producto['slug']; ?>" class="tooltip-top" data-tippy-content="Ver Detalle">
+                              <i data-feather="refresh-cw"></i>
+                            </a>
                           </div>
                         </div>
                       </div>
@@ -255,14 +268,22 @@
       <div class="col-12">
         <div class="theme-tab">
           <div class="tab-content-cls">
+            <!-- TAB NUEVOS -->
             <div id="tab-nuevos" class="tab-content active default">
               <div class="slide-5 no-arrow">
-                <?php foreach ($data['nuevoProductos'] as $producto) { ?>
+                <?php foreach ($data['nuevoProductos'] as $producto) { 
+                  // IMAGEN POR DEFECTO
+                  $imagenProducto = (!empty($producto['imagen']) && file_exists($producto['imagen'])) 
+                      ? BASE_URL . $producto['imagen'] 
+                      : BASE_URL . 'assets/images/productos/product.png';
+                ?>
                   <div>
                     <div class="media-banner b-g-white1 border-0">
                       <div class="media-banner-box">
                         <div class="media">
-                          <a href="#" tabindex="0"> <img src="<?php echo BASE_URL . $producto['imagen']; ?>" class="img-fluid  " alt="banner"> </a>
+                          <a href="#" tabindex="0"> 
+                            <img src="<?php echo $imagenProducto; ?>" class="img-fluid" alt="banner"> 
+                          </a>
                           <div class="media-body">
                             <div class="media-contant">
                               <div>
@@ -282,7 +303,7 @@
                                     <i class="<?php echo $cinco; ?> fa fa-star"></i>
                                   </ul>
                                   <a href="#" tabindex="0">
-                                    <p> <?php echo $producto['nombre']; ?></p>
+                                    <p><?php echo $producto['nombre']; ?></p>
                                   </a>
                                   <h6>PRECIO VARIADO</h6>
                                 </div>
@@ -300,14 +321,23 @@
                 <?php } ?>
               </div>
             </div>
+
+            <!-- TAB DESTACADOS -->
             <div id="tab-especial" class="tab-content">
               <div class="slide-5 no-arrow">
-                <?php foreach ($data['destacados'] as $producto) { ?>
+                <?php foreach ($data['destacados'] as $producto) { 
+                  // IMAGEN POR DEFECTO
+                  $imagenProducto = (!empty($producto['prod']['imagen']) && file_exists($producto['prod']['imagen'])) 
+                      ? BASE_URL . $producto['prod']['imagen'] 
+                      : BASE_URL . 'assets/images/productos/product.png';
+                ?>
                   <div>
                     <div class="media-banner b-g-white1 border-0">
                       <div class="media-banner-box">
                         <div class="media">
-                          <a href="#" tabindex="0"> <img src="<?php echo BASE_URL . $producto['prod']['imagen']; ?>" class="img-fluid  " alt="banner"> </a>
+                          <a href="#" tabindex="0"> 
+                            <img src="<?php echo $imagenProducto; ?>" class="img-fluid" alt="banner"> 
+                          </a>
                           <div class="media-body">
                             <div class="media-contant">
                               <div>
@@ -327,7 +357,7 @@
                                     <i class="<?php echo $cinco; ?> fa fa-star"></i>
                                   </ul>
                                   <a href="#" tabindex="0">
-                                    <p> <?php echo $producto['prod']['nombre']; ?></p>
+                                    <p><?php echo $producto['prod']['nombre']; ?></p>
                                   </a>
                                   <h6>PRECIO VARIADO</h6>
                                 </div>
@@ -345,14 +375,23 @@
                 <?php } ?>
               </div>
             </div>
-            <div id="tab-vendidos" class="tab-content  ">
+
+            <!-- TAB ESPECIALES -->
+            <div id="tab-vendidos" class="tab-content">
               <div class="slide-5 no-arrow">
-                <?php foreach ($data['especiales'] as $producto) { ?>
+                <?php foreach ($data['especiales'] as $producto) { 
+                  // IMAGEN POR DEFECTO
+                  $imagenProducto = (!empty($producto['prod']['imagen']) && file_exists($producto['prod']['imagen'])) 
+                      ? BASE_URL . $producto['prod']['imagen'] 
+                      : BASE_URL . 'assets/images/productos/product.png';
+                ?>
                   <div>
                     <div class="media-banner b-g-white1 border-0">
                       <div class="media-banner-box">
                         <div class="media">
-                          <a href="#" tabindex="0"> <img src="<?php echo BASE_URL . $producto['prod']['imagen']; ?>" class="img-fluid  " alt="banner"> </a>
+                          <a href="#" tabindex="0"> 
+                            <img src="<?php echo $imagenProducto; ?>" class="img-fluid" alt="banner"> 
+                          </a>
                           <div class="media-body">
                             <div class="media-contant">
                               <div>
@@ -372,7 +411,7 @@
                                     <i class="<?php echo $cinco; ?> fa fa-star"></i>
                                   </ul>
                                   <a href="#" tabindex="0">
-                                    <p> <?php echo $producto['prod']['nombre']; ?></p>
+                                    <p><?php echo $producto['prod']['nombre']; ?></p>
                                   </a>
                                   <h6>PRECIO VARIADO</h6>
                                 </div>
@@ -447,77 +486,6 @@
   </div>
 </section>
 <!--rounded category end-->
-
-<!--title start-->
-<div class="title1 section-my-space">
-  <h4>TOP PRODUCTOS</h4>
-</div>
-<!--title end-->
-
-<!--product start-->
-<section class="product section-pb-space">
-  <div class="custom-container">
-    <div class="row ">
-      <div class="col pr-0">
-        <div class="product-slide-6  no-arrow">
-          <?php foreach ($data['especiales'] as $producto) { ?>
-            <div>
-              <div class="product-box">
-                <div class="product-imgbox">
-                  <div class="product-front">
-                    <a href="#"> <img src="<?php echo BASE_URL . $producto['prod']['imagen']; ?>" class="img-fluid  " alt="product"> </a>
-                  </div>
-                  <div class="product-back">
-                    <a href="#"> <img src="<?php echo BASE_URL . $producto['prod']['imagen']; ?>" class="img-fluid  " alt="product"> </a>
-                  </div>
-                  <div class="new-label3">
-                    <div>top</div>
-                  </div>
-                  <div class="on-sale3"> on sale </div>
-                </div>
-                <div class="product-detail detail-center detail-inverse">
-                  <div class="detail-title">
-                    <div class="detail-left">
-                      <?php
-                      $uno = ($producto['calificacion'] >= 1) ? 'text-warning' : 'text-muted';
-                      $dos = ($producto['calificacion'] >= 2) ? 'text-warning' : 'text-muted';
-                      $tres = ($producto['calificacion'] >= 3) ? 'text-warning' : 'text-muted';
-                      $cuatro = ($producto['calificacion'] >= 4) ? 'text-warning' : 'text-muted';
-                      $cinco = ($producto['calificacion'] == 5) ? 'text-warning' : 'text-muted';
-                      ?>
-                      <ul class="rating">
-                        <i class="<?php echo $uno; ?> fa fa-star"></i>
-                        <i class="<?php echo $dos; ?> fa fa-star"></i>
-                        <i class="<?php echo $tres; ?> fa fa-star"></i>
-                        <i class="<?php echo $cuatro; ?> fa fa-star"></i>
-                        <i class="<?php echo $cinco; ?> fa fa-star"></i>
-                      </ul>
-                      <a href="#">
-                        <h6 class="price-title">
-                          <?php echo $producto['producto']; ?>
-                        </h6>
-                      </a>
-                    </div>
-                    <div class="detail-right">
-                      <div class="price">
-                        <div class="price">PRECIO VARIADO</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="icon-detail">
-                    <a href="javascript:void(0)" onclick="verDetalle(<?php echo $producto['id_producto']; ?>)" class="tooltip-top" data-tippy-content="Vista previa"> <i data-feather="eye"></i> </a>
-                    <a href="<?php echo BASE_URL . 'principal/detail/' . $producto['prod']['slug']; ?>" class="tooltip-top" data-tippy-content="Ver Detalle"><i data-feather="refresh-cw"></i></a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          <?php } ?>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<!--product end-->
 
 <!--testimonial start-->
 <section class="testimonial">

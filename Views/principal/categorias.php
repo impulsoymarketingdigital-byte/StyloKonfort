@@ -24,13 +24,10 @@
         <div class="custom-container">
             <div class="row">
                 <div class="col-sm-3 collection-filter category-side category-page-side">
-                    <!-- side-bar colleps block stat -->
                     <div class="collection-filter-block creative-card creative-inner category-side">
-                        <!-- brand filter start -->
                         <div class="collection-mobile-back">
                             <span class="filter-back"><i class="fa fa-angle-left" aria-hidden="true"></i> Atras</span>
                         </div>
-                        <!-- color filter start here -->
                         <div class="collection-collapse-block open">
                             <h3 class="collapse-block-title">colores</h3>
                             <div class="collection-collapse-block-content">
@@ -39,7 +36,8 @@
                                     <ul>
                                         <?php foreach ($data['colores'] as $color) { ?>
                                             <li>
-                                                <div style="background-color: <?php echo $color['color']; ?>;" data-id="<?php echo $color['id']; ?>"></div>
+                                                <div style="background-color: <?php echo $color['color']; ?>;"
+                                                    data-id="<?php echo $color['id']; ?>"></div>
                                                 <?php echo $color['nombre']; ?>
                                             </li>
                                         <?php } ?>
@@ -48,16 +46,19 @@
                             </div>
                         </div>
 
-                        <!-- size filter start here -->
                         <div class="collection-collapse-block open">
                             <h3 class="collapse-block-title">size</h3>
                             <div class="collection-collapse-block-content">
                                 <div class="size-selector">
                                     <div class="collection-brand-filter">
                                         <?php foreach ($data['sizes'] as $size) { ?>
-                                            <div class="custom-control custom-checkbox  form-check collection-filter-checkbox">
-                                                <input type="checkbox" class="custom-control-input form-check-input sizes" id="size_<?php echo $size['id']; ?>" name="sizes[]" value="<?php echo $size['id']; ?>">
-                                                <label class="custom-control-label form-check-label" for="small"><?php echo $size['nombre']; ?></label>
+                                            <div
+                                                class="custom-control custom-checkbox form-check collection-filter-checkbox">
+                                                <input type="checkbox" class="custom-control-input form-check-input sizes"
+                                                    id="size_<?php echo $size['id']; ?>" name="sizes[]"
+                                                    value="<?php echo $size['id']; ?>">
+                                                <label class="custom-control-label form-check-label"
+                                                    for="small"><?php echo $size['nombre']; ?></label>
                                             </div>
                                         <?php } ?>
                                     </div>
@@ -65,13 +66,12 @@
                             </div>
                         </div>
 
-
-                        <!-- price filter start here -->
                         <div class="collection-collapse-block border-0 open">
                             <h3 class="collapse-block-title">price</h3>
                             <div class="collection-collapse-block-content">
                                 <div class="filter-slide">
-                                    <input class="js-range-slider" type="text" id="my_range" value="" data-type="double" />
+                                    <input class="js-range-slider" type="text" id="my_range" value=""
+                                        data-type="double" />
                                 </div>
                             </div>
                         </div>
@@ -85,7 +85,9 @@
                                     <div class="product-top-filter">
                                         <div class="row">
                                             <div class="col-xl-12">
-                                                <div class="filter-main-btn"><span class="filter-btn btn btn-theme"><i class="fa fa-filter" aria-hidden="true"></i> Filter</span></div>
+                                                <div class="filter-main-btn"><span class="filter-btn btn btn-theme"><i
+                                                            class="fa fa-filter" aria-hidden="true"></i> Filter</span>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -99,10 +101,14 @@
                                                     </div>
                                                     <div class="collection-grid-view">
                                                         <ul>
-                                                            <li><img src="<?php echo BASE_URL; ?>assets/images/category/icon/2.png" alt="" class="product-2-layout-view"></li>
-                                                            <li><img src="<?php echo BASE_URL; ?>assets/images/category/icon/3.png" alt="" class="product-3-layout-view"></li>
-                                                            <li><img src="<?php echo BASE_URL; ?>assets/images/category/icon/4.png" alt="" class="product-4-layout-view"></li>
-                                                            <li><img src="<?php echo BASE_URL; ?>assets/images/category/icon/6.png" alt="" class="product-6-layout-view"></li>
+                                                            <li><img src="<?php echo BASE_URL; ?>assets/images/category/icon/2.png"
+                                                                    alt="" class="product-2-layout-view"></li>
+                                                            <li><img src="<?php echo BASE_URL; ?>assets/images/category/icon/3.png"
+                                                                    alt="" class="product-3-layout-view"></li>
+                                                            <li><img src="<?php echo BASE_URL; ?>assets/images/category/icon/4.png"
+                                                                    alt="" class="product-4-layout-view"></li>
+                                                            <li><img src="<?php echo BASE_URL; ?>assets/images/category/icon/6.png"
+                                                                    alt="" class="product-6-layout-view"></li>
                                                         </ul>
                                                     </div>
                                                 </div>
@@ -111,19 +117,25 @@
                                     </div>
                                     <div class="product-wrapper-grid product">
                                         <div id="loading-indicator" style="display: none">
-                                            <!-- Aquí puedes agregar un indicador de carga, como un spinner o un mensaje de carga -->
                                             Cargando...
                                         </div>
                                         <div class="row" id="contentProductos">
-                                            <?php foreach ($data['productos'] as $producto) { ?>
+                                            <?php foreach ($data['productos'] as $producto) {
+                                                // IMAGEN POR DEFECTO
+                                                $imagenProducto = (!empty($producto['imagen']) && file_exists($producto['imagen']))
+                                                    ? BASE_URL . $producto['imagen']
+                                                    : BASE_URL . 'assets/images/productos/product.png';
+                                                ?>
                                                 <div class="col-xl-3 col-md-4 col-6 col-grid-box">
                                                     <div class="product-box">
                                                         <div class="product-imgbox">
                                                             <div class="product-front">
-                                                                <a href="#"> <img src="<?php echo BASE_URL . $producto['imagen']; ?>" class="img-fluid  " alt="product" loading="lazy"> </a>
+                                                                <a href="#"> <img src="<?php echo $imagenProducto; ?>"
+                                                                        class="img-fluid" alt="product" loading="lazy"> </a>
                                                             </div>
                                                             <div class="product-back">
-                                                                <a href="#"> <img src="<?php echo BASE_URL . $producto['imagen']; ?>" class="img-fluid  " alt="product" loading="lazy"> </a>
+                                                                <a href="#"> <img src="<?php echo $imagenProducto; ?>"
+                                                                        class="img-fluid" alt="product" loading="lazy"> </a>
                                                             </div>
                                                         </div>
                                                         <div class="product-detail detail-center detail-inverse">
@@ -157,8 +169,13 @@
                                                                 </div>
                                                             </div>
                                                             <div class="icon-detail">
-                                                                <a href="javascript:void(0)" onclick="verDetalle(<?php echo $producto['id']; ?>)" class="tooltip-top" data-tippy-content="Quick View"> <i data-feather="eye"></i> </a>
-                                                                <a href="<?php echo BASE_URL . 'principal/detail/' . $producto['slug']; ?>" class="tooltip-top" data-tippy-content="Ver Detalle"><i data-feather="refresh-cw"></i></a>
+                                                                <a href="javascript:void(0)"
+                                                                    onclick="verDetalle(<?php echo $producto['id']; ?>)"
+                                                                    class="tooltip-top" data-tippy-content="Quick View"> <i
+                                                                        data-feather="eye"></i> </a>
+                                                                <a href="<?php echo BASE_URL . 'principal/detail/' . $producto['slug']; ?>"
+                                                                    class="tooltip-top" data-tippy-content="Ver Detalle"><i
+                                                                        data-feather="refresh-cw"></i></a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -208,7 +225,7 @@
     const my_range = document.querySelector('#my_range');
     const colors = document.querySelector('#colors');
 
-    $('.color-selector ul li > div').on('click', function(e) {
+    $('.color-selector ul li > div').on('click', function (e) {
         $(".color-selector ul li > div").removeClass("active");
         $(this).addClass("active");
         colors.value = $(this).attr('data-id');
@@ -216,7 +233,7 @@
     });
 
     $(".js-range-slider").ionRangeSlider({
-       type: "double",
+        type: "double",
         grid: true,
         min: 0,
         max: <?php echo MAXPRECIO; ?>,
@@ -224,13 +241,13 @@
         to: <?php echo MAXPRECIO; ?>,
         prefix: "$",
         onFinish: function (data) {
-         const precios = data.from + ';' + data.to;
-         filtrarProductos(precios);
-       }
+            const precios = data.from + ';' + data.to;
+            filtrarProductos(precios);
+        }
     });
 
-    sizes.forEach(function(checkbox) {
-        checkbox.addEventListener("click", function() {
+    sizes.forEach(function (checkbox) {
+        checkbox.addEventListener("click", function () {
             filtrarProductos(my_range.value);
         });
     });
@@ -239,7 +256,7 @@
         const selectedCategories = [<?php echo $data['categoria']['id']; ?>];
         const selectedSizes = [];
 
-        sizes.forEach(function(checkbox) {
+        sizes.forEach(function (checkbox) {
             if (checkbox.checked) {
                 selectedSizes.push(checkbox.value);
             }
@@ -255,54 +272,59 @@
         const http = new XMLHttpRequest();
         http.open("POST", url, true);
         http.send(data);
-        http.onreadystatechange = function() {
+        http.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
                 const res = JSON.parse(this.responseText);
                 html = '';
                 res.productos.forEach(producto => {
+                    // IMAGEN POR DEFECTO EN JAVASCRIPT
+                    const imagenProducto = (producto.imagen && producto.imagen !== '')
+                        ? base_url + producto.imagen
+                        : base_url + 'assets/images/productos/product.png';
+
                     let uno = (producto.calificacion >= 1) ? 'text-warning' : 'text-muted';
                     let dos = (producto.calificacion >= 2) ? 'text-warning' : 'text-muted';
                     let tres = (producto.calificacion >= 3) ? 'text-warning' : 'text-muted';
                     let cuatro = (producto.calificacion >= 4) ? 'text-warning' : 'text-muted';
                     let cinco = (producto.calificacion == 5) ? 'text-warning' : 'text-muted';
+
                     html += `<div class="col-xl-3 col-md-4 col-6 col-grid-box">
                         <div class="product-box">
                             <div class="product-imgbox">
                                 <div class="product-front">
-                                    <a href="#"> <img src="${base_url + producto.imagen}" class="img-fluid  " alt="product" loading="lazy"> </a>
+                                    <a href="#"> <img src="${imagenProducto}" class="img-fluid" alt="product" loading="lazy"> </a>
                                 </div>
                                 <div class="product-back">
-                                    <a href="#"> <img src="${base_url + producto.imagen}" class="img-fluid  " alt="product" loading="lazy"> </a>
+                                    <a href="#"> <img src="${imagenProducto}" class="img-fluid" alt="product" loading="lazy"> </a>
                                 </div>
                             </div>
                             <div class="product-detail detail-center detail-inverse">
                                 <div class="detail-title">
                                     <div class="detail-left">
                                         <div class="rating-star">
-                                            <i class="${ uno } fa fa-star"></i>
-                                            <i class="${ dos } fa fa-star"></i>
-                                            <i class="${ tres } fa fa-star"></i>
-                                            <i class="${ cuatro } fa fa-star"></i>
-                                            <i class="${ cinco } fa fa-star"></i>
+                                            <i class="${uno} fa fa-star"></i>
+                                            <i class="${dos} fa fa-star"></i>
+                                            <i class="${tres} fa fa-star"></i>
+                                            <i class="${cuatro} fa fa-star"></i>
+                                            <i class="${cinco} fa fa-star"></i>
                                         </div>
-                                        <p>${ producto.descripcion} </p>
+                                        <p>${producto.descripcion}</p>
                                         <a href="#">
                                             <h6 class="price-title">
-                                                ${ producto.nombre }
+                                                ${producto.nombre}
                                             </h6>
                                             <span class="badge" style="background-color: ${producto.color};">${producto.colornombre}</span>
                                             <span class="badge" style="background-color: ${producto.color};">${producto.size}</span>
                                         </a>
                                     </div>
                                     <div class="detail-right">
-                                        <div class="check-price"> ${ res.moneda + producto.precio } </div>
                                         <div class="price">
-                                            <div class="price"> ${ res.moneda + producto.precio } </div>
+                                            <div class="price">${res.moneda + producto.precio_venta}</div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="icon-detail">
-                                    <a href="javascript:void(0)" onclick="agregarCarrito(${ producto.id }, 1, ${ producto.id_talla }, ${ producto.id_color })" class="tooltip-top" data-tippy-content="Quick View"> <i class="fa fa-shopping-cart"></i> </a>
+                                    <a href="javascript:void(0)" onclick="agregarCarrito(${producto.id}, 1, ${producto.id_talla}, ${producto.id_color})" class="tooltip-top" data-tippy-content="Quick View"> <i class="fa fa-shopping-cart"></i> </a>
                                 </div>
                             </div>
                         </div>
@@ -315,7 +337,6 @@
     }
 </script>
 
-<!-- End Script -->
 </body>
 
 </html>

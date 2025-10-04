@@ -220,50 +220,62 @@ class Principal extends Controller
         $json = json_decode($datos, true);
         $array['productos'] = array();
         $total = 0.00;
+
         if (!empty($json)) {
             foreach ($json as $producto) {
                 $result = $this->model->getProducto($producto['idProducto']);
+
                 $atributo = '';
                 $atributoMP = '';
-                $precio = $result['precio'];
-                if ($producto['size'] > 0 && $producto['color'] > 0) {
+                $precio = $result['precio_venta'] ?? 0;
+                $stock = 'Ilimitado';
+
+                if (!empty($producto['size']) && !empty($producto['color'])) {
                     $detalle = $this->model->getAtributos($producto['size'], $producto['color'], $producto['idProducto']);
-                    if (empty($detalle)) {
-                        $color = $this->model->getColorSize('colores', $producto['color']);
-                        $talla = $this->model->getColorSize('tallas', $producto['color']);
-                        $atributo = $talla['nombre_corto'] . ' - <span class="badge" style="background: ' . $color['color'] . ';">' . $color['nombre'] . '</span>';
-                        $atributoMP = $talla['nombre_corto'] . ' - ' . $color['nombre'];
-                        $precio = $detalle['precio'];
-                    } else {
+
+                    if (!empty($detalle)) {
                         $atributoMP = $detalle['nombre_corto'] . ' - ' . $detalle['nombre'];
-                        $atributo = $detalle['nombre_corto'] . ' - <span class="badge" style="background: ' . $detalle['color'] . ';">' . $detalle['nombre'] . '</span>';
-                        $data['stock'] = $detalle['cantidad'];
-                        $precio = $detalle['precio'];
+                        $atributo = $detalle['nombre_corto'] . ' - <span class="badge" style="background: ' . ($detalle['color'] ?? '#000') . ';">' . $detalle['nombre'] . '</span>';
+                        $precio = $detalle['precio'] ?? $precio;
+                        $stock = $detalle['cantidad'] ?? 'Ilimitado';
+                    } else {
+                        $color = $this->model->getColorSize('colores', $producto['color']);
+                        $talla = $this->model->getColorSize('tallas', $producto['size']);
+                        $atributo = $talla['nombre_corto'] . ' - <span class="badge" style="background: ' . ($color['color'] ?? '#000') . ';">' . ($color['nombre'] ?? '') . '</span>';
+                        $atributoMP = $talla['nombre_corto'] . ' - ' . ($color['nombre'] ?? '');
                     }
-                } else {
-                    $data['stock'] = 'Ilimitado';
                 }
-                $data['id'] = $result['id'];
-                $data['nombre'] = $result['nombre'];
-                $data['atributo'] = $atributo;
-                $data['atributoMP'] = $atributoMP;
-                $data['precio'] = $precio;
-                $data['cantidad'] = $producto['cantidad'];
-                $data['size'] = $producto['size'];
-                $data['color'] = $producto['color'];
-                $data['imagen'] = $result['imagen'];
-                $subTotal = $precio * $producto['cantidad'];
-                $data['subTotal'] = number_format($subTotal, 2);
-                array_push($array['productos'], $data);
+
+                $cantidad = $producto['cantidad'] ?? 1;
+                $subTotal = $precio * $cantidad;
+
+                $data = [
+                    'id' => $result['id'] ?? 0,
+                    'nombre' => $result['nombre'] ?? '',
+                    'atributo' => $atributo,
+                    'atributoMP' => $atributoMP,
+                    'precio' => $precio,
+                    'cantidad' => $cantidad,
+                    'size' => $producto['size'] ?? 0,
+                    'color' => $producto['color'] ?? 0,
+                    'stock' => $stock,
+                    'imagen' => $result['imagen'] ?? 'assets/images/productos/product.png',
+                    'subTotal' => number_format($subTotal, 2)
+                ];
+
+                $array['productos'][] = $data;
                 $total += $subTotal;
             }
+
             $_SESSION['productos'] = $array['productos'];
         }
-        $array['login'] = (empty($_SESSION['idCliente'])) ? 0 : 1;
+
+        $array['login'] = empty($_SESSION['idCliente']) ? 0 : 1;
         $array['total'] = number_format($total, 2);
         $array['totalPaypal'] = number_format($total, 2, '.', '');
         $array['moneda'] = MONEDA;
         $array['currency'] = CURRENCY;
+
         echo json_encode($array, JSON_UNESCAPED_UNICODE);
         die();
     }

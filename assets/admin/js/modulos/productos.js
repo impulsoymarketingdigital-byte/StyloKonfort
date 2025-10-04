@@ -8,7 +8,7 @@ const containerGaleria = document.querySelector("#containerGaleria");
 
 const cantidad = document.querySelector("#cantidad");
 
-let tblProductos;
+let tblProductos, tblMantenimiento;
 
 var firstTabEl = document.querySelector("#myTab li:last-child button");
 var firstTab = new bootstrap.Tab(firstTabEl);
@@ -22,7 +22,6 @@ const modalMantenimiento = new bootstrap.Modal(
 );
 
 const btnProcesar = document.querySelector("#btnProcesar");
-const tblMantenimiento = document.querySelector("#tblMantenimiento tbody");
 
 const btnAgregar = document.querySelector("#btnAgregar");
 const frmMantenimiento = document.querySelector("#frmMantenimiento");
@@ -39,7 +38,16 @@ document.addEventListener("DOMContentLoaded", function () {
       dataSrc: "",
     },
     columns: [
+      {
+        data: null,
+        render: function (data, type, row, meta) {
+          return meta.row + 1;
+        },
+      },
+      { data: "codigo" },
       { data: "nombre" },
+      { data: "precio_compra" },
+      { data: "precio_venta" },
       { data: "categoria" },
       { data: "marca" },
       { data: "estado" },
@@ -66,10 +74,11 @@ document.addEventListener("DOMContentLoaded", function () {
   //submit productos
   frm.addEventListener("submit", function (e) {
     e.preventDefault();
-    if(frm.categoria.value === "" || frm.marca.value === ""){
-        alertas("Seleccione categoría y marca", "warning");
-        return;
+    if (frm.categoria.value === "" || frm.marca.value === "") {
+      alertas("Seleccione categoría y marca", "warning");
+      return;
     }
+
     let data = new FormData(this);
     const url = base_url + "productos/registrar";
     const http = new XMLHttpRequest();
@@ -114,8 +123,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const id_producto = document.querySelector("#id_producto");
     const talla = document.querySelector("#talla");
     const color = document.querySelector("#color");
-    const price = document.querySelector("#price");
-    if (talla.value == "" || color.value == "" || price.value == "") {
+    const almacen = document.querySelector("#almacen");
+
+    if (talla.value == "" || color.value == "" || almacen.value == "") {
       alertas("ATRIBUTOS VACIO", "warning");
     } else {
       let data = new FormData(this);
@@ -128,8 +138,12 @@ document.addEventListener("DOMContentLoaded", function () {
           const res = JSON.parse(this.responseText);
           alertas(res.msg.toUpperCase(), res.icono);
           if (res.icono == "success") {
+            // Limpiar los select2
+            $("#talla").val("").trigger("change");
+            $("#color").val("").trigger("change");
+            $("#almacen").val("").trigger("change");
+
             mantenimiento(id_producto.value);
-            price.value = "";
           }
         }
       };
@@ -205,7 +219,8 @@ function edit(id) {
       document.querySelector("#codigo").value = res.codigo;
       document.querySelector("#nombre").value = res.nombre;
       document.querySelector("#genero").value = res.genero;
-      document.querySelector("#precio").value = res.precio;
+      document.querySelector("#precio_compra").value = res.precio_compra;
+      document.querySelector("#precio_venta").value = res.precio_venta;
       document.querySelector("#categoria").value = res.id_categoria;
       document.querySelector("#marca").value = res.id_marca;
       document.querySelector("#descripcion").value = res.descripcion;
@@ -283,24 +298,39 @@ function mantenimiento(id) {
   http.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
       const res = JSON.parse(this.responseText);
-      let html = "";
-      res.detalle.forEach((atributo) => {
-        html += `<tr>
-                    <td>${atributo.talla}</td>
-                    <td><span class="badge" style="background: ${atributo.color};">${atributo.nombre}</span></td>
-                    <td>${atributo.cantidad}</td>
-                    <td>${atributo.precio}</td>
-                    <td>
-                    <button class="btn btn-danger btn-sm" onclick="eliminarDetalle(${atributo.id})"><i class="fas fa-times-circle"></i></button>
-                    </td>
-                </tr>`;
-      });
+
       document.querySelector("#id_producto").value = res.producto.id;
-      document.querySelector("#producto").value =
-        res.producto.nombre + " - " + res.producto.precio;
+      document.querySelector("#producto").value = res.producto.nombre;
       document.querySelector("#codigo_producto").value = res.producto.codigo;
 
-      tblMantenimiento.innerHTML = html;
+      if ($.fn.DataTable.isDataTable("#tblMantenimiento")) {
+        $("#tblMantenimiento").DataTable().destroy();
+      }
+
+      tblMantenimiento = $("#tblMantenimiento").DataTable({
+        data: res.detalle,
+        columns: [
+          { data: "talla" },
+          {
+            data: null,
+            render: function (data, type, row) {
+              return `<span class="badge" style="background: ${row.codigo_color};">${row.color}</span>`;
+            },
+          },
+          { data: "stock" },
+          { data: "almacen" },
+          {
+            data: null,
+            render: function (data, type, row) {
+              return `<button class="btn btn-danger btn-sm" onclick="eliminarDetalle(${row.id})"><i class="fas fa-times-circle"></i></button>`;
+            },
+          },
+        ],
+        responsive: true,
+        language,
+        order: [[0, "asc"]],
+      });
+
       modalMantenimiento.show();
     }
   };

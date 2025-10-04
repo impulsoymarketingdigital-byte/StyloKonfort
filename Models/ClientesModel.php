@@ -1,6 +1,7 @@
 <?php
-class ClientesModel extends Query{
- 
+class ClientesModel extends Query
+{
+
     public function __construct()
     {
         parent::__construct();
@@ -40,13 +41,34 @@ class ClientesModel extends Query{
         return $this->select($sql);
     }
 
-    public function registrarPedido($id_transaccion, $metodo, $monto, $estado, $fecha, $email,
-    $nombre, $apellido, $direccion, $ciudad, $id_cliente)
-    {
+    public function registrarPedido(
+        $id_transaccion,
+        $metodo,
+        $monto,
+        $estado,
+        $fecha,
+        $email,
+        $nombre,
+        $apellido,
+        $direccion,
+        $ciudad,
+        $id_cliente
+    ) {
         $sql = "INSERT INTO pedidos (id_transaccion, metodo, monto, estado, fecha, email,
         nombre, apellido, direccion, ciudad, id_cliente) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
-        $datos = array($id_transaccion, $metodo, $monto, $estado, $fecha, $email,
-        $nombre, $apellido, $direccion, $ciudad, $id_cliente);
+        $datos = array(
+            $id_transaccion,
+            $metodo,
+            $monto,
+            $estado,
+            $fecha,
+            $email,
+            $nombre,
+            $apellido,
+            $direccion,
+            $ciudad,
+            $id_cliente
+        );
         $data = $this->insertar($sql, $datos);
         if ($data > 0) {
             $res = $data;
@@ -132,19 +154,18 @@ class ClientesModel extends Query{
 
     public function getAtributos($size, $color, $id_producto)
     {
-        $sql = "SELECT d.cantidad, d.precio, t.nombre AS size, c.nombre, c.color FROM tallas_colores d INNER JOIN tallas t ON d.id_talla = t.id INNER JOIN colores c ON d.id_color = c.id WHERE d.id_talla = $size AND d.id_color = $color AND d.id_producto = $id_producto";
+        $sql = "SELECT d.stock, t.nombre AS size, c.nombre, c.color, p.precio_venta as precio
+            FROM tallas_colores d 
+            INNER JOIN tallas t ON d.id_talla = t.id 
+            INNER JOIN colores c ON d.id_color = c.id 
+            INNER JOIN productos p ON d.id_producto = p.id
+            WHERE d.id_talla = $size AND d.id_color = $color AND d.id_producto = $id_producto";
         return $this->select($sql);
     }
     public function actualizarStockDetalle($stock, $size, $color, $id_producto)
     {
-        $sql = "UPDATE tallas_colores SET cantidad=? WHERE id_talla=? AND id_color=? AND id_producto=?";
+        $sql = "UPDATE tallas_colores SET stock=? WHERE id_talla=? AND id_color=? AND id_producto=?";
         $datos = array($stock, $size, $color, $id_producto);
-        return $this->save($sql, $datos);
-    }
-    public function actualizarStockProducto($stock, $ventas, $id_producto)
-    {
-        $sql = "UPDATE productos SET cantidad=?, ventas=? WHERE id=?";
-        $datos = array($stock, $ventas, $id_producto);
         return $this->save($sql, $datos);
     }
 
@@ -197,7 +218,7 @@ class ClientesModel extends Query{
     {
         if ($accion == 'registrar' && $id == 0) {
             $sql = "SELECT id FROM clientes WHERE $campo = '$valor'";
-        }else{
+        } else {
             $sql = "SELECT id FROM clientes WHERE $campo = '$valor' AND id != $id";
         }
         return $this->select($sql);
@@ -215,14 +236,20 @@ class ClientesModel extends Query{
         return $this->select($sql);
     }
 
-    public function actualizar($nombre, $apellido,
-    $telefono, $correo, $direccion, $perfil, $id)
-    {
+    public function actualizar(
+        $nombre,
+        $apellido,
+        $telefono,
+        $correo,
+        $direccion,
+        $perfil,
+        $id
+    ) {
         $sql = "UPDATE clientes SET nombre=?, apellido=?, telefono=?, correo=?, direccion=?, perfil=? WHERE id=?";
         $array = array($nombre, $apellido, $telefono, $correo, $direccion, $perfil, $id);
         return $this->save($sql, $array);
     }
-    
+
 }
- 
+
 ?>

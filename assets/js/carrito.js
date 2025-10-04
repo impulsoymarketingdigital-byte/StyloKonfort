@@ -136,7 +136,7 @@ function getListaCarrito() {
                           <p>${producto.atributo}</p>
                         </a>
                         <h6>
-                        ${res.moneda + ' ' + producto.precio} <span>${res.moneda + ' ' + producto.precio}</span>
+                        ${res.moneda + ' ' + producto.precio}
                         </h6>
                         <div class="addit-box">
                             <div class="input-group">
@@ -193,7 +193,7 @@ function getListaDeseo() {
                           <p>${producto.atributo}</p>
                         </a>
                         <h6>
-                        ${res.moneda + ' ' + producto.precio} <span>${res.moneda + ' ' + producto.precio}</span>
+                        ${res.moneda + ' ' + producto.precio_venta} <span>${res.moneda + ' ' + producto.precio_venta}</span>
                         </h6>
                         <div class="addit-box">
                             <div class="input-group">
@@ -345,8 +345,7 @@ function verDetalle(idProducto) {
               <div class="pro-group">
                 <h2>${res.producto.nombre}</h2>
                 <ul class="pro-price">
-                  <li>${res.moneda + ' ' + res.producto.precio}</li>
-                  <li><span>${res.moneda + ' ' + res.producto.precio}</span></li>
+                  <li>${res.moneda + ' ' + res.producto.precio_venta}</li>
                 </ul>
                 <div class="revieu-box">
                   <ul>

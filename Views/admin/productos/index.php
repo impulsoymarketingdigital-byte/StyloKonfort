@@ -13,7 +13,11 @@
                 id="tblProductos">
                 <thead>
                     <tr>
+                        <th>N°</th>
+                        <th>Codigo</th>
                         <th>Nombre</th>
+                        <th>P. Compra</th>
+                        <th>P. Venta</th>
                         <th>Categoria</th>
                         <th>Marca</th>
                         <th>Estado</th>
@@ -60,20 +64,20 @@
                         </div>
 
                         <div class="col-lg-6 col-sm-6 mb-2">
-                            <label class="form-label">Precio Compra<span class="text-danger">*</span></label>
+                            <label class="form-label">Precio Compra <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light"><i class="fas fa-dollar-sign"></i></span>
-                                <input id="precio_compra" name="precio_compra" type="number" step="0.01" class="form-control"
-                                    placeholder="Precio Compra">
+                                <input id="precio_compra" name="precio_compra" type="number" step="0.01"
+                                    class="form-control" placeholder="Precio Compra">
                             </div>
                         </div>
 
                         <div class="col-lg-6 col-sm-6 mb-2">
-                            <label class="form-label">Precio Venta<span class="text-danger">*</span></label>
+                            <label class="form-label">Precio Venta <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light"><i class="fas fa-dollar-sign"></i></span>
-                                <input id="precio_venta" name="precio_venta" type="number" step="0.01" class="form-control"
-                                    placeholder="Precio Venta">
+                                <input id="precio_venta" name="precio_venta" type="number" step="0.01"
+                                    class="form-control" placeholder="Precio Venta">
                             </div>
                         </div>
 
@@ -217,8 +221,8 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4 mb-3">
-                            <label for="">Size <span class="text-danger">*</span></label>
+                        <div class="col-md-6 mb-3">
+                            <label for="">Talla <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-tag"></i></span>
                                 <select id="talla" class="form-control select" name="talla">
@@ -232,7 +236,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-6 mb-3">
                             <label for="">Color <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-tag"></i></span>
@@ -245,30 +249,37 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4 mb-3">
-                            <label for="">Precio <span class="text-danger">*</span></label>
+                        <div class="col-md-6 mb-3">
+                            <label for="">Almacen <span class="text-danger">*</span></label>
                             <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
-                                <input type="number" class="form-control" id="price" name="price" step="0.01" min="0.01"
-                                    placeholder="0.00">
+                                <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                                <select id="almacen" class="form-control select" name="almacen">
+                                    <option value="">Seleccionar</option>
+                                    <?php foreach ($data['almacenes'] as $almacen) { ?>
+                                        <option value="<?php echo $almacen['id']; ?>"><?php echo $almacen['nombre']; ?>
+                                        </option>
+                                    <?php } ?>
+                                </select>
                             </div>
                         </div>
-
+                        <div class="col-md-6 mb-3">
+                            <div class="text-end">
+                                <button class="btn btn-outline-info" type="submit" id="btnAgregar"><i
+                                        class="fas fa-plus-circle"></i> Agregar</button>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="text-end">
-                        <button class="btn btn-outline-info" type="submit" id="btnAgregar"><i
-                                class="fas fa-plus-circle"></i></button>
-                    </div>
                 </form>
                 <div class="table-responsive">
-                    <table class="table" id="tblMantenimiento">
+                    <table class="table table-bordered table-striped table-hover align-middle" style="width: 100%;"
+                        id="tblMantenimiento">
                         <thead>
                             <tr>
-                                <th>Size</th>
+                                <th>Talla</th>
                                 <th>Color</th>
                                 <th>Cantidad</th>
-                                <th>Precio</th>
+                                <th>Almacen</th>
                                 <th></th>
                             </tr>
                         </thead>

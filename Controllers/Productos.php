@@ -17,6 +17,7 @@ class Productos extends Controller
         $data['marcas'] = $this->model->getDatos('marcas');
         $data['colores'] = $this->model->getDatos('colores');
         $data['tallas'] = $this->model->getDatos('tallas');
+        $data['almacenes'] = $this->model->getDatos('almacenes');
         $this->views->getView('admin/productos', "index", $data);
     }
     public function listar()
@@ -66,7 +67,6 @@ class Productos extends Controller
             $categoria = strClean($_POST['categoria']);
             $marca = strClean($_POST['marca']);
 
-            // Validaciones básicas
             if (empty($nombre)) {
                 $respuesta = array('msg' => 'EL NOMBRE ES REQUERIDO', 'icono' => 'warning');
             } else if (empty($codigo)) {
@@ -77,8 +77,9 @@ class Productos extends Controller
                 $respuesta = array('msg' => 'EL PRECIO VENTA ES REQUERIDO', 'icono' => 'warning');
             } else if (empty($categoria)) {
                 $respuesta = array('msg' => 'LA CATEGORÍA ES REQUERIDA', 'icono' => 'warning');
+            } else if (empty($marca)) {
+                $respuesta = array('msg' => 'LA MARCA ES REQUERIDA', 'icono' => 'warning');
             } else {
-                // Registro nuevo
                 if ($id == '') {
                     $verificar = $this->model->getValidar('codigo', $codigo, 'registrar', 0);
                     if (empty($verificar)) {
@@ -91,8 +92,8 @@ class Productos extends Controller
                             $precio_compra,
                             $precio_venta,
                             $categoria,
-                            $marca,
-                        );
+                            $marca
+                        ); 
                         if ($data > 0) {
                             $respuesta = array('msg' => 'PRODUCTO REGISTRADO', 'icono' => 'success');
                         } else {
@@ -102,7 +103,6 @@ class Productos extends Controller
                         $respuesta = array('msg' => 'EL CÓDIGO YA EXISTE', 'icono' => 'warning');
                     }
                 }
-                // Actualización
                 else {
                     $verificar = $this->model->getValidar('codigo', $codigo, 'actualizar', $id);
                     if (empty($verificar)) {
@@ -117,7 +117,7 @@ class Productos extends Controller
                             $categoria,
                             $marca,
                             $id
-                        );
+                        ); 
                         if ($data > 0) {
                             $respuesta = array('msg' => 'PRODUCTO MODIFICADO', 'icono' => 'success');
                         } else {
@@ -247,32 +247,25 @@ class Productos extends Controller
         $id_producto = $_POST['id_producto'];
         $talla = $_POST['talla'];
         $color = $_POST['color'];
-        $price = $_POST['price'];
-        $id_sucursal = $_SESSION['id_sucursal'];
+        $almacen = $_POST['almacen'];
 
-        $consulta = $this->model->getVerificar($talla, $color, $id_producto, $id_sucursal);
+        $consulta = $this->model->getVerificar($talla, $color, $id_producto, $almacen);
 
         if (empty($consulta)) {
-            $data = $this->model->registrarMantenimiento($talla, $color, $price, $id_producto, $id_sucursal);
+            $data = $this->model->registrarMantenimiento($talla, $color, $almacen, $id_producto);
             if ($data > 0) {
-                $this->model->registrarInventario($id_producto, $talla, $color, $id_sucursal, $price);
-
                 $respuesta = array('msg' => 'ATRIBUTO AGREGADO', 'icono' => 'success');
             } else {
                 $respuesta = array('msg' => 'ERROR AL AGREGAR', 'icono' => 'error');
             }
         } else {
-            $data = $this->model->actualizarMantenimiento($talla, $color, $price, $id_producto, $id_sucursal);
-            if ($data == 1) {
-                $respuesta = array('msg' => 'ATRIBUTO MODIFICADO', 'icono' => 'success');
-            } else {
-                $respuesta = array('msg' => 'ERROR AL MODIFICAR', 'icono' => 'error');
-            }
+            $respuesta = array('msg' => 'EL ATRIBUTO YA EXISTE', 'icono' => 'warning');
         }
 
         echo json_encode($respuesta);
         die();
     }
+
 
 
     public function eliminarDetalle($id)
