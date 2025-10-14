@@ -1,16 +1,18 @@
 <?php
-class VentasModel extends Query{
-    public function __construct() {
+class VentasModel extends Query
+{
+    public function __construct()
+    {
         parent::__construct();
     }
     public function buscarPorNombre($valor)
     {
-        $sql = "SELECT * FROM productos WHERE nombre LIKE '%".$valor."%' AND estado = 1 LIMIT 10";
+        $sql = "SELECT * FROM productos WHERE nombre LIKE '%" . $valor . "%' AND estado = 1 LIMIT 10";
         return $this->selectAll($sql);
     }
     public function buscarCliente($valor)
     {
-        $sql = "SELECT * FROM clientes WHERE nombre LIKE '%".$valor."%' AND estado = 1 LIMIT 10";
+        $sql = "SELECT * FROM clientes WHERE nombre LIKE '%" . $valor . "%' AND estado = 1 LIMIT 10";
         return $this->selectAll($sql);
     }
     public function getProducto($idProducto)
@@ -41,45 +43,81 @@ class VentasModel extends Query{
     }
     public function getAtributos($size, $color, $id_producto)
     {
-        $sql = "SELECT d.cantidad, d.precio, t.nombre AS size, c.nombre, c.color FROM tallas_colores d INNER JOIN tallas t ON d.id_talla = t.id INNER JOIN colores c ON d.id_color = c.id WHERE d.id_talla = $size AND d.id_color = $color AND d.id_producto = $id_producto";
+        $sql = "SELECT tc.id, tc.stock, p.precio_venta, t.nombre AS size, c.nombre, c.color 
+            FROM tallas_colores tc
+            INNER JOIN productos p ON tc.id_producto = p.id
+            INNER JOIN tallas t ON tc.id_talla = t.id 
+            INNER JOIN colores c ON tc.id_color = c.id 
+            WHERE tc.id_talla = $size 
+            AND tc.id_color = $color 
+            AND tc.id_producto = $id_producto
+            AND tc.id_almacen = 1";
         return $this->select($sql);
     }
-    public function actualizarStockProducto($cantidad, $ventas, $idProducto)
+
+    public function registrarPedido($id_transaccion, $metodo, $monto, $estado, $fecha, $id_cliente)
     {
-        $sql = "UPDATE productos SET cantidad = ?, ventas=? WHERE id = ?";
-        $array = array($cantidad, $ventas, $idProducto);
-        return $this->save($sql, $array);
+        $sql = "INSERT INTO pedidos (id_transaccion, metodo, monto, estado, fecha, id_cliente, proceso) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $datos = array($id_transaccion, $metodo, $monto, $estado, $fecha, $id_cliente, 1);
+        return $this->insertar($sql, $datos);
     }
 
-    public function actualizarStockDetalle($stock, $size, $color, $id_producto)
+    public function registrarDetallePedido($id_pedido, $id_producto, $nombre, $precio, $cantidad, $id_talla_color)
     {
-        $sql = "UPDATE tallas_colores SET cantidad=? WHERE id_talla=? AND id_color=? AND id_producto=?";
-        $datos = array($stock, $size, $color, $id_producto);
+        $sql = "INSERT INTO detalle_pedidos (producto, precio, cantidad, id_pedido, id_producto, id_talla_color) 
+            VALUES (?, ?, ?, ?, ?, ?)";
+        $datos = array($nombre, $precio, $cantidad, $id_pedido, $id_producto, $id_talla_color);
+        return $this->insertar($sql, $datos);
+    }
+    public function actualizarStockDetalle($stock, $id_talla_color)
+    {
+        $sql = "UPDATE tallas_colores SET stock = ? WHERE id = ?";
+        $datos = array($stock, $id_talla_color);
         return $this->save($sql, $datos);
     }
-    
+
     public function getEmpresa()
     {
         $sql = "SELECT * FROM configuracion";
         return $this->select($sql);
     }
-
+    public function getVentas()
+    {
+        $sql = "SELECT v.*, CONCAT(c.nombre,' ',c.apellido) AS nombre FROM pedidos  v INNER JOIN clientes c ON v.id_cliente = c.id WHERE v.metodo = 'VENTA DIRECTA'";
+        return $this->selectAll($sql);
+    }
     public function getVenta($idVenta)
     {
-        $sql = "SELECT v.*, c.nombre, c.apellido, c.telefono, c.direccion FROM ventas v INNER JOIN clientes c ON v.id_cliente = c.id WHERE v.id = $idVenta";
+        $sql = "SELECT p.*, c.nombre, c.apellido, c.telefono, c.direccion 
+            FROM pedidos p 
+            INNER JOIN clientes c ON p.id_cliente = c.id 
+            WHERE p.id = $idVenta";
         return $this->select($sql);
     }
 
-    public function getVentas()
+    public function getDetallePedido($idPedido)
     {
-        $sql = "SELECT v.*, CONCAT(c.nombre,' ',c.apellido) AS nombre FROM ventas v INNER JOIN clientes c ON v.id_cliente = c.id";
+        $sql = "SELECT dp.*, 
+            t.nombre AS talla, t.nombre_corto,
+            c.nombre AS color_nombre, c.color AS color_hexa
+            FROM detalle_pedidos dp
+            LEFT JOIN tallas_colores tc ON dp.id_talla_color = tc.id
+            LEFT JOIN tallas t ON tc.id_talla = t.id
+            LEFT JOIN colores c ON tc.id_color = c.id
+            WHERE dp.id_pedido = $idPedido";
         return $this->selectAll($sql);
+    }
+    public function getTallaColorPorId($id)
+    {
+        $sql = "SELECT * FROM tallas_colores WHERE id = $id";
+        return $this->select($sql);
     }
 
     public function anular($idVenta)
     {
-        $sql = "UPDATE ventas SET estado = ? WHERE id = ?";
-        $array = array(0, $idVenta);
+        $sql = "UPDATE pedidos SET estado = ? WHERE id = ?";
+        $array = array('ANULADO', $idVenta);
         return $this->save($sql, $array);
     }
 

@@ -1,25 +1,24 @@
 const inputBuscarNombre = document.querySelector("#buscarProductoNombre");
-const nombre = document.querySelector("#nombre");
 const containerNombre = document.querySelector("#containerNombre");
-
 const errorBusqueda = document.querySelector("#errorBusqueda");
 
 const btnAccion = document.querySelector("#btnAccion");
 const totalPagar = document.querySelector("#totalPagar");
+const totalDescuento = document.querySelector("#totalDescuento");
 const size = document.querySelector("#size");
 const color = document.querySelector("#color");
 const idProducto = document.querySelector("#idProducto");
 const btnAgregar = document.querySelector("#btnAgregar");
-const cantidad = document.querySelector("#cantidad");
+const stockActual = document.querySelector("#stockActual");
+const precioCompra = document.querySelector("#precioCompra");
+const cantidadCompra = document.querySelector("#cantidadCompra");
 
-//para filtro por rango de fechas
 const desde = document.querySelector("#desde");
 const hasta = document.querySelector("#hasta");
 
 let listaCarrito, tblHistorial;
 
 document.addEventListener("DOMContentLoaded", function () {
-  //comprobar productos en localStorage
   if (localStorage.getItem(nombreKey) != null) {
     listaCarrito = JSON.parse(localStorage.getItem(nombreKey));
   }
@@ -28,11 +27,10 @@ document.addEventListener("DOMContentLoaded", function () {
     limpiarModal();
   });
 
-  //autocomplete productos
   $("#buscarProductoNombre").autocomplete({
     source: function (request, response) {
       $.ajax({
-        url: base_url + "ventas/buscarPorNombre",
+        url: base_url + "compras/buscarPorNombre",
         dataType: "json",
         data: {
           term: request.term,
@@ -49,16 +47,10 @@ document.addEventListener("DOMContentLoaded", function () {
     },
     minLength: 2,
     select: function (event, ui) {
-      if (ui.item.descarga) {
-        agregarProducto(ui.item.id, 1, ui.item.stock, 0, 0, true);
-        inputBuscarNombre.value = "";
-        inputBuscarNombre.focus();
-      } else {
-        idProducto.value = ui.item.id;
-        cargarSizeTalla(ui.item.id);
-        $("#modalSizeColor").modal("show");
-      }
-
+      idProducto.value = ui.item.id;
+      cargarSizeTalla(ui.item.id);
+      $("#modalSizeColor").modal("show");
+      inputBuscarNombre.value = "";
       return false;
     },
   });
@@ -68,7 +60,8 @@ document.addEventListener("DOMContentLoaded", function () {
       cargarColoresPorSize(e.target.value);
     } else {
       color.innerHTML = '<option value="">Seleccionar</option>';
-      cantidad.value = "";
+      stockActual.value = "";
+      precioCompra.value = "";
       btnAgregar.classList.add("d-none");
     }
   });
@@ -77,7 +70,8 @@ document.addEventListener("DOMContentLoaded", function () {
     if (e.target.value != "" && size.value != "") {
       cambiarStock(size.value, e.target.value);
     } else {
-      cantidad.value = "";
+      stockActual.value = "";
+      precioCompra.value = "";
       btnAgregar.classList.add("d-none");
     }
   });
@@ -103,7 +97,8 @@ document.addEventListener("DOMContentLoaded", function () {
           });
         }
         color.innerHTML = html;
-        cantidad.value = "";
+        stockActual.value = "";
+        precioCompra.value = "";
         btnAgregar.classList.add("d-none");
       }
     };
@@ -113,65 +108,51 @@ document.addEventListener("DOMContentLoaded", function () {
     idProducto.value = "";
     size.innerHTML = '<option value="">Seleccionar</option>';
     color.innerHTML = '<option value="">Seleccionar</option>';
-    cantidad.value = "";
+    stockActual.value = "";
+    precioCompra.value = "";
+    cantidadCompra.value = "1";
     btnAgregar.classList.add("d-none");
   }
 
   btnAgregar.addEventListener("click", function () {
     if (size.value != "" && color.value != "") {
-      const stockDisponible = parseInt(cantidad.value);
+      const precio = parseFloat(precioCompra.value);
+      const cantidad = parseInt(cantidadCompra.value);
 
-      if (stockDisponible > 0) {
-        agregarProducto(
-          idProducto.value,
-          1,
-          stockDisponible,
-          size.value,
-          color.value,
-          false
-        );
-
-        idProducto.value = "";
-        inputBuscarNombre.value = "";
-        $("#modalSizeColor").modal("hide");
-      } else {
-        alertas("STOCK NO DISPONIBLE", "warning");
+      if (isNaN(precio) || precio <= 0) {
+        alertas("INGRESA UN PRECIO VÁLIDO", "warning");
+        return;
       }
+
+      if (isNaN(cantidad) || cantidad <= 0) {
+        alertas("INGRESA UNA CANTIDAD VÁLIDA", "warning");
+        return;
+      }
+
+      agregarProducto(
+        idProducto.value,
+        cantidad,
+        size.value,
+        color.value,
+        precio,
+        0 
+      );
+
+      idProducto.value = "";
+      inputBuscarNombre.value = "";
+      $("#modalSizeColor").modal("hide");
     } else {
       alertas("SELECCIONA TALLA Y COLOR", "warning");
     }
   });
 
   $.datetimepicker.setLocale("es");
-
-
-  //filtro rango de fechas
-  desde.addEventListener("blur", function () {
-    tblHistorial.draw();
-  });
-  hasta.addEventListener("blur", function () {
-    tblHistorial.draw();
-  });
-
-  $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
-    var FilterStart = desde.value;
-    var FilterEnd = hasta.value;
-    var DataTableStart = data[1].trim();
-    var DataTableEnd = data[1].trim();
-    if (FilterStart == "" || FilterEnd == "") {
-      return true;
-    }
-    if (DataTableStart >= FilterStart && DataTableEnd <= FilterEnd) {
-      return true;
-    } else {
-      return false;
-    }
-  });
 });
 
 function cambiarStock(size, color) {
   if (!size || !color) {
-    cantidad.value = "";
+    stockActual.value = "";
+    precioCompra.value = "";
     btnAgregar.classList.add("d-none");
     return;
   }
@@ -188,7 +169,8 @@ function cambiarStock(size, color) {
     if (this.readyState == 4 && this.status == 200) {
       const res = JSON.parse(this.responseText);
 
-      cantidad.value = res.atrib ? res.atrib.stock : "";
+      stockActual.value = res.atrib ? res.atrib.stock : "";
+      precioCompra.value = res.atrib ? res.atrib.precio_venta : "";
 
       let html = '<option value="">Seleccionar</option>';
       if (res.colores && res.colores.length > 0) {
@@ -200,7 +182,7 @@ function cambiarStock(size, color) {
       }
       document.querySelector("#color").innerHTML = html;
 
-      if (res.atrib && res.atrib.stock && parseInt(res.atrib.stock) > 0) {
+      if (res.atrib) {
         btnAgregar.classList.remove("d-none");
       } else {
         btnAgregar.classList.add("d-none");
@@ -209,14 +191,13 @@ function cambiarStock(size, color) {
   };
 }
 
-//agregar productos a localStorage
 function agregarProducto(
   idProducto,
   cantidad,
-  stockActual,
   size,
   color,
-  descarga
+  precioCompra,
+  descuento
 ) {
   if (localStorage.getItem(nombreKey) == null) {
     listaCarrito = [];
@@ -225,7 +206,6 @@ function agregarProducto(
   }
 
   let productoExistente = false;
-  let cantidadTotal = 0;
 
   for (let i = 0; i < listaCarrito.length; i++) {
     if (
@@ -234,43 +214,23 @@ function agregarProducto(
       listaCarrito[i]["color"] == color
     ) {
       productoExistente = true;
-      cantidadTotal =
+      listaCarrito[i]["cantidad"] =
         parseInt(listaCarrito[i]["cantidad"]) + parseInt(cantidad);
-
-      if (!descarga) {
-        if (
-          cantidadTotal > parseInt(stockActual) ||
-          parseInt(stockActual) == 0
-        ) {
-          alertas(
-            "STOCK NO DISPONIBLE. Stock actual: " + stockActual,
-            "warning"
-          );
-          return;
-        }
-      }
-
-      listaCarrito[i]["cantidad"] = cantidadTotal;
+      listaCarrito[i]["precioCompra"] = precioCompra;
+      listaCarrito[i]["descuento"] =
+        parseFloat(listaCarrito[i]["descuento"]) + parseFloat(descuento);
       break;
     }
   }
 
   if (!productoExistente) {
-    if (!descarga) {
-      if (
-        parseInt(cantidad) > parseInt(stockActual) ||
-        parseInt(stockActual) == 0
-      ) {
-        alertas("STOCK NO DISPONIBLE. Stock actual: " + stockActual, "warning");
-        return;
-      }
-    }
-
     listaCarrito.push({
       idProducto: idProducto,
       cantidad: cantidad,
       size: size,
       color: color,
+      precioCompra: precioCompra,
+      descuento: descuento,
     });
   }
 
@@ -282,7 +242,6 @@ function agregarProducto(
   mostrarProducto();
 }
 
-//agregar evento click para eliminar
 function btnEliminarProducto() {
   let lista = document.querySelectorAll(".btnEliminar");
   for (let i = 0; i < lista.length; i++) {
@@ -294,7 +253,7 @@ function btnEliminarProducto() {
     });
   }
 }
-//eliminar productos del table
+
 function eliminarProducto(idProducto, size, color) {
   for (let i = 0; i < listaCarrito.length; i++) {
     if (
@@ -310,7 +269,6 @@ function eliminarProducto(idProducto, size, color) {
   mostrarProducto();
 }
 
-//agregar eventa change para cambiar la cantidad
 function agregarCantidad() {
   let lista = document.querySelectorAll(".inputCantidad");
   for (let i = 0; i < lista.length; i++) {
@@ -345,15 +303,77 @@ function cambiarCantidad(idProducto, cantidad, size, color) {
   mostrarProducto();
 }
 
+function agregarPrecio() {
+  let lista = document.querySelectorAll(".inputPrecio");
+  for (let i = 0; i < lista.length; i++) {
+    lista[i].addEventListener("change", function () {
+      let idProducto = lista[i].getAttribute("data-id");
+      let size = lista[i].getAttribute("size");
+      let color = lista[i].getAttribute("color");
+      let precio = lista[i].value;
+
+      if (isNaN(precio) || precio == "" || parseFloat(precio) <= 0) {
+        alertas("PRECIO INVÁLIDO", "warning");
+        mostrarProducto();
+        return;
+      }
+
+      cambiarPrecio(idProducto, precio, size, color);
+    });
+  }
+}
+
+function cambiarPrecio(idProducto, precio, size, color) {
+  for (let i = 0; i < listaCarrito.length; i++) {
+    if (
+      listaCarrito[i]["idProducto"] == idProducto &&
+      listaCarrito[i]["size"] == size &&
+      listaCarrito[i]["color"] == color
+    ) {
+      listaCarrito[i]["precioCompra"] = precio;
+    }
+  }
+  localStorage.setItem(nombreKey, JSON.stringify(listaCarrito));
+  mostrarProducto();
+}
+
+function agregarDescuento() {
+  let lista = document.querySelectorAll(".inputDescuento");
+  for (let i = 0; i < lista.length; i++) {
+    lista[i].addEventListener("change", function () {
+      let idProducto = lista[i].getAttribute("data-id");
+      let size = lista[i].getAttribute("size");
+      let color = lista[i].getAttribute("color");
+      let descuento = lista[i].value;
+
+      if (isNaN(descuento) || descuento == "") {
+        descuento = 0;
+      }
+
+      cambiarDescuento(idProducto, descuento, size, color);
+    });
+  }
+}
+
+function cambiarDescuento(idProducto, descuento, size, color) {
+  for (let i = 0; i < listaCarrito.length; i++) {
+    if (
+      listaCarrito[i]["idProducto"] == idProducto &&
+      listaCarrito[i]["size"] == size &&
+      listaCarrito[i]["color"] == color
+    ) {
+      listaCarrito[i]["descuento"] = descuento;
+    }
+  }
+  localStorage.setItem(nombreKey, JSON.stringify(listaCarrito));
+  mostrarProducto();
+}
+
 function cargarSizeTalla(idProducto) {
-  const url = base_url + "ventas/size/" + idProducto;
-  //hacer una instancia del objeto XMLHttpRequest
+  const url = base_url + "compras/size/" + idProducto;
   const http = new XMLHttpRequest();
-  //Abrir una Conexion - POST - GET
   http.open("GET", url, true);
-  //Enviar Datos
   http.send();
-  //verificar estados
   http.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
       const res = JSON.parse(this.responseText);

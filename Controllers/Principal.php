@@ -14,6 +14,7 @@ class Principal extends Controller
         $data['testimonios'] = $this->model->getTestimonial();
         $this->views->getView('principal', "about", $data);
     }
+
     //vista shop
     public function shop($page)
     {
@@ -24,7 +25,6 @@ class Principal extends Controller
         $data['productos'] = $this->model->getProductos($desde, PORPAGINA);
         $total = $this->model->getTotalProductos();
         $data['pagina'] = $pagina;
-
         $data['total'] = ceil($total['total'] / PORPAGINA);
 
         ######### CALIFICACION ###########
@@ -32,53 +32,64 @@ class Principal extends Controller
             $calificacion = $this->model->getCalificacion('SUM', $data['productos'][$i]['id']);
             $cantidad = $this->model->getCalificacion('COUNT', $data['productos'][$i]['id']);
             $totalCantidad = ($cantidad['total'] == 0) ? 5 : $cantidad['total'];
-
             $total = ($calificacion['total'] != null) ? $calificacion['total'] / $totalCantidad : $totalCantidad;
-
             $data['productos'][$i]['calificacion'] = round($total);
+
+            // ⭐ AGREGAR LA PRIMERA IMAGEN DE LA GALERÍA
+            $primeraImagen = $this->model->getPrimeraImagen($data['productos'][$i]['id']);
+            $data['productos'][$i]['imagen'] = $primeraImagen;
         }
+
         $productos = $this->model->getNuevosProductos();
         for ($i = 0; $i < count($productos); $i++) {
             $calificacion = $this->model->getCalificacion('SUM', $productos[$i]['id']);
             $cantidad = $this->model->getCalificacion('COUNT', $productos[$i]['id']);
             $totalCantidad = ($cantidad['total'] == 0) ? 5 : $cantidad['total'];
-
             $total = ($calificacion['total'] != null) ? $calificacion['total'] / $totalCantidad : $totalCantidad;
-
             $productos[$i]['calificacion'] = round($total);
+
+            // ⭐ AGREGAR LA PRIMERA IMAGEN DE LA GALERÍA
+            $primeraImagen = $this->model->getPrimeraImagen($productos[$i]['id']);
+            $productos[$i]['imagen'] = $primeraImagen;
         }
 
         $data['nuevosProductos'] = $productos;
-        //sizes
+
+        // Filtros
         $data['sizes'] = $this->model->getDatos('tallas');
         $data['colores'] = $this->model->getDatos('colores');
+        $data['marcas'] = $this->model->getMarcas();
+
         $this->views->getView('principal', "shop", $data);
     }
+
     public function filtro()
     {
-        $categorias = $_POST['categorias'];
-        $color = $_POST['color'];
-        $sizes = $_POST['sizes'];
+        $categorias = isset($_POST['categorias']) && !empty($_POST['categorias']) ? $_POST['categorias'] : '';
+        $colores = isset($_POST['colores']) && !empty($_POST['colores']) ? $_POST['colores'] : '';
+        $sizes = isset($_POST['sizes']) && !empty($_POST['sizes']) ? $_POST['sizes'] : '';
+        $marcas = isset($_POST['marcas']) && !empty($_POST['marcas']) ? $_POST['marcas'] : '';
         $precio = explode(';', $_POST['precios']);
         $precioMin = $precio[0];
         $precioMax = $precio[1];
-
         $pagina = (empty($_POST['page'])) ? 1 : $_POST['page'];
         $desde = ($pagina - 1) * PORPAGINA;
-        $total = $this->model->getTotalFiltroProductos($categorias, $precioMin, $precioMax, $color, $sizes);
+
+        $total = $this->model->getTotalFiltroProductos($categorias, $precioMin, $precioMax, $colores, $sizes, $marcas);
         $data['pagina'] = $pagina;
         $data['total'] = ceil($total['total'] / PORPAGINA);
+        $data['productos'] = $this->model->getFiltroProductos($categorias, $precioMin, $precioMax, $colores, $sizes, $marcas, $desde, PORPAGINA);
 
-        $data['productos'] = $this->model->getFiltroProductos($categorias, $precioMin, $precioMax, $color, $sizes, $desde, PORPAGINA);
         for ($i = 0; $i < count($data['productos']); $i++) {
             $calificacion = $this->model->getCalificacion('SUM', $data['productos'][$i]['id']);
             $cantidad = $this->model->getCalificacion('COUNT', $data['productos'][$i]['id']);
             $totalCantidad = ($cantidad['total'] == 0) ? 5 : $cantidad['total'];
-
             $total = ($calificacion['total'] != null) ? $calificacion['total'] / $totalCantidad : $totalCantidad;
-
             $data['productos'][$i]['calificacion'] = round($total);
+            $primeraImagen = $this->model->getPrimeraImagen($data['productos'][$i]['id']);
+            $data['productos'][$i]['imagen'] = $primeraImagen;
         }
+
         $data['moneda'] = MONEDA;
         echo json_encode($data, JSON_UNESCAPED_UNICODE);
         die();
@@ -92,6 +103,7 @@ class Principal extends Controller
             echo 'Pagina no encontrada';
             exit;
         }
+
         //CALIFICACION PRODUCTO
         $calific = $this->model->getCalificacion('SUM', $data['producto']['id']);
         $cant = $this->model->getCalificacion('COUNT', $data['producto']['id']);
@@ -105,15 +117,45 @@ class Principal extends Controller
             $calificacion = $this->model->getCalificacion('SUM', $productos[$i]['id']);
             $cantidad = $this->model->getCalificacion('COUNT', $productos[$i]['id']);
             $totalCantidad = ($cantidad['total'] == 0) ? 5 : $cantidad['total'];
-
             $total = ($calificacion['total'] != null) ? $calificacion['total'] / $totalCantidad : $totalCantidad;
-
             $productos[$i]['calificacion'] = round($total);
-        }
 
+            // Agregar primera imagen
+            $primeraImagen = $this->model->getPrimeraImagen($productos[$i]['id']);
+            $productos[$i]['imagen'] = $primeraImagen;
+        }
         $data['nuevosProductos'] = $productos;
 
-        $data['sizes'] = $this->model->getTalla($data['producto']['id']);
+        // ⭐ OBTENER TALLAS CON STOCK (CORREGIDO)
+        $tallasBase = $this->model->getTalla($data['producto']['id']);
+        $data['sizes'] = [];
+
+        foreach ($tallasBase as $talla) {
+            // Calcular stock total de esta talla (suma de todos los colores)
+            $stockTotal = 0;
+
+            // 🔧 CORRECCIÓN: El orden correcto es getColores($idTalla, $idProducto)
+            $colores = $this->model->getColores($talla['id'], $data['producto']['id']);
+
+            foreach ($colores as $color) {
+                // Sumar el stock de cada color
+                if (isset($color['stock']) && $color['stock'] > 0) {
+                    $stockTotal += $color['stock'];
+                }
+            }
+
+            $talla['stock_disponible'] = $stockTotal;
+            $data['sizes'][] = $talla;
+        }
+
+        // Verificar si el producto tiene stock
+        $data['tiene_stock'] = false;
+        foreach ($data['sizes'] as $size) {
+            if ($size['stock_disponible'] > 0) {
+                $data['tiene_stock'] = true;
+                break;
+            }
+        }
 
         $id_categoria = $data['producto']['id_categoria'];
         $data['relacionados'] = $this->model->getAleatorios($id_categoria, $data['producto']['id']);
@@ -123,10 +165,12 @@ class Principal extends Controller
             $calificacion = $this->model->getCalificacion('SUM', $data['relacionados'][$i]['id']);
             $cantidad = $this->model->getCalificacion('COUNT', $data['relacionados'][$i]['id']);
             $totalCantidad = ($cantidad['total'] == 0) ? 5 : $cantidad['total'];
-
             $total = ($calificacion['total'] != null) ? $calificacion['total'] / $totalCantidad : $totalCantidad;
-
             $data['relacionados'][$i]['calificacion'] = round($total);
+
+            // Agregar primera imagen
+            $primeraImagen = $this->model->getPrimeraImagen($data['relacionados'][$i]['id']);
+            $data['relacionados'][$i]['imagen'] = $primeraImagen;
         }
 
         //scanear galeria
@@ -143,10 +187,10 @@ class Principal extends Controller
             }
         }
         $data['imagenes'] = $result;
-
         $data['title'] = $data['producto']['nombre'];
         $this->views->getView('principal', "detail", $data);
     }
+
 
     public function getColores($datos)
     {
@@ -206,14 +250,12 @@ class Principal extends Controller
         $data['colores'] = $this->model->getDatos('colores');
         $this->views->getView('principal', "categorias", $data);
     }
-    //vista contactos
     public function contactos()
     {
         $data['perfil'] = 'si';
         $data['title'] = 'Contactos';
         $this->views->getView('principal', "contact", $data);
     }
-    //obtener producto a partir de la lista de carrito
     public function listaProductos()
     {
         $datos = file_get_contents('php://input');
@@ -224,47 +266,79 @@ class Principal extends Controller
         if (!empty($json)) {
             foreach ($json as $producto) {
                 $result = $this->model->getProducto($producto['idProducto']);
-
                 $atributo = '';
                 $atributoMP = '';
                 $precio = $result['precio_venta'] ?? 0;
                 $stock = 'Ilimitado';
 
+                // Verificar si tiene talla y color
                 if (!empty($producto['size']) && !empty($producto['color'])) {
                     $detalle = $this->model->getAtributos($producto['size'], $producto['color'], $producto['idProducto']);
 
                     if (!empty($detalle)) {
-                        $atributoMP = $detalle['nombre_corto'] . ' - ' . $detalle['nombre'];
-                        $atributo = $detalle['nombre_corto'] . ' - <span class="badge" style="background: ' . ($detalle['color'] ?? '#000') . ';">' . $detalle['nombre'] . '</span>';
-                        $precio = $detalle['precio'] ?? $precio;
-                        $stock = $detalle['cantidad'] ?? 'Ilimitado';
+                        $talla = $detalle['size'] ?? '';
+                        $colorNombre = $detalle['nombre'] ?? '';
+                        $colorHexa = $detalle['color'] ?? '#000';
+
+                        $atributoMP = $talla . ' - ' . $colorNombre;
+                        $atributo = 'T: ' . $talla . ' | <span class="badge" style="background: ' . $colorHexa . ';">C: ' . $colorNombre . '</span>';
+                        $precio = $detalle['precio_venta'] ?? $precio;
+                        $stock = $detalle['stock'] ?? 'Ilimitado';
                     } else {
                         $color = $this->model->getColorSize('colores', $producto['color']);
                         $talla = $this->model->getColorSize('tallas', $producto['size']);
-                        $atributo = $talla['nombre_corto'] . ' - <span class="badge" style="background: ' . ($color['color'] ?? '#000') . ';">' . ($color['nombre'] ?? '') . '</span>';
-                        $atributoMP = $talla['nombre_corto'] . ' - ' . ($color['nombre'] ?? '');
+                        $atributo = ($talla['nombre'] ?? '') . ' - <span class="badge" style="background: ' . ($color['color'] ?? '#000') . ';">' . ($color['nombre'] ?? '') . '</span>';
+                        $atributoMP = ($talla['nombre'] ?? '') . ' - ' . ($color['nombre'] ?? '');
                     }
                 }
 
                 $cantidad = $producto['cantidad'] ?? 1;
-                $subTotal = $precio * $cantidad;
 
-                $data = [
-                    'id' => $result['id'] ?? 0,
-                    'nombre' => $result['nombre'] ?? '',
-                    'atributo' => $atributo,
-                    'atributoMP' => $atributoMP,
-                    'precio' => $precio,
-                    'cantidad' => $cantidad,
-                    'size' => $producto['size'] ?? 0,
-                    'color' => $producto['color'] ?? 0,
-                    'stock' => $stock,
-                    'imagen' => $result['imagen'] ?? 'assets/images/productos/product.png',
-                    'subTotal' => number_format($subTotal, 2)
-                ];
+                if (isset($producto['precio_compra'])) {
+                    // ES UNA COMPRA
+                    $precio_compra = floatval($producto['precio_compra']);
+                    $descuento = isset($producto['descuento']) ? floatval($producto['descuento']) : 0;
+                    $subTotal = ($precio_compra * $cantidad) - $descuento;
+
+                    $data = [
+                        'id' => $result['id'] ?? 0,
+                        'nombre' => $result['nombre'] ?? '',
+                        'atributo' => $atributo,
+                        'atributoMP' => $atributoMP,
+                        'precio' => $precio_compra,
+                        'precio_compra' => $precio_compra,
+                        'descuento' => $descuento,
+                        'cantidad' => $cantidad,
+                        'size' => $producto['size'] ?? 0,
+                        'color' => $producto['color'] ?? 0,
+                        'stock' => $stock,
+                        'imagen' => $result['imagen'] ?? 'assets/images/productos/product.png',
+                        'subTotal' => number_format($subTotal, 2)
+                    ];
+
+                    $total += $subTotal;
+                } else {
+                    // ES UNA VENTA
+                    $subTotal = $precio * $cantidad;
+
+                    $data = [
+                        'id' => $result['id'] ?? 0,
+                        'nombre' => $result['nombre'] ?? '',
+                        'atributo' => $atributo,
+                        'atributoMP' => $atributoMP,
+                        'precio' => $precio,
+                        'cantidad' => $cantidad,
+                        'size' => $producto['size'] ?? 0,
+                        'color' => $producto['color'] ?? 0,
+                        'stock' => $stock,
+                        'imagen' => $result['imagen'] ?? 'assets/images/productos/product.png',
+                        'subTotal' => number_format($subTotal, 2)
+                    ];
+
+                    $total += $subTotal;
+                }
 
                 $array['productos'][] = $data;
-                $total += $subTotal;
             }
 
             $_SESSION['productos'] = $array['productos'];
@@ -273,13 +347,12 @@ class Principal extends Controller
         $array['login'] = empty($_SESSION['idCliente']) ? 0 : 1;
         $array['total'] = number_format($total, 2);
         $array['totalPaypal'] = number_format($total, 2, '.', '');
-        $array['moneda'] = MONEDA;
-        $array['currency'] = CURRENCY;
+        $array['moneda'] = MONEDA ?? 'Bs';
+        $array['currency'] = CURRENCY ?? 'USD';
 
         echo json_encode($array, JSON_UNESCAPED_UNICODE);
         die();
     }
-
     public function busqueda($valor)
     {
         $data = [];
@@ -296,15 +369,17 @@ class Principal extends Controller
         $size = (!empty($_POST['size'])) ? strClean($_POST['size']) : null;
         $color = (!empty($_POST['color'])) ? strClean($_POST['color']) : null;
         $id_producto = $_POST['id_producto'];
+
+        $data = array();
+
         if ($size != null) {
-            $id_producto = $_POST['id_producto'];
-            $data['atrib'] = $this->model->consultaStock('id_talla', $size, $id_producto);
             $data['colores'] = $this->model->getColores($size, $id_producto);
+
+            if ($color != null && $color != '') {
+                $data['atrib'] = $this->model->getAtributos($size, $color, $id_producto);
+            }
         }
-        if ($color != null) {
-            $id_producto = $_POST['id_producto'];
-            $data['atrib'] = $this->model->consultaStock('id_color', $color, $id_producto);
-        }
+
         $data['moneda'] = MONEDA;
         echo json_encode($data, JSON_UNESCAPED_UNICODE);
         die();
@@ -325,10 +400,32 @@ class Principal extends Controller
             $data['moneda'] = MONEDA;
             $data['sizes'] = [];
             $data['producto'] = $this->model->getProducto($idProducto);
+
             if (!empty($data['producto'])) {
+                $result = array();
+                $directorio = 'assets/images/productos/' . $idProducto;
+                if (file_exists($directorio)) {
+                    $imagenes = scandir($directorio);
+                    if (false !== $imagenes) {
+                        foreach ($imagenes as $file) {
+                            if ('.' != $file && '..' != $file) {
+                                array_push($result, $file);
+                            }
+                        }
+                    }
+                }
+                $data['imagenes'] = $result;
+
+                if (!empty($result)) {
+                    $data['producto']['imagen'] = 'assets/images/productos/' . $idProducto . '/' . $result[0];
+                }
+
                 $data['sizes'] = $this->model->getTalla($idProducto);
+
+                $stockTotal = $this->model->getTotalStockProducto($idProducto);
+                $data['tiene_stock'] = $stockTotal['total_stock'] > 0;
             }
-            //CALIFICACION
+
             $calificacion = $this->model->getCalificacion('SUM', $idProducto);
             $cantidad = $this->model->getCalificacion('COUNT', $idProducto);
             $totalCantidad = ($cantidad['total'] == 0) ? 5 : $cantidad['total'];
@@ -340,6 +437,7 @@ class Principal extends Controller
         }
         die();
     }
+
 
     public function getStock($datos)
     {

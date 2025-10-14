@@ -1,0 +1,533 @@
+/* ============================================
+   LOGIN.CSS - Sistema de Ventas Moderno
+   Prefijo: lg- (login)
+   Color Corporativo: #fc0038
+   ============================================ */
+
+/* Reset y Variables */
+:root {
+    --lg-primary-color: #fc0038;
+    --lg-primary-dark: #d10030;
+    --lg-primary-light: #ff1a52;
+    --lg-secondary-color: #ff6b9d;
+    --lg-accent-color: #ff3366;
+    --lg-success-color: #10b981;
+    --lg-danger-color: #ef4444;
+    --lg-dark-bg: #0f172a;
+    --lg-card-bg: #ffffff;
+    --lg-text-primary: #1e293b;
+    --lg-text-secondary: #64748b;
+    --lg-border-color: #e2e8f0;
+    --lg-shadow-sm: 0 1px 3px 0 rgba(252, 0, 56, 0.1);
+    --lg-shadow-md: 0 4px 6px -1px rgba(252, 0, 56, 0.1);
+    --lg-shadow-lg: 0 20px 25px -5px rgba(252, 0, 56, 0.15);
+    --lg-shadow-xl: 0 25px 50px -12px rgba(252, 0, 56, 0.25);
+}
+
+/* Fondo con Gradiente Animado */
+.lg-bg-login {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #fc0038 0%, #ff6b9d 50%, #d10030 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.lg-bg-login::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 50%, rgba(252, 0, 56, 0.4) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(255, 107, 157, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(255, 26, 82, 0.3) 0%, transparent 50%);
+    animation: lg-bg-animation 15s ease infinite;
+}
+
+@keyframes lg-bg-animation {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+}
+
+/* Partículas decorativas */
+.lg-bg-login::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(2px 2px at 20% 30%, white, transparent),
+        radial-gradient(2px 2px at 60% 70%, white, transparent),
+        radial-gradient(1px 1px at 50% 50%, white, transparent),
+        radial-gradient(1px 1px at 80% 10%, white, transparent),
+        radial-gradient(2px 2px at 90% 60%, white, transparent);
+    background-size: 200% 200%;
+    animation: lg-particles-move 20s linear infinite;
+    opacity: 0.4;
+}
+
+@keyframes lg-particles-move {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 100% 100%; }
+}
+
+/* Contenedor Principal */
+.lg-section-authentication {
+    position: relative;
+    z-index: 1;
+    padding: 2rem 0;
+}
+
+/* Logo Container */
+.lg-logo-container {
+    margin-bottom: 2rem !important;
+    animation: lg-fade-in-down 0.8s ease;
+}
+
+.lg-logo-container img {
+    filter: drop-shadow(0 10px 20px rgba(252, 0, 56, 0.2));
+    transition: transform 0.3s ease;
+}
+
+.lg-logo-container img:hover {
+    transform: scale(1.05);
+}
+
+/* Card Principal */
+.lg-card {
+    border: none;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--lg-shadow-xl);
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+    animation: lg-fade-in-up 0.8s ease;
+}
+
+@keyframes lg-fade-in-down {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes lg-fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.lg-card-body {
+    padding: 2rem;
+}
+
+/* Borde interno del formulario */
+.lg-form-container {
+    border: 2px solid var(--lg-border-color) !important;
+    border-radius: 16px !important;
+    padding: 2rem !important;
+    background: linear-gradient(to bottom, #ffffff, #f8fafc);
+}
+
+/* Título */
+.lg-title {
+    color: var(--lg-text-primary);
+    font-weight: 700;
+    font-size: 1.875rem;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, var(--lg-primary-color), var(--lg-secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Separador */
+.lg-separater {
+    position: relative;
+    margin: 1.5rem 0 !important;
+}
+
+.lg-separater span {
+    background: linear-gradient(to bottom, #ffffff, #f8fafc);
+    padding: 0 1rem;
+    color: var(--lg-text-secondary);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 1;
+}
+
+.lg-separater hr {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    border: none;
+    border-top: 2px solid var(--lg-border-color);
+}
+
+/* Labels */
+.lg-form-label {
+    color: var(--lg-text-primary);
+    font-weight: 600;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.lg-form-label::before {
+    content: '';
+    width: 4px;
+    height: 16px;
+    background: linear-gradient(to bottom, var(--lg-primary-color), var(--lg-primary-light));
+    border-radius: 2px;
+}
+
+/* Inputs */
+.lg-form-control {
+    border: 2px solid var(--lg-border-color);
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    font-size: 0.9375rem;
+    transition: all 0.3s ease;
+    background: #ffffff;
+    width: 100%;
+}
+
+.lg-form-control:focus {
+    border-color: var(--lg-primary-color);
+    box-shadow: 0 0 0 4px rgba(252, 0, 56, 0.1);
+    background: #ffffff;
+    outline: none;
+}
+
+.lg-form-control::placeholder {
+    color: #94a3b8;
+    font-size: 0.875rem;
+}
+
+/* Input Group (Password) */
+.lg-input-group {
+    position: relative;
+}
+
+.lg-input-group .lg-form-control {
+    padding-right: 3rem;
+}
+
+.lg-input-group-text {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    border: none;
+    background: transparent !important;
+    z-index: 10;
+    cursor: pointer;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+}
+
+.lg-input-group-text:hover {
+    color: var(--lg-primary-color);
+}
+
+.lg-input-group-text i {
+    font-size: 1.25rem;
+    color: var(--lg-text-secondary);
+    transition: color 0.3s ease;
+}
+
+.lg-input-group-text:hover i {
+    color: var(--lg-primary-color);
+}
+
+/* Link de "Olvidaste tu contraseña" */
+.lg-forgot-link {
+    color: var(--lg-primary-color);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.lg-forgot-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--lg-primary-color);
+    transition: width 0.3s ease;
+}
+
+.lg-forgot-link:hover {
+    color: var(--lg-primary-dark);
+}
+
+.lg-forgot-link:hover::after {
+    width: 100%;
+}
+
+/* Botón Principal */
+.lg-btn-primary {
+    background: linear-gradient(135deg, var(--lg-primary-color) 0%, var(--lg-accent-color) 100%);
+    border: none;
+    border-radius: 12px;
+    padding: 0.875rem 1.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: 0.025em;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(252, 0, 56, 0.4);
+    position: relative;
+    overflow: hidden;
+    color: #ffffff;
+    width: 100%;
+    cursor: pointer;
+}
+
+.lg-btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.lg-btn-primary:hover::before {
+    left: 100%;
+}
+
+.lg-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(252, 0, 56, 0.5);
+    background: linear-gradient(135deg, var(--lg-primary-dark) 0%, var(--lg-primary-color) 100%);
+}
+
+.lg-btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px rgba(252, 0, 56, 0.3);
+}
+
+.lg-btn-primary i {
+    margin-right: 0.5rem;
+    font-size: 1.125rem;
+}
+
+/* Responsive Design */
+
+/* Tablets */
+@media (max-width: 991px) {
+    .lg-card-body {
+        padding: 1.5rem;
+    }
+    
+    .lg-form-container {
+        padding: 1.5rem !important;
+    }
+    
+    .lg-title {
+        font-size: 1.625rem;
+    }
+}
+
+/* Mobile Devices */
+@media (max-width: 576px) {
+    .lg-section-authentication {
+        padding: 1rem 0;
+    }
+    
+    .lg-logo-container {
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .lg-logo-container img {
+        max-width: 140px;
+    }
+    
+    .lg-card-body {
+        padding: 1rem;
+    }
+    
+    .lg-form-container {
+        padding: 1.25rem !important;
+        border-radius: 12px !important;
+    }
+    
+    .lg-title {
+        font-size: 1.5rem;
+    }
+    
+    .lg-separater span {
+        font-size: 0.688rem;
+        padding: 0 0.75rem;
+    }
+    
+    .lg-form-label {
+        font-size: 0.813rem;
+    }
+    
+    .lg-form-control {
+        padding: 0.625rem 0.875rem;
+        font-size: 0.875rem;
+    }
+    
+    .lg-btn-primary {
+        padding: 0.75rem 1.25rem;
+        font-size: 0.9375rem;
+    }
+    
+    .lg-forgot-link {
+        font-size: 0.813rem;
+    }
+}
+
+/* Extra Small Devices */
+@media (max-width: 375px) {
+    .lg-card {
+        border-radius: 16px;
+    }
+    
+    .lg-form-container {
+        padding: 1rem !important;
+    }
+    
+    .lg-title {
+        font-size: 1.375rem;
+    }
+    
+    .lg-form-control {
+        font-size: 0.813rem;
+    }
+}
+
+/* Animaciones de Loading */
+.lg-btn-primary.lg-loading {
+    pointer-events: none;
+    position: relative;
+}
+
+.lg-btn-primary.lg-loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    margin-left: -8px;
+    margin-top: -8px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: lg-spinner 0.6s linear infinite;
+}
+
+@keyframes lg-spinner {
+    to { transform: rotate(360deg); }
+}
+
+/* Estados de Validación */
+.lg-form-control.lg-is-invalid {
+    border-color: var(--lg-danger-color);
+    background-image: none;
+}
+
+.lg-form-control.lg-is-valid {
+    border-color: var(--lg-success-color);
+    background-image: none;
+}
+
+/* Efecto de Hover en Card */
+.lg-card:hover {
+    box-shadow: 0 30px 60px -15px rgba(252, 0, 56, 0.3);
+}
+
+/* Accesibilidad */
+.lg-form-control:focus-visible,
+.lg-btn-primary:focus-visible,
+.lg-input-group-text:focus-visible {
+    outline: 2px solid var(--lg-primary-color);
+    outline-offset: 2px;
+}
+
+/* Utilidades adicionales */
+.lg-text-center {
+    text-align: center;
+}
+
+.lg-text-end {
+    text-align: right;
+}
+
+.lg-d-grid {
+    display: grid;
+}
+
+.lg-col-12 {
+    width: 100%;
+}
+
+.lg-mb-4 {
+    margin-bottom: 1.5rem;
+}
+
+.lg-g-3 > * {
+    margin-bottom: 1rem;
+}
+
+/* Dark Mode Support (Opcional) */
+@media (prefers-color-scheme: dark) {
+    .lg-card {
+        background: rgba(30, 41, 59, 0.95);
+    }
+    
+    .lg-form-container {
+        border-color: #334155 !important;
+        background: linear-gradient(to bottom, #1e293b, #0f172a);
+    }
+    
+    .lg-title,
+    .lg-form-label {
+        color: #f1f5f9;
+    }
+    
+    .lg-form-control {
+        background: #1e293b;
+        border-color: #334155;
+        color: #f1f5f9;
+    }
+    
+    .lg-form-control:focus {
+        background: #1e293b;
+        border-color: var(--lg-primary-light);
+    }
+    
+    .lg-separater span {
+        background: linear-gradient(to bottom, #1e293b, #0f172a);
+        color: #94a3b8;
+    }
+}

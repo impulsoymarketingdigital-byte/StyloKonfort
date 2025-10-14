@@ -3057,3 +3057,263 @@ input[type="radio"]:checked ~ .payment-method .imgName .name {
 #variantModal {
     z-index: 1070; /* Mayor que el primer modal */
 }
+
+/*# custom */
+
+/* ========================================
+   MODAL GALERÍA - ESTILOS MEJORADOS
+   ======================================== */
+
+/* Dropzone mejorado con color rojo */
+.dropzone {
+    border: 3px dashed #fc0038 !important;
+    border-radius: 12px !important;
+    background: #fff5f7 !important;
+    transition: all 0.3s ease;
+    min-height: 200px !important;
+    padding: 30px !important;
+}
+
+.dropzone:hover {
+    border-color: #d4003d !important;
+    background: #ffe8ee !important;
+    transform: scale(1.01);
+}
+
+.dropzone .dz-message {
+    margin: 2rem 0 !important;
+}
+
+.dropzone .dz-message i {
+    color: #fc0038;
+}
+
+/* Cards mejorados */
+#modalGaleria .card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+
+#modalGaleria .card-header {
+    background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+    border: none;
+    padding: 1rem 1.5rem;
+    font-weight: 600;
+    color: #495057;
+}
+
+#modalGaleria .card-body {
+    padding: 1.5rem;
+}
+
+/* ========================================
+   GALERÍA DE IMÁGENES - 6 POR FILA
+   ======================================== */
+
+#containerGaleria {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1rem;
+    padding: 0.5rem;
+}
+
+/* Contenedor de cada imagen */
+.gallery-item {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    aspect-ratio: 1;
+}
+
+.gallery-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(252, 0, 56, 0.3);
+}
+
+/* Imagen dentro del contenedor */
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.05);
+}
+
+/* Overlay con botón eliminar */
+.gallery-item .image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0.75rem;
+}
+
+.gallery-item:hover .image-overlay {
+    opacity: 1;
+}
+
+/* Botón eliminar con color rojo */
+.gallery-item .btnEliminarImagen {
+    background: linear-gradient(135deg, #fc0038 0%, #d4003d 100%);
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(252, 0, 56, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.gallery-item .btnEliminarImagen:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(252, 0, 56, 0.5);
+}
+
+.gallery-item .btnEliminarImagen i {
+    margin-right: 0.35rem;
+}
+
+/* Placeholder cuando no hay imágenes */
+#no-images-placeholder {
+    grid-column: 1 / -1;
+    padding: 3rem !important;
+}
+
+#no-images-placeholder i {
+    font-size: 4rem;
+    color: #dee2e6;
+}
+
+/* Botón subir imágenes con color rojo */
+#btnProcesar {
+    background: linear-gradient(135deg, #fc0038 0%, #d4003d 100%);
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 25px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(252, 0, 56, 0.4);
+    transition: all 0.3s ease;
+}
+
+#btnProcesar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(252, 0, 56, 0.5);
+}
+
+/* Modal footer mejorado */
+#modalGaleria .modal-footer {
+    padding: 1.25rem 1.5rem;
+    border: none;
+}
+
+#modalGaleria .modal-footer .btn-danger {
+    background: linear-gradient(135deg, #fc0038 0%, #d4003d 100%);
+    border: none;
+    padding: 0.625rem 1.75rem;
+    border-radius: 25px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Animación de carga */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.gallery-item {
+    animation: fadeIn 0.3s ease;
+}
+
+/* Indicador de cantidad de imágenes con color rojo */
+.image-count-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(252, 0, 56, 0.95);
+    color: white;
+    padding: 0.25rem 0.65rem;
+    border-radius: 15px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+/* ========================================
+   RESPONSIVE - 6, 4, 3, 2 columnas
+   ======================================== */
+
+/* Tablets grandes (4 columnas) */
+@media (max-width: 1200px) {
+    #containerGaleria {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Tablets (3 columnas) */
+@media (max-width: 992px) {
+    #containerGaleria {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Móviles grandes (2 columnas) */
+@media (max-width: 768px) {
+    #containerGaleria {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+    
+    .gallery-item .btnEliminarImagen {
+        font-size: 0.7rem;
+        padding: 0.4rem 0.8rem;
+    }
+}
+
+/* Móviles pequeños (2 columnas más compactas) */
+@media (max-width: 576px) {
+    #containerGaleria {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+    
+    .gallery-item {
+        border-radius: 8px;
+    }
+    
+    .image-count-badge {
+        font-size: 0.65rem;
+        padding: 0.2rem 0.5rem;
+    }
+}

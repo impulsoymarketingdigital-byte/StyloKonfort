@@ -1,98 +1,77 @@
 <!-- footer start -->
-<footer>
-  <div class="footer1 ">
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-          <div class="footer-main">
-            <div class="footer-box">
-              <div class="footer-title mobile-title">
-                <h5>acerca de</h5>
-              </div>
-              <div class="footer-contant">
-                <div class="footer-logo">
-                  <a href="<?php echo BASE_URL; ?>"> <img src="<?php echo BASE_URL; ?>assets/images/logo.png" class="img-fluid" alt="logo"> </a>
-                </div>
-                <p><?php echo $empresa['mensaje']; ?></p>
-                <ul class="sosiyal">
-                  <li><a href="<?php echo $empresa['facebook']; ?>" target="_blank"><i class="fa fa-facebook"></i></a></li>
-                  <li><a href="<?php echo $empresa['twitter']; ?>" target="_blank"><i class="fa fa-twitter"></i></a></li>
-                  <li><a href="<?php echo $empresa['instagram']; ?>" target="_blank"><i class="fa fa-instagram"></i></a></li>
-                </ul>
-              </div>
-            </div>
-            <div class="footer-box">
-              <div class="footer-title">
-                <h5>mi cuenta</h5>
-              </div>
-              <div class="footer-contant">
-                <ul>
-                  <li><a href="<?php echo BASE_URL; ?>">Inicio</a></li>
-                  <li><a href="<?php echo BASE_URL . 'principal/shop'; ?>">Tienda</a></li>
-                  <li><a href="<?php echo BASE_URL . 'principal/about'; ?>">Servicios</a></li>
-                  <li><a href="<?php echo BASE_URL . 'principal/contactos'; ?>">Contactos</a></li>
-                </ul>
-              </div>
-            </div>
-            <div class="footer-box">
-              <div class="footer-title">
-                <h5>contactos</h5>
-              </div>
-              <div class="footer-contant">
-                <ul class="contact-list">
-                  <li><i class="fa fa-map-marker"></i><?php echo $empresa['nombre']; ?>
-                  </li>
-                  <li><i class="fa fa-phone"></i>Telefono: <span><?php echo $empresa['telefono']; ?></span></li>
-                  <li><i class="fa fa-envelope-o"></i>Correo: <?php echo $empresa['correo']; ?></li>
-                  <li><i class="fa fa-home"></i><span><?php echo $empresa['direccion']; ?></span></li>
-                </ul>
-              </div>
-            </div>
-            <div class="footer-box">
-              <div class="footer-title">
-                <h5>Ubicación</h5>
-              </div>
-              <div class="footer-contant">
-                <div class="newsletter-second">
-                  <?php echo $empresa['ubicacion']; ?>
-                </div>
-              </div>
-            </div>
-          </div>
+<!-- Footer Moderno -->
+<footer class="ft-main">
+  <div class="ft-container">
+    <div class="ft-grid">
+      
+      <!-- Columna Logo y Descripción -->
+      <div class="ft-column ft-brand">
+        <div class="ft-logo-wrapper">
+          <a href="<?php echo BASE_URL; ?>">
+            <img src="<?php echo BASE_URL; ?>assets/images/logo.png" class="ft-logo-img" alt="logo">
+          </a>
+        </div>
+        <p class="ft-description"><?php echo $empresa['mensaje']; ?></p>
+        <div class="ft-social">
+          <a href="<?php echo $empresa['facebook']; ?>" target="_blank" class="ft-social-link">
+            <i class="fa fa-facebook"></i>
+          </a>
+          <a href="<?php echo $empresa['twitter']; ?>" target="_blank" class="ft-social-link">
+            <i class="fa fa-twitter"></i>
+          </a>
+          <a href="<?php echo $empresa['instagram']; ?>" target="_blank" class="ft-social-link">
+            <i class="fa fa-instagram"></i>
+          </a>
         </div>
       </div>
+
+      <!-- Columna Enlaces Rápidos -->
+      <div class="ft-column">
+        <h3 class="ft-title">Enlaces Rápidos</h3>
+        <ul class="ft-links">
+          <li><a href="<?php echo BASE_URL; ?>" class="ft-link">Inicio</a></li>
+          <li><a href="<?php echo BASE_URL . 'principal/shop'; ?>" class="ft-link">Tienda</a></li>
+          <li><a href="<?php echo BASE_URL . 'principal/about'; ?>" class="ft-link">Servicios</a></li>
+          <li><a href="<?php echo BASE_URL . 'principal/contactos'; ?>" class="ft-link">Contacto</a></li>
+        </ul>
+      </div>
+
+      <!-- Columna Contacto -->
+      <div class="ft-column">
+        <h3 class="ft-title">Contacto</h3>
+        <ul class="ft-contact">
+          <li class="ft-contact-item">
+            <i class="fa fa-map-marker ft-icon"></i>
+            <span><?php echo $empresa['direccion']; ?></span>
+          </li>
+          <li class="ft-contact-item">
+            <i class="fa fa-phone ft-icon"></i>
+            <span><?php echo $empresa['telefono']; ?></span>
+          </li>
+          <li class="ft-contact-item">
+            <i class="fa fa-envelope ft-icon"></i>
+            <span><?php echo $empresa['correo']; ?></span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Columna Ubicación -->
+      <div class="ft-column">
+        <h3 class="ft-title">Ubicación</h3>
+        <div class="ft-map">
+          <?php echo $empresa['ubicacion']; ?>
+        </div>
+      </div>
+
     </div>
   </div>
-  <div class="subfooter footer-border">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-6">
-          <div class="footer-left">
-            <p><?php echo date('Y'); ?></p>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="footer-right">
-            <ul class="payment">
-              <li>
-                <a href="javascript:void(0)"><img src="<?php echo BASE_URL; ?>assets/images/pay/1.png" class="img-fluid" alt="pay"></a>
-              </li>
-              <li>
-                <a href="javascript:void(0)"><img src="<?php echo BASE_URL; ?>assets/images/pay/2.png" class="img-fluid" alt="pay"></a>
-              </li>
-              <li>
-                <a href="javascript:void(0)"><img src="<?php echo BASE_URL; ?>assets/images/pay/3.png" class="img-fluid" alt="pay"></a>
-              </li>
-              <li>
-                <a href="javascript:void(0)"><img src="<?php echo BASE_URL; ?>assets/images/pay/4.png" class="img-fluid" alt="pay"></a>
-              </li>
-              <li>
-                <a href="javascript:void(0)"><img src="<?php echo BASE_URL; ?>assets/images/pay/5.png" class="img-fluid" alt="pay"></a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
+
+  <!-- Footer Bottom -->
+  <div class="ft-bottom">
+    <div class="ft-container">
+      <p class="ft-copyright">
+        © <?php echo date('Y'); ?> <?php echo $empresa['nombre']; ?>. Todos los derechos reservados.
+      </p>
     </div>
   </div>
 </footer>

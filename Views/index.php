@@ -1,32 +1,29 @@
 <?php include_once 'Views/template/header-principal.php'; ?>
 
 <!--slider start-->
-<section class="theme-slider section-py-space home-slide">
-  <div class="custom-container">
-    <div class="row slider-layout-4">
-      <div class="col-xl-10 slider-slide">
-        <div class="slide-1 no-arrow">
-          <?php foreach ($this->base->getSliders() as $slider) { ?>
-            <div>
-              <div class="slider-banner slide-banner-3">
-                <div class="slider-img">
-                  <ul class="layout4-slide-1">
-                    <li id="img-1"><img src="<?php echo BASE_URL . $slider['imagen']; ?>" class="img-fluid" alt="slider">
-                    </li>
-                  </ul>
-                </div>
-                <div class="slider-banner-contain">
-                  <div>
-                    <h3><?php echo $slider['titulo']; ?></h3>
-                    <h2><?php echo $slider['subtitulo']; ?></h2> <a href="<?php echo $slider['link']; ?>" class="btn btn-normal">
-                      Mas Información
-                    </a>
-                  </div>
+<section class="hero-slider-section">
+  <div class="hero-slider-wrapper">
+    <div class="hero-slider-container">
+      <div class="hero-slides">
+        <?php foreach ($this->base->getSliders() as $slider) { ?>
+          <div class="hero-slide-item">
+            <div class="hero-slide-content">
+              <div class="hero-slide-image">
+                <img src="<?php echo BASE_URL . $slider['imagen']; ?>" alt="slider">
+              </div>
+              <div class="hero-slide-overlay"></div>
+              <div class="hero-slide-text">
+                <div class="hero-text-inner">
+                  <h3 class="hero-subtitle"><?php echo $slider['titulo']; ?></h3>
+                  <h2 class="hero-title"><?php echo $slider['subtitulo']; ?></h2>
+                  <a href="<?php echo $slider['link']; ?>" class="hero-btn">
+                    Más Información
+                  </a>
                 </div>
               </div>
             </div>
-          <?php } ?>
-        </div>
+          </div>
+        <?php } ?>
       </div>
     </div>
   </div>
@@ -41,7 +38,6 @@
           <li class="<?php echo ($item == 0) ? 'current' : ''; ?>"><a href="tab-<?php echo $categoria['id']; ?>"><?php echo $categoria['categoria']; ?></a></a></li>
         <?php $item++;
         } ?>
-        <!-- <li class="current"><a href="tab-1">fashion</a></li> -->
       </ul>
     </div>
   </div>
@@ -142,7 +138,7 @@
 </section>
 <!-- product tab end -->
 <!--services start-->
-<section class="services ">
+<section class="services">
   <div class="container">
     <div class="row service-block">
       <div class="col-lg-3 col-md-6  col-sm-12">
@@ -437,55 +433,6 @@
 </section>
 <!--media banner end-->
 
-<!--deal banner start-->
-<section class="deal-banner  deal-banner-inverse">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-12 col-lg-8">
-        <div class="deal-banner-containe">
-          <h2>
-            AHORRE HASTA UN 30% A UN 40% DE DESCUENTO
-          </h2>
-          <h1>
-            ¡DIOS MÍO! ¡SOLO MIRA LAS GRANDES OFERTAS!
-          </h1>
-        </div>
-      </div>
-      <div class="col-md-12 col-lg-4 ">
-        <div class="deal-banner-containe">
-          <diV class="deal-btn"> <a href="#" class="btn-white">
-              Ver más
-            </a> </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<!--deal banner end-->
-
-<!--rounded category start-->
-<section class="rounded-category rounded-category-inverse">
-  <div class="container">
-    <div class="row">
-      <div class="col">
-        <div class="slide-6 no-arrow">
-          <?php foreach ($this->base->getCategorias() as $categoria) { ?>
-            <div>
-              <div class="category-contain">
-                <div class="img-wrapper">
-                  <a href="<?php echo BASE_URL . 'principal/categorias/' . $categoria['slug']; ?>"> <img src="<?php echo BASE_URL . $categoria['imagen']; ?>" alt="category  " class="img-fluid"> </a>
-                </div> <a href="<?php echo BASE_URL . 'principal/categorias/' . $categoria['slug']; ?>" class="btn-rounded">
-                  <?php echo $categoria['categoria']; ?>
-                </a>
-              </div>
-            </div>
-          <?php } ?>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<!--rounded category end-->
 
 <!--testimonial start-->
 <section class="testimonial">
@@ -515,6 +462,48 @@
 
 <?php include_once 'Views/template/footer-principal.php'; ?>
 
+<script>
+
+$(document).ready(function(){
+  $('.hero-slides').slick({
+    dots: true,
+    infinite: true,
+    speed: 800,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    fade: true,
+    cssEase: 'cubic-bezier(0.4, 0, 0.2, 1)',
+    pauseOnHover: true,
+    pauseOnFocus: false,
+    arrows: true,
+    draggable: true,
+    swipe: true,
+    touchMove: true,
+    adaptiveHeight: false,
+    prevArrow: '<button type="button" class="slick-prev"></i></button>',
+    nextArrow: '<button type="button" class="slick-next"></i></button>',
+    responsive: [
+      {
+        breakpoint: 768,
+        settings: {
+          arrows: false,
+          dots: true
+        }
+      },
+      {
+        breakpoint: 576,
+        settings: {
+          arrows: false,
+          dots: true,
+          autoplaySpeed: 4000
+        }
+      }
+    ]
+  });
+});
+</script>
 </body>
 
 </html>

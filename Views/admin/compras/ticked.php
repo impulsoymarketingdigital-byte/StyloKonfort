@@ -62,24 +62,24 @@
             letter-spacing: 0.3px;
         }
         
-        .cliente-info {
+        .compra-info {
             font-size: 8pt;
             line-height: 1.6;
             margin-bottom: 8px;
         }
         
-        .cliente-info table {
+        .compra-info table {
             width: 100%;
             border-collapse: collapse;
         }
         
-        .cliente-info td {
+        .compra-info td {
             padding: 1px 0;
         }
         
-        .cliente-info td:first-child {
+        .compra-info td:first-child {
             font-weight: bold;
-            width: 60px;
+            width: 65px;
         }
         
         .productos-table {
@@ -201,6 +201,8 @@
         small {
             font-size: 6pt;
         }
+        
+        
     </style>
 </head>
 <body>
@@ -225,33 +227,41 @@
             <?php endif; ?>
         </div>
         
-        <?php if (!empty($data['venta']['id'])): ?>
-        <div class="ticket-id">TICKET #<?php echo str_pad($data['venta']['id'], 6, '0', STR_PAD_LEFT); ?></div>
-        <?php endif; ?>
+        <div class="ticket-id">
+            COMPRA #<?php echo $data['compra']['numero_compra']; ?><br>
+            <span style="font-size: 7pt;"><?php echo strtoupper($data['compra']['tipo_comprobante']); ?></span>
+        </div>
         
         <div class="fecha-hora">
-            <?php echo date('d/m/Y - H:i:s', strtotime($data['venta']['fecha'] ?? 'now')); ?>
+            <?php echo date('d/m/Y - H:i:s', strtotime($data['compra']['fecha'])); ?>
         </div>
     </div>
 
-    <!-- DATOS CLIENTE -->
-    <div class="section-title">DATOS DEL CLIENTE</div>
-    <div class="cliente-info">
+    <!-- DATOS PROVEEDOR -->
+    <div class="section-title">DATOS DEL PROVEEDOR</div>
+    <div class="compra-info">
         <table>
             <tr>
-                <td>Nombre:</td>
-                <td><?php echo $data['venta']['nombre'] . ' ' . $data['venta']['apellido']; ?></td>
+                <td>Proveedor:</td>
+                <td><?php echo $data['compra']['proveedor']; ?></td>
             </tr>
+            <?php if (!empty($data['compra']['ruc'])): ?>
             <tr>
-                <td>Teléfono:</td>
-                <td><?php echo $data['venta']['telefono']; ?></td>
-            </tr>
-            <?php if (!empty($data['venta']['metodo_pago'])): ?>
-            <tr>
-                <td>Método:</td>
-                <td><?php echo strtoupper($data['venta']['metodo_pago']); ?></td>
+                <td>Documento:</td>
+                <td><?php echo $data['compra']['ruc']; ?></td>
             </tr>
             <?php endif; ?>
+            <?php if (!empty($data['compra']['telefono'])): ?>
+            <tr>
+                <td>Teléfono:</td>
+                <td><?php echo $data['compra']['telefono']; ?></td>
+            </tr>
+            <?php endif; ?>
+            <tr>
+                <td>Almacén:</td>
+                <td><?php echo $data['compra']['almacen']; ?></td>
+            </tr>
+          
         </table>
     </div>
 
@@ -269,23 +279,42 @@
         <tbody>
             <?php 
             $productos = $data['detalle'];
-            $subtotal = 0;
+            $subtotal_general = 0;
+            $descuento_general = 0;
+            
             foreach ($productos as $producto) { 
-                $total_producto = $producto['cantidad'] * $producto['precio'];
-                $subtotal += $total_producto;
+                $precio = floatval($producto['precio_compra']);
+                $cantidad = intval($producto['cantidad']);
+                $descuento = floatval($producto['descuento']);
+                $subtotal = ($precio * $cantidad) - $descuento;
+                
+                $subtotal_general += $subtotal;
+                $descuento_general += $descuento;
             ?>
                 <tr>
-                    <td><?php echo $producto['cantidad']; ?></td>
+                    <td><?php echo $cantidad; ?></td>
                     <td>
                         <div class="producto-descripcion">
                             <?php echo $producto['producto']; ?><br>
                             <small>
-                                <?php echo $producto['nombre_corto']; ?> - <?php echo $producto['color_nombre']; ?>
+                                <?php 
+                                $detalles = array();
+                                if (!empty($producto['nombre_corto'])) {
+                                    $detalles[] = $producto['nombre_corto'];
+                                }
+                                if (!empty($producto['color_nombre'])) {
+                                    $detalles[] = $producto['color_nombre'];
+                                }
+                                echo implode(' - ', $detalles);
+                                ?>
                             </small>
+                            <?php if ($descuento > 0): ?>
+                            <br><small style="color: #666;">Desc: <?php echo number_format($descuento, 2); ?></small>
+                            <?php endif; ?>
                         </div>
                     </td>
-                    <td><?php echo number_format($producto['precio'], 2); ?></td>
-                    <td><?php echo number_format($total_producto, 2); ?></td>
+                    <td><?php echo number_format($precio, 2); ?></td>
+                    <td><?php echo number_format($subtotal, 2); ?></td>
                 </tr>
             <?php } ?>
         </tbody>
@@ -293,21 +322,29 @@
 
     <!-- TOTALES -->
     <div class="totales">
+        <?php if ($descuento_general > 0): ?>
         <div class="total-row">
             <table>
                 <tr>
                     <td>Subtotal:</td>
-                    <td><?php echo number_format($subtotal, 2); ?> Bs</td>
+                    <td><?php echo number_format($subtotal_general + $descuento_general, 2); ?> Bs</td>
                 </tr>
             </table>
         </div>
-        
-        <?php if (!empty($data['venta']['descuento']) && $data['venta']['descuento'] > 0): ?>
         <div class="total-row">
             <table>
                 <tr>
                     <td>Descuento:</td>
-                    <td><?php echo number_format($data['venta']['descuento'], 2); ?> Bs</td>
+                    <td>- <?php echo number_format($descuento_general, 2); ?> Bs</td>
+                </tr>
+            </table>
+        </div>
+        <?php else: ?>
+        <div class="total-row">
+            <table>
+                <tr>
+                    <td>Subtotal:</td>
+                    <td><?php echo number_format($subtotal_general, 2); ?> Bs</td>
                 </tr>
             </table>
         </div>
@@ -316,8 +353,8 @@
         <div class="total-row total-final">
             <table>
                 <tr>
-                    <td>TOTAL A PAGAR:</td>
-                    <td><?php echo number_format($data['venta']['monto'], 2); ?> Bs</td>
+                    <td>TOTAL COMPRA:</td>
+                    <td><?php echo number_format($data['compra']['total'], 2); ?> Bs</td>
                 </tr>
             </table>
         </div>
@@ -326,9 +363,9 @@
     <!-- FOOTER -->
     <div class="footer">
         <div class="mensaje">
-            <?php echo $data['empresa']['mensaje']; ?>
+            <?php echo !empty($data['empresa']['mensaje']) ? $data['empresa']['mensaje'] : 'Gracias por su confianza'; ?>
         </div>
-        <div class="gracias">¡VUELVA PRONTO!</div>
+        <div class="gracias">¡COMPRA REGISTRADA!</div>
         <div style="font-size: 6pt; margin-top: 5px; color: #999;">
             Generado por Mastec Digital
         </div>

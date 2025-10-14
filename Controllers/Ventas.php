@@ -15,7 +15,7 @@ class Ventas extends Controller
         parent::__construct();
         session_start();
         if (empty($_SESSION['id_usuario'])) {
-            header('Location: '. BASE_URL . 'admin');
+            header('Location: ' . BASE_URL . 'admin');
             exit;
         }
         $this->id_usuario = $_SESSION['id_usuario'];
@@ -35,7 +35,6 @@ class Ventas extends Controller
         foreach ($data as $row) {
             $result['id'] = $row['id'];
             $result['label'] = $row['nombre'];
-            $result['stock'] = $row['cantidad'];
             array_push($array, $result);
         }
         echo json_encode($array, JSON_UNESCAPED_UNICODE);
@@ -65,52 +64,58 @@ class Ventas extends Controller
         echo json_encode($data, JSON_UNESCAPED_UNICODE);
         die();
     }
-
     public function registrarVenta()
     {
         $json = file_get_contents('php://input');
         $datos = json_decode($json, true);
-        $array['productos'] = array();
         $total = 0;
+
         if (!empty($datos['productos'])) {
             $fecha = date('Y-m-d H:i:s');
             $idCliente = $datos['idCliente'];
+            $metodo = isset($datos['metodo']) ? $datos['metodo'] : 'VENTA DIRECTA';
+
             if (empty($idCliente)) {
                 $res = array('msg' => 'EL CLIENTE ES REQUERIDO', 'type' => 'warning');
             } else {
+                // Calcular total
                 foreach ($datos['productos'] as $producto) {
-                    $result = $this->model->getProducto($producto['idProducto']);
                     $atributo = $this->model->getAtributos($producto['size'], $producto['color'], $producto['idProducto']);
-                    $data['precio'] = $atributo['precio'];
-                    $data['id'] = $result['id'];
-                    $data['nombre'] = $result['nombre'];
-                    $data['color'] = $producto['color'];
-                    $data['size'] = $producto['size'];
-                    $data['cantidad'] = $producto['cantidad'];
-                    $subTotal = $data['precio'] * $producto['cantidad'];
-                    array_push($array['productos'], $data);
+                    if (empty($atributo)) {
+                        $res = array('msg' => 'ERROR: Producto sin stock disponible', 'type' => 'error');
+                        echo json_encode($res);
+                        die();
+                    }
+                    $subTotal = $atributo['precio_venta'] * $producto['cantidad'];
                     $total += $subTotal;
                 }
-                $datosProductos = json_encode($array['productos']);
-                $venta = $this->model->registrarVenta($datosProductos, $total, $fecha, $idCliente, $this->id_usuario);
+
+                // Registrar pedido
+                $id_transaccion = $metodo . '-' . uniqid();
+                $estado = 'COMPLETADO';
+                $venta = $this->model->registrarPedido($id_transaccion, $metodo, $total, $estado, $fecha, $idCliente);
+
                 if ($venta > 0) {
+                    // Registrar detalles y actualizar stock
                     foreach ($datos['productos'] as $producto) {
-                        $atributo = $this->model->getAtributos($producto['size'], $producto['color'], $producto['idProducto']);
                         $result = $this->model->getProducto($producto['idProducto']);
-                        $totalStock = 0;
-                        $total = 0;
-                        if ($producto['size'] > 0 && $producto['color'] > 0) {
-                            //actualizar stock
-                            $stock = $atributo['cantidad'] - $producto['cantidad'];
-                            $this->model->actualizarStockDetalle($stock, $producto['size'], $producto['color'], $producto['idProducto']);
-                        }
-                        if ($producto['idProducto'] == $result['id']) {
-                            $total += $producto['cantidad'];
-                        }
-                        $totalStock = $result['cantidad'] - $total;
-                        $ventas = $result['ventas'] + $total;
-                        $this->model->actualizarStockProducto($totalStock, $ventas, $result['id']);
+                        $atributo = $this->model->getAtributos($producto['size'], $producto['color'], $producto['idProducto']);
+
+                        // Guardar detalle
+                        $this->model->registrarDetallePedido(
+                            $venta,
+                            $result['id'],
+                            $result['nombre'],
+                            $atributo['precio_venta'],
+                            $producto['cantidad'],
+                            $atributo['id']
+                        );
+
+                        // Actualizar stock en tallas_colores
+                        $nuevoStock = $atributo['stock'] - $producto['cantidad'];
+                        $this->model->actualizarStockDetalle($nuevoStock, $atributo['id']);
                     }
+
                     $res = array('msg' => 'VENTA GENERADA', 'type' => 'success', 'idVenta' => $venta);
                 } else {
                     $res = array('msg' => 'ERROR AL GENERAR VENTA', 'type' => 'error');
@@ -119,10 +124,10 @@ class Ventas extends Controller
         } else {
             $res = array('msg' => 'CARRITO VACIO', 'type' => 'warning');
         }
+
         echo json_encode($res);
         die();
     }
-
     public function reporte($datos)
     {
         ob_start();
@@ -133,49 +138,80 @@ class Ventas extends Controller
         $data['title'] = 'Reporte';
         $data['empresa'] = $this->model->getEmpresa();
         $data['venta'] = $this->model->getVenta($idVenta);
+        $data['detalle'] = $this->model->getDetallePedido($idVenta);
+
         if (empty($data['venta'])) {
             echo 'Pagina no Encontrada';
             exit;
         }
+
         $this->views->getView('admin/ventas', $tipo, $data);
         $html = ob_get_clean();
         $dompdf = new Dompdf();
         $options = $dompdf->getOptions();
-        $options->set('isJavascriptEnabled', true);
         $options->set('isRemoteEnabled', true);
         $dompdf->setOptions($options);
         $dompdf->loadHtml($html);
 
         if ($tipo == 'ticked') {
-            $dompdf->setPaper(array(0, 0, 130, 841), 'portrait');
+            $dompdf->setPaper(array(0, 0, 226.77, 500), 'portrait');
         } else {
             $dompdf->setPaper('A4', 'vertical');
         }
 
-        // Render the HTML as PDF
         $dompdf->render();
-
-        // Output the generated PDF to Browser
         $dompdf->stream('reporte.pdf', array('Attachment' => false));
     }
 
     public function listar()
     {
         $data = $this->model->getVentas();
+
         for ($i = 0; $i < count($data); $i++) {
-            if ($data[$i]['estado'] == 1) {
-                $data[$i]['acciones'] = '<div>
-                <a class="btn btn-warning" href="#" onclick="anularVenta(' . $data[$i]['id'] . ')"><i class="fas fa-trash"></i></a>
-                <a class="btn btn-danger" href="#" onclick="verReporte(' . $data[$i]['id'] . ')"><i class="fas fa-file-pdf"></i></a>
+
+            if ($data[$i]['estado'] == 'COMPLETADO') {
+                $data[$i]['estado'] = '<span class="badge bg-success">Completado</span>';
+            } else {
+                $data[$i]['estado'] = '<span class="badge bg-secondary">Anulado</span>';
+            }
+
+            if ($data[$i]['estado'] == '<span class="badge bg-success">Completado</span>') {
+                $data[$i]['acciones'] = '
+                <div class="text-center">
+                    <button class="btn btn-info btn-sm" onclick="verDetalle(' . $data[$i]['id'] . ')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-warning btn-sm" onclick="anularVenta(' . $data[$i]['id'] . ')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <button class="btn btn-danger btn-sm" onclick="verReporte(' . $data[$i]['id'] . ')">
+                        <i class="fas fa-file-pdf"></i>
+                    </button>
                 </div>';
             } else {
-                $data[$i]['acciones'] = '<div>
-                <span class="badge bg-info">Anulado</span>
-                <a class="btn btn-danger" href="#" onclick="verReporte(' . $data[$i]['id'] . ')"><i class="fas fa-file-pdf"></i></a>
+                $data[$i]['acciones'] = '
+                <div class="text-center">
+                    <button class="btn btn-info btn-sm" onclick="verDetalle(' . $data[$i]['id'] . ')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-danger btn-sm" onclick="verReporte(' . $data[$i]['id'] . ')">
+                        <i class="fas fa-file-pdf"></i>
+                    </button>
                 </div>';
             }
         }
+
         echo json_encode($data);
+        die();
+    }
+
+    public function detalle($idPedido)
+    {
+        if (is_numeric($idPedido)) {
+            $data['pedido'] = $this->model->getVenta($idPedido);
+            $data['detalle'] = $this->model->getDetallePedido($idPedido);
+            echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        }
         die();
     }
 
@@ -184,21 +220,18 @@ class Ventas extends Controller
         if (isset($_GET) && is_numeric($idVenta)) {
             $data = $this->model->anular($idVenta);
             if ($data == 1) {
-                $resultVenta = $this->model->getVenta($idVenta);
-                $ventaProducto = json_decode($resultVenta['productos'], true);
-                foreach ($ventaProducto as $producto) {
-                    $result = $this->model->getProducto($producto['id']);
-                    $nuevaCantidad = 0;
+                $detalles = $this->model->getDetallePedido($idVenta);
 
-                    $nuevaCantidad = $result['cantidad'] + $producto['cantidad'];
-                    $atributo = $this->model->getAtributos($producto['size'], $producto['color'], $producto['id']);
-                    $stock = $atributo['cantidad'] + $producto['cantidad'];
-                    $this->model->actualizarStockDetalle($stock, $producto['size'], $producto['color'], $producto['id']);
+                foreach ($detalles as $detalle) {
+                    $tallasColores = $this->model->getTallaColorPorId($detalle['id_talla_color']);
 
-                    $total = $result['ventas'] - $producto['cantidad'];
-                    $this->model->actualizarStockProducto($nuevaCantidad, $total, $producto['id']);
+                    if (!empty($tallasColores)) {
+                        $nuevoStock = $tallasColores['stock'] + $detalle['cantidad'];
+                        $this->model->actualizarStockDetalle($nuevoStock, $detalle['id_talla_color']);
+                    }
                 }
-                $res = array('msg' => 'VENTA ANULADO', 'type' => 'success');
+
+                $res = array('msg' => 'VENTA ANULADA', 'type' => 'success');
             } else {
                 $res = array('msg' => 'ERROR AL ANULAR', 'type' => 'error');
             }

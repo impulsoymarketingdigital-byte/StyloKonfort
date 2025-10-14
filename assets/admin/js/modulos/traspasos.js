@@ -1,38 +1,70 @@
 const inputBuscarNombre = document.querySelector("#buscarProductoNombre");
-const nombre = document.querySelector("#nombre");
 const containerNombre = document.querySelector("#containerNombre");
-
 const errorBusqueda = document.querySelector("#errorBusqueda");
 
 const btnAccion = document.querySelector("#btnAccion");
-const totalPagar = document.querySelector("#totalPagar");
+const totalProductos = document.querySelector("#totalProductos");
 const size = document.querySelector("#size");
 const color = document.querySelector("#color");
 const idProducto = document.querySelector("#idProducto");
 const btnAgregar = document.querySelector("#btnAgregar");
-const cantidad = document.querySelector("#cantidad");
+const stockActual = document.querySelector("#stockActual");
+const cantidadTraspaso = document.querySelector("#cantidadTraspaso");
 
-//para filtro por rango de fechas
-const desde = document.querySelector("#desde");
-const hasta = document.querySelector("#hasta");
+const almacenOrigen = document.querySelector("#almacenOrigen");
+const almacenDestino = document.querySelector("#almacenDestino");
+const errorAlmacenOrigen = document.querySelector("#errorAlmacenOrigen");
+const errorAlmacenDestino = document.querySelector("#errorAlmacenDestino");
 
-let listaCarrito, tblHistorial;
+let listaCarrito = [];
 
 document.addEventListener("DOMContentLoaded", function () {
-  //comprobar productos en localStorage
+  // Inicializar carrito desde localStorage
   if (localStorage.getItem(nombreKey) != null) {
     listaCarrito = JSON.parse(localStorage.getItem(nombreKey));
+  } else {
+    listaCarrito = [];
   }
+
+  // Habilitar búsqueda solo si hay almacén origen seleccionado
+  almacenOrigen.addEventListener("change", function () {
+    if (almacenOrigen.value != "") {
+      inputBuscarNombre.disabled = false;
+      errorAlmacenOrigen.textContent = "";
+      
+      // Si cambia el almacén origen, limpiar el carrito
+      if (listaCarrito && listaCarrito.length > 0) {
+        Swal.fire({
+          title: "¿Cambiar almacén origen?",
+          text: "Se vaciará el carrito actual",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Sí, cambiar",
+          cancelButtonText: "Cancelar",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            localStorage.removeItem(nombreKey);
+            listaCarrito = [];
+            mostrarProducto();
+          } else {
+            almacenOrigen.value = listaCarrito[0]?.idAlmacenOrigen || "";
+          }
+        });
+      }
+    } else {
+      inputBuscarNombre.disabled = true;
+      inputBuscarNombre.value = "";
+    }
+  });
 
   $("#modalSizeColor").on("hidden.bs.modal", function () {
     limpiarModal();
   });
 
-  //autocomplete productos
   $("#buscarProductoNombre").autocomplete({
     source: function (request, response) {
       $.ajax({
-        url: base_url + "ventas/buscarPorNombre",
+        url: base_url + "traspasos/buscarPorNombre",
         dataType: "json",
         data: {
           term: request.term,
@@ -49,16 +81,15 @@ document.addEventListener("DOMContentLoaded", function () {
     },
     minLength: 2,
     select: function (event, ui) {
-      if (ui.item.descarga) {
-        agregarProducto(ui.item.id, 1, ui.item.stock, 0, 0, true);
-        inputBuscarNombre.value = "";
-        inputBuscarNombre.focus();
-      } else {
-        idProducto.value = ui.item.id;
-        cargarSizeTalla(ui.item.id);
-        $("#modalSizeColor").modal("show");
+      if (!almacenOrigen.value) {
+        alertas("SELECCIONA PRIMERO EL ALMACÉN ORIGEN", "warning");
+        return false;
       }
-
+      
+      idProducto.value = ui.item.id;
+      cargarSizeTalla(ui.item.id);
+      $("#modalSizeColor").modal("show");
+      inputBuscarNombre.value = "";
       return false;
     },
   });
@@ -68,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function () {
       cargarColoresPorSize(e.target.value);
     } else {
       color.innerHTML = '<option value="">Seleccionar</option>';
-      cantidad.value = "";
+      stockActual.value = "";
       btnAgregar.classList.add("d-none");
     }
   });
@@ -77,16 +108,22 @@ document.addEventListener("DOMContentLoaded", function () {
     if (e.target.value != "" && size.value != "") {
       cambiarStock(size.value, e.target.value);
     } else {
-      cantidad.value = "";
+      stockActual.value = "";
       btnAgregar.classList.add("d-none");
     }
   });
 
   function cargarColoresPorSize(sizeId) {
+    if (!almacenOrigen.value) {
+      alertas("SELECCIONA EL ALMACÉN ORIGEN", "warning");
+      return;
+    }
+
     let data = new FormData();
     data.append("size", sizeId);
     data.append("color", "");
     data.append("id_producto", idProducto.value);
+    data.append("id_almacen", almacenOrigen.value);
 
     const url = base_url + "principal/cambiarStock";
     const http = new XMLHttpRequest();
@@ -103,7 +140,7 @@ document.addEventListener("DOMContentLoaded", function () {
           });
         }
         color.innerHTML = html;
-        cantidad.value = "";
+        stockActual.value = "";
         btnAgregar.classList.add("d-none");
       }
     };
@@ -113,65 +150,46 @@ document.addEventListener("DOMContentLoaded", function () {
     idProducto.value = "";
     size.innerHTML = '<option value="">Seleccionar</option>';
     color.innerHTML = '<option value="">Seleccionar</option>';
-    cantidad.value = "";
+    stockActual.value = "";
+    cantidadTraspaso.value = "1";
     btnAgregar.classList.add("d-none");
   }
 
   btnAgregar.addEventListener("click", function () {
     if (size.value != "" && color.value != "") {
-      const stockDisponible = parseInt(cantidad.value);
+      const cantidad = parseInt(cantidadTraspaso.value);
+      const stock = parseInt(stockActual.value);
 
-      if (stockDisponible > 0) {
-        agregarProducto(
-          idProducto.value,
-          1,
-          stockDisponible,
-          size.value,
-          color.value,
-          false
-        );
-
-        idProducto.value = "";
-        inputBuscarNombre.value = "";
-        $("#modalSizeColor").modal("hide");
-      } else {
-        alertas("STOCK NO DISPONIBLE", "warning");
+      if (isNaN(cantidad) || cantidad <= 0) {
+        alertas("INGRESA UNA CANTIDAD VÁLIDA", "warning");
+        return;
       }
+
+      if (cantidad > stock) {
+        alertas("CANTIDAD MAYOR AL STOCK DISPONIBLE", "warning");
+        return;
+      }
+
+      agregarProducto(
+        idProducto.value,
+        cantidad,
+        size.value,
+        color.value,
+        almacenOrigen.value
+      );
+
+      idProducto.value = "";
+      inputBuscarNombre.value = "";
+      $("#modalSizeColor").modal("hide");
     } else {
       alertas("SELECCIONA TALLA Y COLOR", "warning");
-    }
-  });
-
-  $.datetimepicker.setLocale("es");
-
-
-  //filtro rango de fechas
-  desde.addEventListener("blur", function () {
-    tblHistorial.draw();
-  });
-  hasta.addEventListener("blur", function () {
-    tblHistorial.draw();
-  });
-
-  $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
-    var FilterStart = desde.value;
-    var FilterEnd = hasta.value;
-    var DataTableStart = data[1].trim();
-    var DataTableEnd = data[1].trim();
-    if (FilterStart == "" || FilterEnd == "") {
-      return true;
-    }
-    if (DataTableStart >= FilterStart && DataTableEnd <= FilterEnd) {
-      return true;
-    } else {
-      return false;
     }
   });
 });
 
 function cambiarStock(size, color) {
-  if (!size || !color) {
-    cantidad.value = "";
+  if (!size || !color || !almacenOrigen.value) {
+    stockActual.value = "";
     btnAgregar.classList.add("d-none");
     return;
   }
@@ -180,6 +198,8 @@ function cambiarStock(size, color) {
   data.append("size", size);
   data.append("color", color);
   data.append("id_producto", idProducto.value);
+  data.append("id_almacen", almacenOrigen.value);
+  
   const url = base_url + "principal/cambiarStock";
   const http = new XMLHttpRequest();
   http.open("POST", url, true);
@@ -188,7 +208,7 @@ function cambiarStock(size, color) {
     if (this.readyState == 4 && this.status == 200) {
       const res = JSON.parse(this.responseText);
 
-      cantidad.value = res.atrib ? res.atrib.stock : "";
+      stockActual.value = res.atrib ? res.atrib.stock : "";
 
       let html = '<option value="">Seleccionar</option>';
       if (res.colores && res.colores.length > 0) {
@@ -200,32 +220,32 @@ function cambiarStock(size, color) {
       }
       document.querySelector("#color").innerHTML = html;
 
-      if (res.atrib && res.atrib.stock && parseInt(res.atrib.stock) > 0) {
+      if (res.atrib && res.atrib.stock > 0) {
         btnAgregar.classList.remove("d-none");
       } else {
         btnAgregar.classList.add("d-none");
+        if (res.atrib && res.atrib.stock == 0) {
+          alertas("SIN STOCK EN ESTE ALMACÉN", "warning");
+        }
       }
     }
   };
 }
 
-//agregar productos a localStorage
-function agregarProducto(
-  idProducto,
-  cantidad,
-  stockActual,
-  size,
-  color,
-  descarga
-) {
+function agregarProducto(idProducto, cantidad, size, color, idAlmacenOrigen) {
   if (localStorage.getItem(nombreKey) == null) {
     listaCarrito = [];
   } else {
     listaCarrito = JSON.parse(localStorage.getItem(nombreKey));
   }
 
+  // Validar que todos los productos sean del mismo almacén origen
+  if (listaCarrito.length > 0 && listaCarrito[0].idAlmacenOrigen != idAlmacenOrigen) {
+    alertas("TODOS LOS PRODUCTOS DEBEN SER DEL MISMO ALMACÉN ORIGEN", "warning");
+    return;
+  }
+
   let productoExistente = false;
-  let cantidadTotal = 0;
 
   for (let i = 0; i < listaCarrito.length; i++) {
     if (
@@ -234,43 +254,19 @@ function agregarProducto(
       listaCarrito[i]["color"] == color
     ) {
       productoExistente = true;
-      cantidadTotal =
+      listaCarrito[i]["cantidad"] =
         parseInt(listaCarrito[i]["cantidad"]) + parseInt(cantidad);
-
-      if (!descarga) {
-        if (
-          cantidadTotal > parseInt(stockActual) ||
-          parseInt(stockActual) == 0
-        ) {
-          alertas(
-            "STOCK NO DISPONIBLE. Stock actual: " + stockActual,
-            "warning"
-          );
-          return;
-        }
-      }
-
-      listaCarrito[i]["cantidad"] = cantidadTotal;
       break;
     }
   }
 
   if (!productoExistente) {
-    if (!descarga) {
-      if (
-        parseInt(cantidad) > parseInt(stockActual) ||
-        parseInt(stockActual) == 0
-      ) {
-        alertas("STOCK NO DISPONIBLE. Stock actual: " + stockActual, "warning");
-        return;
-      }
-    }
-
     listaCarrito.push({
       idProducto: idProducto,
       cantidad: cantidad,
       size: size,
       color: color,
+      idAlmacenOrigen: idAlmacenOrigen
     });
   }
 
@@ -282,7 +278,6 @@ function agregarProducto(
   mostrarProducto();
 }
 
-//agregar evento click para eliminar
 function btnEliminarProducto() {
   let lista = document.querySelectorAll(".btnEliminar");
   for (let i = 0; i < lista.length; i++) {
@@ -294,7 +289,7 @@ function btnEliminarProducto() {
     });
   }
 }
-//eliminar productos del table
+
 function eliminarProducto(idProducto, size, color) {
   for (let i = 0; i < listaCarrito.length; i++) {
     if (
@@ -303,6 +298,7 @@ function eliminarProducto(idProducto, size, color) {
       listaCarrito[i]["color"] == color
     ) {
       listaCarrito.splice(i, 1);
+      break;
     }
   }
   localStorage.setItem(nombreKey, JSON.stringify(listaCarrito));
@@ -310,7 +306,6 @@ function eliminarProducto(idProducto, size, color) {
   mostrarProducto();
 }
 
-//agregar eventa change para cambiar la cantidad
 function agregarCantidad() {
   let lista = document.querySelectorAll(".inputCantidad");
   for (let i = 0; i < lista.length; i++) {
@@ -319,9 +314,16 @@ function agregarCantidad() {
       let size = lista[i].getAttribute("size");
       let color = lista[i].getAttribute("color");
       let cantidad = lista[i].value;
+      let stockMax = parseInt(lista[i].getAttribute("data-stock"));
 
       if (isNaN(cantidad) || cantidad == "" || parseInt(cantidad) <= 0) {
         alertas("CANTIDAD INVÁLIDA", "warning");
+        mostrarProducto();
+        return;
+      }
+
+      if (parseInt(cantidad) > stockMax) {
+        alertas("CANTIDAD MAYOR AL STOCK DISPONIBLE", "warning");
         mostrarProducto();
         return;
       }
@@ -339,6 +341,7 @@ function cambiarCantidad(idProducto, cantidad, size, color) {
       listaCarrito[i]["color"] == color
     ) {
       listaCarrito[i]["cantidad"] = cantidad;
+      break;
     }
   }
   localStorage.setItem(nombreKey, JSON.stringify(listaCarrito));
@@ -346,21 +349,28 @@ function cambiarCantidad(idProducto, cantidad, size, color) {
 }
 
 function cargarSizeTalla(idProducto) {
-  const url = base_url + "ventas/size/" + idProducto;
-  //hacer una instancia del objeto XMLHttpRequest
+  if (!almacenOrigen.value) {
+    alertas("SELECCIONA EL ALMACÉN ORIGEN", "warning");
+    return;
+  }
+
+  const url = base_url + "traspasos/size/" + idProducto + "?almacen=" + almacenOrigen.value;
   const http = new XMLHttpRequest();
-  //Abrir una Conexion - POST - GET
   http.open("GET", url, true);
-  //Enviar Datos
   http.send();
-  //verificar estados
   http.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
       const res = JSON.parse(this.responseText);
       let sizes = '<option value="">Seleccionar</option>';
-      res.forEach((size) => {
-        sizes += `<option value="${size.id}">${size.nombre}</option>`;
-      });
+      
+      if (res.length > 0) {
+        res.forEach((size) => {
+          sizes += `<option value="${size.id}">${size.nombre}</option>`;
+        });
+      } else {
+        alertas("NO HAY STOCK EN ESTE ALMACÉN", "warning");
+      }
+      
       size.innerHTML = sizes;
     }
   };

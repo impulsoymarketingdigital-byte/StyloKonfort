@@ -226,7 +226,7 @@
         </div>
         
         <?php if (!empty($data['venta']['id'])): ?>
-        <div class="ticket-id">TICKET #<?php echo str_pad($data['venta']['id'], 6, '0', STR_PAD_LEFT); ?></div>
+        <div class="ticket-id">PEDIDO #<?php echo str_pad($data['venta']['id'], 6, '0', STR_PAD_LEFT); ?></div>
         <?php endif; ?>
         
         <div class="fecha-hora">
@@ -243,15 +243,23 @@
                 <td><?php echo $data['venta']['nombre'] . ' ' . $data['venta']['apellido']; ?></td>
             </tr>
             <tr>
-                <td>Teléfono:</td>
-                <td><?php echo $data['venta']['telefono']; ?></td>
+                <td>Email:</td>
+                <td><?php echo $data['venta']['email']; ?></td>
             </tr>
-            <?php if (!empty($data['venta']['metodo_pago'])): ?>
+            <?php if (!empty($data['venta']['direccion'])): ?>
             <tr>
-                <td>Método:</td>
-                <td><?php echo strtoupper($data['venta']['metodo_pago']); ?></td>
+                <td>Dirección:</td>
+                <td><?php echo $data['venta']['direccion']; ?></td>
             </tr>
             <?php endif; ?>
+            <tr>
+                <td>Método:</td>
+                <td><?php echo strtoupper($data['venta']['metodo']); ?></td>
+            </tr>
+            <tr>
+                <td>Estado:</td>
+                <td><?php echo strtoupper($data['venta']['estado']); ?></td>
+            </tr>
         </table>
     </div>
 
@@ -273,15 +281,24 @@
             foreach ($productos as $producto) { 
                 $total_producto = $producto['cantidad'] * $producto['precio'];
                 $subtotal += $total_producto;
+                
+                // Decodificar atributos si existen
+                $atributos = null;
+                if (!empty($producto['atributos'])) {
+                    $atributos = json_decode($producto['atributos'], true);
+                }
             ?>
                 <tr>
                     <td><?php echo $producto['cantidad']; ?></td>
                     <td>
                         <div class="producto-descripcion">
-                            <?php echo $producto['producto']; ?><br>
+                            <?php echo $producto['producto']; ?>
+                            <?php if ($atributos): ?>
+                            <br>
                             <small>
-                                <?php echo $producto['nombre_corto']; ?> - <?php echo $producto['color_nombre']; ?>
+                                Talla: <?php echo $atributos['size']; ?> - Color: <?php echo $atributos['color']; ?>
                             </small>
+                            <?php endif; ?>
                         </div>
                     </td>
                     <td><?php echo number_format($producto['precio'], 2); ?></td>
@@ -302,17 +319,6 @@
             </table>
         </div>
         
-        <?php if (!empty($data['venta']['descuento']) && $data['venta']['descuento'] > 0): ?>
-        <div class="total-row">
-            <table>
-                <tr>
-                    <td>Descuento:</td>
-                    <td><?php echo number_format($data['venta']['descuento'], 2); ?> Bs</td>
-                </tr>
-            </table>
-        </div>
-        <?php endif; ?>
-        
         <div class="total-row total-final">
             <table>
                 <tr>
@@ -326,7 +332,7 @@
     <!-- FOOTER -->
     <div class="footer">
         <div class="mensaje">
-            <?php echo $data['empresa']['mensaje']; ?>
+            <?php echo !empty($data['empresa']['mensaje']) ? $data['empresa']['mensaje'] : 'GRACIAS POR TU COMPRA'; ?>
         </div>
         <div class="gracias">¡VUELVA PRONTO!</div>
         <div style="font-size: 6pt; margin-top: 5px; color: #999;">

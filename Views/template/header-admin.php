@@ -68,13 +68,17 @@
                         <div class="menu-title">Administración</div>
                     </a>
                     <ul>
-                        <li> <a href="<?php echo BASE_URL . 'admin/empresa'; ?>"><i class="bx bx-right-arrow-alt"></i>Configuración</a>
+                        <li> <a href="<?php echo BASE_URL . 'admin/empresa'; ?>"><i
+                                    class="bx bx-right-arrow-alt"></i>Configuración</a>
                         </li>
-                        <li> <a href="<?php echo BASE_URL . 'usuarios'; ?>"><i class="bx bx-right-arrow-alt"></i>Usuarios</a>
+                        <li> <a href="<?php echo BASE_URL . 'usuarios'; ?>"><i
+                                    class="bx bx-right-arrow-alt"></i>Usuarios</a>
                         </li>
-                        <li> <a href="<?php echo BASE_URL . 'sucursales'; ?>"><i class="bx bx-right-arrow-alt"></i>Sucursales</a>
+                        <li> <a href="<?php echo BASE_URL . 'sucursales'; ?>"><i
+                                    class="bx bx-right-arrow-alt"></i>Sucursales</a>
                         </li>
-                        <li> <a href="<?php echo BASE_URL . 'sliders'; ?>"><i class="bx bx-right-arrow-alt"></i>Sliders</a>
+                        <li> <a href="<?php echo BASE_URL . 'sliders'; ?>"><i
+                                    class="bx bx-right-arrow-alt"></i>Sliders</a>
                         </li>
                     </ul>
                 </li>
@@ -86,15 +90,20 @@
                         <div class="menu-title">Mantenimientos</div>
                     </a>
                     <ul>
-                        <li> <a href="<?php echo BASE_URL . 'productos'; ?>"><i class="bx bx-right-arrow-alt"></i>Productos</a>
+                        <li> <a href="<?php echo BASE_URL . 'productos'; ?>"><i
+                                    class="bx bx-right-arrow-alt"></i>Productos</a>
                         </li>
-                        <li> <a href="<?php echo BASE_URL . 'marcas'; ?>"><i class="bx bx-right-arrow-alt"></i>Marcas</a>
+                        <li> <a href="<?php echo BASE_URL . 'marcas'; ?>"><i
+                                    class="bx bx-right-arrow-alt"></i>Marcas</a>
                         </li>
-                        <li> <a href="<?php echo BASE_URL . 'categorias'; ?>"><i class="bx bx-right-arrow-alt"></i>Categorias</a>
+                        <li> <a href="<?php echo BASE_URL . 'categorias'; ?>"><i
+                                    class="bx bx-right-arrow-alt"></i>Categorias</a>
                         </li>
-                        <li> <a href="<?php echo BASE_URL . 'sizes'; ?>"><i class="bx bx-right-arrow-alt"></i>Tamaños</a>
+                        <li> <a href="<?php echo BASE_URL . 'sizes'; ?>"><i
+                                    class="bx bx-right-arrow-alt"></i>Tamaños</a>
                         </li>
-                        <li> <a href="<?php echo BASE_URL . 'colores'; ?>"><i class="bx bx-right-arrow-alt"></i>Colores</a>
+                        <li> <a href="<?php echo BASE_URL . 'colores'; ?>"><i
+                                    class="bx bx-right-arrow-alt"></i>Colores</a>
                         </li>
                     </ul>
                 </li>
@@ -107,34 +116,50 @@
                     </a>
                 </li>
 
-               <!--
+
                 <li>
                     <a href="<?php echo BASE_URL . 'pedidos'; ?>">
-                        <div class="parent-icon"><i class='fas fa-bell'></i>
-                        </div>
+                        <div class="parent-icon"><i class='fas fa-bell'></i></div>
                         <div class="menu-title">Pedidos</div>
                     </a>
                 </li>
 
                 <li>
                     <a href="<?php echo BASE_URL . 'ventas'; ?>">
-                        <div class="parent-icon"><i class='fas fa-cash-register'></i>
-                        </div>
+                        <div class="parent-icon"><i class='fas fa-cash-register'></i></div>
                         <div class="menu-title">Ventas</div>
                     </a>
                 </li>
- <li>
+
+                <li>
+                    <a href="<?php echo BASE_URL . 'compras'; ?>">
+                        <div class="parent-icon"><i class='fas fa-shopping-cart'></i></div>
+                        <div class="menu-title">Compras</div>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="<?php echo BASE_URL . 'traspasos'; ?>">
+                        <div class="parent-icon"><i class='fas fa-exchange-alt'></i></div>
+                        <div class="menu-title">Traspasos</div>
+                    </a>
+                </li>
+
+                <li>
                     <a href="javascript:;" class="has-arrow">
                         <div class="parent-icon"><i class='fas fa-file-pdf'></i>
                         </div>
                         <div class="menu-title">Reportes Pdf</div>
                     </a>
                     <ul>
-                        <li> <a href="<?php echo BASE_URL . 'ventas/reportesPDF/dia'; ?>" target="_blank"><i class="bx bx-right-arrow-alt"></i>Dia</a>
+                        <li> <a href="<?php echo BASE_URL . 'ventas/reportesPDF/dia'; ?>" target="_blank"><i
+                                    class="bx bx-right-arrow-alt"></i>Dia</a>
                         </li>
-                        <li> <a href="<?php echo BASE_URL . 'ventas/reportesPDF/semana'; ?>" target="_blank"><i class="bx bx-right-arrow-alt"></i>Ultimos 7 días</a>
+                        <li> <a href="<?php echo BASE_URL . 'ventas/reportesPDF/semana'; ?>" target="_blank"><i
+                                    class="bx bx-right-arrow-alt"></i>Ultimos 7 días</a>
                         </li>
-                        <li> <a href="<?php echo BASE_URL . 'ventas/reportesPDF/mes'; ?>" target="_blank"><i class="bx bx-right-arrow-alt"></i>Ultimos 30 días</a>
+                        <li> <a href="<?php echo BASE_URL . 'ventas/reportesPDF/mes'; ?>" target="_blank"><i
+                                    class="bx bx-right-arrow-alt"></i>Ultimos 30 días</a>
                         </li>
                     </ul>
                 </li>
@@ -146,11 +171,14 @@
                         <div class="menu-title">Reportes Pdf</div>
                     </a>
                     <ul>
-                        <li> <a href="<?php echo BASE_URL . 'ventas/reportesExcel/dia'; ?>" target="_blank"><i class="bx bx-right-arrow-alt"></i>Dia</a>
+                        <li> <a href="<?php echo BASE_URL . 'ventas/reportesExcel/dia'; ?>" target="_blank"><i
+                                    class="bx bx-right-arrow-alt"></i>Dia</a>
                         </li>
-                        <li> <a href="<?php echo BASE_URL . 'ventas/reportesExcel/semana'; ?>" target="_blank"><i class="bx bx-right-arrow-alt"></i>Ultimos 7 días</a>
+                        <li> <a href="<?php echo BASE_URL . 'ventas/reportesExcel/semana'; ?>" target="_blank"><i
+                                    class="bx bx-right-arrow-alt"></i>Ultimos 7 días</a>
                         </li>
-                        <li> <a href="<?php echo BASE_URL . 'ventas/reportesExcel/mes'; ?>" target="_blank"><i class="bx bx-right-arrow-alt"></i>Ultimos 30 días</a>
+                        <li> <a href="<?php echo BASE_URL . 'ventas/reportesExcel/mes'; ?>" target="_blank"><i
+                                    class="bx bx-right-arrow-alt"></i>Ultimos 30 días</a>
                         </li>
                     </ul>
                 </li>
@@ -169,7 +197,8 @@
 
                     </div>
                     <div class="user-box dropdown">
-                        <a class="d-flex align-items-center nav-link dropdown-toggle dropdown-toggle-nocaret" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="d-flex align-items-center nav-link dropdown-toggle dropdown-toggle-nocaret" href="#"
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <?php if ($_SESSION['perfil_usuario'] == null) {
                                 $perfil = BASE_URL . 'assets/images/logo.png';
                             } else {
@@ -182,12 +211,14 @@
                             </div>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="<?php echo BASE_URL . 'usuarios/profile'; ?>"><i class="bx bx-user"></i><span>Profile</span></a>
+                            <li><a class="dropdown-item" href="<?php echo BASE_URL . 'usuarios/profile'; ?>"><i
+                                        class="bx bx-user"></i><span>Profile</span></a>
                             </li>
                             <li>
                                 <div class="dropdown-divider mb-0"></div>
                             </li>
-                            <li><a class="dropdown-item" href="<?php echo BASE_URL . 'admin/salir'; ?>"><i class='bx bx-log-out-circle'></i><span>Logout</span></a>
+                            <li><a class="dropdown-item" href="<?php echo BASE_URL . 'admin/salir'; ?>"><i
+                                        class='bx bx-log-out-circle'></i><span>Logout</span></a>
                             </li>
                         </ul>
                     </div>

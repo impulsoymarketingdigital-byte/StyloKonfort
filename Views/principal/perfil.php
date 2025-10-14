@@ -4,33 +4,8 @@ include_once 'Views/template/header-principal.php'; ?>
 <!-- Start Content -->
 <div class="container-fluid py-5">
     <?php if ($data['verificar']['verify'] == 1) { ?>
-        <!-- Barra superior con info del usuario -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card shadow-sm border-0">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="d-flex align-items-center">
-                                <?php $perfil = (empty($_SESSION['perfilCliente']) || $_SESSION['perfilCliente'] == null) ? 'default.png' : $_SESSION['perfilCliente']; ?>
-                                <img class="rounded-circle me-3" src="<?php echo BASE_URL . 'assets/images/clientes/' . $perfil; ?>" alt="" width="60" height="60" style="object-fit: cover;">
-                                <div>
-                                    <h5 class="mb-0"><?php echo $_SESSION['nombreCliente'] . ' ' . $_SESSION['apellidoCliente']; ?></h5>
-                                    <small class="text-muted"><i class="fa fa-envelope"></i> <?php echo $_SESSION['correoCliente']; ?></small>
-                                </div>
-                            </div>
-                            <div>
-                                <button class="btn btn-outline-primary me-2" type="button" data-bs-toggle="modal" data-bs-target="#modalPerfil">
-                                    <i class="fa fa-user"></i> Mi Perfil
-                                </button>
-                                <a href="<?php echo BASE_URL . 'clientes/salir'; ?>" class="btn btn-outline-danger">
-                                    <i class="fa fa-sign-out-alt"></i> Cerrar Sesión
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+       
+        
 
         <!-- Tabs de navegación -->
         <ul class="nav nav-pills mb-4 justify-content-center" id="myTab" role="tablist">
@@ -58,18 +33,17 @@ include_once 'Views/template/header-principal.php'; ?>
                 <div class="row justify-content-center">
                     <div class="col-12 col-lg-10">
                         <div class="card shadow-lg border-0">
-                            <div class="card-header bg-primary text-white">
+                            <div class="card-header">
                                 <h4 class="mb-0"><i class="fa fa-shopping-cart"></i> Carrito de Compras</h4>
                             </div>
                             <div class="card-body p-0">
                                 <div class="table-responsive">
                                     <table class="table table-hover align-middle mb-0" id="tableListaProductos">
-                                        <thead class="table-light">
+                                        <thead >
                                             <tr>
                                                 <th class="text-center" width="100">Imagen</th>
                                                 <th>Producto</th>
                                                 <th>Atributos</th>
-                                                <th class="text-center">Stock</th>
                                                 <th class="text-end">Precio</th>
                                                 <th class="text-center">Cantidad</th>
                                                 <th class="text-end">SubTotal</th>
@@ -102,7 +76,7 @@ include_once 'Views/template/header-principal.php'; ?>
                 <div class="row justify-content-center">
                     <div class="col-12 col-lg-10">
                         <div class="card shadow-lg border-0">
-                            <div class="card-header bg-info text-white">
+                            <div class="card-header">
                                 <h4 class="mb-0"><i class="fa fa-clipboard-list"></i> Mis Pedidos</h4>
                             </div>
                             <div class="card-body">
@@ -133,7 +107,7 @@ include_once 'Views/template/header-principal.php'; ?>
                 <div class="row justify-content-center">
                     <div class="col-12 col-lg-10">
                         <div class="card shadow-lg border-0">
-                            <div class="card-header bg-warning text-dark">
+                            <div class="card-header">
                                 <h4 class="mb-0"><i class="fa fa-star"></i> Calificaciones de Productos</h4>
                             </div>
                             <div class="card-body">

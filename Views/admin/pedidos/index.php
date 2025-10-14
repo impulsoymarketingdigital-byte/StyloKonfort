@@ -3,11 +3,11 @@
 <div class="d-flex justify-content-center mb-3">
     <div class="form-group">
         <label for="desde">Desde</label>
-        <input id="desde" class="form-control" type="text">
+        <input id="desde" class="form-control" type="date">
     </div>
     <div class="form-group">
         <label for="hasta">Hasta</label>
-        <input id="hasta" class="form-control" type="text">
+        <input id="hasta" class="form-control" type="date">
     </div>
 </div>
 

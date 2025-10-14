@@ -11,6 +11,7 @@
                         <th>#</th>
                         <th>Nombre</th>
                         <th>Color</th>
+                        <th>Estado</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -34,11 +35,23 @@
                     <input type="hidden" id="id" name="id">
                     <div class="form-group mb-2">
                         <label for="nombre">Nombre</label>
-                        <input id="nombre" class="form-control" type="text" name="nombre" placeholder="Nombre">
+                        <input id="nombre" class="form-control" type="text" name="nombre" placeholder="Ej: ROJO o VERDE/ROJO">
                     </div>
-                    <div class="form-group">
-                        <label for="color">Color</label>
-                        <input id="color" class="form-control" type="color" name="color">
+                    <div class="form-group mb-3">
+                        <label for="color">Color Principal</label>
+                        <input id="color" class="form-control" type="color" name="color" value="#000000">
+                    </div>
+                    
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="checkColorCombinado">
+                        <label class="form-check-label" for="checkColorCombinado">
+                            <strong>¿Es color combinado?</strong>
+                        </label>
+                    </div>
+                    
+                    <div class="form-group mb-2" id="divColorSecundario" style="display: none;">
+                        <label for="color_secundario">Color Secundario</label>
+                        <input id="color_secundario" class="form-control" type="color" name="color_secundario" value="#000000">
                     </div>
                 </div>
                 <div class="modal-footer">

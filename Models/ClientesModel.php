@@ -82,10 +82,10 @@ class ClientesModel extends Query
         $sql = "SELECT * FROM productos WHERE id = $id_producto";
         return $this->select($sql);
     }
-    public function registrarDetalle($producto, $precio, $cantidad, $atributos, $id_pedido, $id_producto)
+    public function registrarDetalle($producto, $precio, $cantidad, $id_pedido, $id_producto, $id_talla_color)
     {
-        $sql = "INSERT INTO detalle_pedidos (producto, precio, cantidad, atributos, id_pedido, id_producto) VALUES (?,?,?,?,?,?)";
-        $datos = array($producto, $precio, $cantidad, $atributos, $id_pedido, $id_producto);
+        $sql = "INSERT INTO detalle_pedidos (producto, precio, cantidad, id_pedido, id_producto, id_talla_color) VALUES (?,?,?,?,?,?)";
+        $datos = array($producto, $precio, $cantidad, $id_pedido, $id_producto, $id_talla_color);
         $data = $this->insertar($sql, $datos);
         if ($data > 0) {
             $res = $data;
@@ -94,6 +94,12 @@ class ClientesModel extends Query
         }
         return $res;
     }
+    public function getIdTallaColor($size, $color, $id_producto)
+    {
+        $sql = "SELECT id FROM tallas_colores WHERE id_talla = $size AND id_color = $color AND id_producto = $id_producto";
+        return $this->select($sql);
+    }
+
     public function getPedidos($id_cliente)
     {
         $sql = "SELECT * FROM pedidos WHERE id_cliente = $id_cliente";
@@ -162,13 +168,12 @@ class ClientesModel extends Query
             WHERE d.id_talla = $size AND d.id_color = $color AND d.id_producto = $id_producto";
         return $this->select($sql);
     }
-    public function actualizarStockDetalle($stock, $size, $color, $id_producto)
+    public function actualizarStockDetalle($stock, $id_talla_color)
     {
-        $sql = "UPDATE tallas_colores SET stock=? WHERE id_talla=? AND id_color=? AND id_producto=?";
-        $datos = array($stock, $size, $color, $id_producto);
+        $sql = "UPDATE tallas_colores SET stock=? WHERE id=?";
+        $datos = array($stock, $id_talla_color);
         return $this->save($sql, $datos);
     }
-
     public function agregarMensaje($mensaje, $id_cliente)
     {
         $sql = "INSERT INTO testimonial (mensaje, id_cliente) VALUES (?,?)";
@@ -180,6 +185,11 @@ class ClientesModel extends Query
             $res = 0;
         }
         return $res;
+    }
+    public function getEmpresa()
+    {
+        $sql = "SELECT * FROM configuracion";
+        return $this->select($sql);
     }
 
     public function modificarMensaje($mensaje, $id_cliente)

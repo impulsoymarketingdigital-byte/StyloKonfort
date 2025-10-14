@@ -5,7 +5,7 @@ const USER = "root";
 const PASS = "";
 const DB = "ecommerce";
 const CHARSET = "charset=utf8";
-const TITLE = "SHOP";
+const TITLE = "Mastec Pos";
 const MONEDA = "Bs. ";
 const CURRENCY = "USD";
 const PORPAGINA = 12;

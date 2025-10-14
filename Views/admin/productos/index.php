@@ -136,30 +136,31 @@
     </div>
 </div>
 
+<!-- ESTRUCTURA HTML DEL MODAL -->
 <div id="modalGaleria" class="modal fade" role="dialog" aria-labelledby="modal-galeria-title" aria-hidden="true">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content border-0 shadow-lg">
             <div class="modal-header text-white">
-                <h5 class="modal-title">Galería de Imágenes del Producto
+                <h5 class="modal-title">
+                    <i class="fas fa-images me-2"></i>Galería de Imágenes del Producto
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body p-4">
-
+                
+                <!-- Card de subida -->
                 <div class="card">
                     <div class="card-header">
                         <h6 class="mb-0"><i class="fas fa-cloud-upload-alt me-2"></i>Subir Imágenes</h6>
                     </div>
                     <div class="card-body">
-                        <form action="<?php echo BASE_URL . 'productos/galeriaImagenes'; ?>" class="dropzone"
-                            id="frmImagenes">
+                        <form action="<?php echo BASE_URL . 'productos/galeriaImagenes'; ?>" class="dropzone" id="frmImagenes">
                             <input type="hidden" id="idProducto" name="idProducto">
                             <div class="dz-message needsclick text-center">
                                 <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
                                 <h5>Arrastra y suelta las imágenes aquí</h5>
                                 <p class="text-muted">o haz clic para seleccionar archivos</p>
-                                <small class="text-muted">Formatos permitidos: PNG, JPG, JPEG | Máximo 10
-                                    archivos</small>
+                                <small class="text-muted">Formatos permitidos: PNG, JPG, JPEG | Máximo 10 archivos</small>
                             </div>
                         </form>
                         <div class="text-end mt-3">
@@ -170,16 +171,16 @@
                     </div>
                 </div>
 
-                <!-- Galería existente con mejor layout -->
+                <!-- Galería existente -->
                 <div class="card">
                     <div class="card-header">
-                        <h6 class="mb-0"><i class="fas fa-cloud-upload-alt me-2"></i>Imágenes Actuales</h6>
+                        <h6 class="mb-0"><i class="fas fa-image me-2"></i>Imágenes Actuales</h6>
                     </div>
                     <div class="card-body">
                         <div class="row g-3" id="containerGaleria">
                             <!-- Las imágenes se cargarán aquí dinámicamente -->
                             <div class="col-12 text-center text-muted py-5" id="no-images-placeholder">
-                                <i class="bi bi-image display-1 opacity-25"></i>
+                                <i class="fas fa-image display-1 opacity-25"></i>
                                 <p class="mt-3">No hay imágenes disponibles</p>
                                 <small>Sube imágenes usando el área de arriba</small>
                             </div>
@@ -188,7 +189,8 @@
                 </div>
             </div>
             <div class="modal-footer bg-light border-0">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Cerrar
                 </button>
             </div>
         </div>

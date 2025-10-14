@@ -184,7 +184,6 @@
                                 <th>Precio</th>
                                 <th>Categoria</th>
                                 <th>Stock</th>
-                                <th>Imagen</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -193,10 +192,9 @@
                                 <tr>
                                     <td><?php echo $producto['id']; ?></td>
                                     <td><?php echo $producto['nombre']; ?></td>
-                                    <td><span class="badge bg-success"><?php echo $producto['precio']; ?></span></td>
+                                    <td><span class="badge bg-success"><?php echo $producto['precio_venta']; ?></span></td>
                                     <td><?php echo $producto['categoria']; ?></td>
                                     <td><?php echo '<span class="badge bg-info">'.$producto['cantidad'].'</span>'; ?></td>
-                                    <td><img class="img-thumbnail" src="<?php echo BASE_URL . $producto['imagen']; ?>" width="100"></td>
                                     <th></th>
                                 </tr>
                             <?php } ?>

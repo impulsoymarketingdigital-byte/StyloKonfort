@@ -185,7 +185,6 @@ function getListaProductos() {
                             </td>
                             <td>${producto.nombre}</td>
                             <td>${producto.atributo}</td>
-                            <td>${producto.stock}</td>
                             <td><span class="badge bg-warning">${
                               res.moneda + " " + producto.precio
                             }</span></td>
@@ -216,7 +215,7 @@ function registrarPedido() {
   http.open("POST", url, true);
   http.send(
     JSON.stringify({
-      productos: productosConPrecio, // Usar los productos con precio
+      productos: productosConPrecio,
     })
   );
   http.onreadystatechange = function () {
@@ -226,13 +225,33 @@ function registrarPedido() {
       alertaPerzanalizada(res.msg, res.icono);
       if (res.icono == "success") {
         localStorage.removeItem("listaCarrito");
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
+        // Enviar ticket por correo
+        enviarTicketCorreo(res.idPedido);
+        window.location.reload();
       }
     }
   };
 }
+
+function enviarTicketCorreo(idPedido) {
+  const formData = new FormData();
+  formData.append("idPedido", idPedido);
+
+  const url = base_url + "clientes/enviarTicket";
+  const http = new XMLHttpRequest();
+  http.open("POST", url, true);
+  http.send(formData);
+  http.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      console.log("Respuesta envío correo:", this.responseText);
+      const res = JSON.parse(this.responseText);
+      if (res.icono == "success") {
+        alertaPerzanalizada(res.msg, res.icono);
+      }
+    }
+  };
+}
+
 function verPedido(idPedido) {
   estadoEnviado.classList.remove("border-success");
   estadoProceso.classList.remove("border-success");

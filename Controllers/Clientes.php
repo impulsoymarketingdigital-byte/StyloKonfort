@@ -4,7 +4,7 @@ require 'vendor/autoload.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
-
+use Dompdf\Dompdf;
 class Clientes extends Controller
 {
     public function __construct()
@@ -175,7 +175,6 @@ class Clientes extends Controller
         }
     }
     //registrar pedidos
-    // Agregar este nuevo método en Clientes.php
     public function registrarPedido()
     {
         if (empty($_SESSION['idCliente'])) {
@@ -202,7 +201,19 @@ class Clientes extends Controller
 
             // Calcular el monto total
             foreach ($productos as $producto) {
-                $monto += $producto['precio'] * $producto['cantidad'];
+                if ($producto['size'] > 0 && $producto['color'] > 0) {
+                    $result = $this->model->getAtributos($producto['size'], $producto['color'], $producto['id']);
+                    if (empty($result)) {
+                        $mensaje = array('msg' => 'Producto sin stock disponible', 'icono' => 'error');
+                        echo json_encode($mensaje);
+                        die();
+                    }
+                    $precio = $result['precio'];
+                } else {
+                    $temp = $this->model->getProducto($producto['id']);
+                    $precio = $temp['precio'];
+                }
+                $monto += $precio * $producto['cantidad'];
             }
 
             // Registrar el pedido
@@ -226,30 +237,39 @@ class Clientes extends Controller
 
                     if ($producto['size'] > 0 && $producto['color'] > 0) {
                         $result = $this->model->getAtributos($producto['size'], $producto['color'], $producto['id']);
-                        $datos = array(
-                            'id_size' => $producto['size'],
-                            'id_color' => $producto['color'],
-                            'size' => $result['size'],
-                            'color' => $result['nombre'],
-                            'hexa' => $result['color'],
-                        );
+                        $tallaColor = $this->model->getIdTallaColor($producto['size'], $producto['color'], $producto['id']);
                         $precio = $result['precio'];
-                        $atributos = json_encode($datos);
+                        $id_talla_color = $tallaColor['id'];
+
+                        // Registrar detalle con id_talla_color
+                        $this->model->registrarDetalle(
+                            $temp['nombre'],
+                            $precio,
+                            $producto['cantidad'],
+                            $data,
+                            $producto['id'],
+                            $id_talla_color
+                        );
+
+                        // Actualizar stock
+                        $nuevoStock = $result['stock'] - $producto['cantidad'];
+                        $this->model->actualizarStockDetalle($nuevoStock, $id_talla_color);
                     } else {
-                        $atributos = null;
+                        // Producto sin talla/color
                         $precio = $temp['precio'];
-                    }
-
-                    $this->model->registrarDetalle($temp['nombre'], $precio, $producto['cantidad'], $atributos, $data, $producto['id']);
-
-                    if ($producto['size'] > 0 && $producto['color'] > 0) {
-                        $stock = $result['stock'] - $producto['cantidad'];
-                        $this->model->actualizarStockDetalle($stock, $producto['size'], $producto['color'], $producto['id']);
+                        $this->model->registrarDetalle(
+                            $temp['nombre'],
+                            $precio,
+                            $producto['cantidad'],
+                            $data,
+                            $producto['id'],
+                            null
+                        );
                     }
                 }
 
                 unset($_SESSION['productos']);
-                $mensaje = array('msg' => 'Pedido registrado exitosamente', 'icono' => 'success');
+                $mensaje = array('msg' => 'Pedido registrado exitosamente', 'icono' => 'success', 'idPedido' => $data);
             } else {
                 $mensaje = array('msg' => 'Error al registrar el pedido', 'icono' => 'error');
             }
@@ -257,6 +277,90 @@ class Clientes extends Controller
             $mensaje = array('msg' => 'Error fatal con los datos', 'icono' => 'error');
         }
         echo json_encode($mensaje);
+        die();
+    }
+
+    public function enviarTicket()
+    {
+        if (isset($_POST['idPedido'])) {
+            $idPedido = strClean($_POST['idPedido']);
+
+            // Obtener el pedido para sacar el correo
+            $pedido = $this->model->getPedido($idPedido);
+
+            if (empty($pedido)) {
+                $mensaje = array('msg' => 'Pedido no encontrado', 'icono' => 'error');
+                echo json_encode($mensaje, JSON_UNESCAPED_UNICODE);
+                die();
+            }
+
+            $correo = $pedido['email'];
+
+            // Generar el PDF del ticket
+            ob_start();
+            $data['title'] = 'Ticket de Compra';
+            $data['empresa'] = $this->model->getEmpresa();
+            $data['venta'] = $pedido;
+            $data['detalle'] = $this->model->verPedidos($idPedido);
+
+            // Usar el template específico para ecommerce
+            $this->views->getView('admin/ventas', 'ticket_ecommerce', $data);
+            $html = ob_get_clean();
+
+            $dompdf = new Dompdf();
+            $options = $dompdf->getOptions();
+            $options->set('isRemoteEnabled', true);
+            $dompdf->setOptions($options);
+            $dompdf->loadHtml($html);
+            $dompdf->setPaper(array(0, 0, 226.77, 500), 'portrait');
+            $dompdf->render();
+
+            // Guardar PDF en memoria
+            $pdfOutput = $dompdf->output();
+
+            // Enviar correo
+            $mail = new PHPMailer(true);
+            try {
+                $mail->SMTPDebug = 0;
+                $mail->isSMTP();
+                $mail->Host = HOST_SMTP;
+                $mail->SMTPAuth = true;
+                $mail->Username = USER_SMTP;
+                $mail->Password = PASS_SMTP;
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+                $mail->Port = PUERTO_SMTP;
+                $mail->CharSet = 'UTF-8';
+
+                $mail->setFrom(CORREO, TITLE);
+                $mail->addAddress($correo);
+
+                // Adjuntar PDF
+                $mail->addStringAttachment($pdfOutput, 'pedido-' . $idPedido . '.pdf');
+
+                $mail->isHTML(true);
+                $mail->Subject = 'Confirmación de Pedido #' . $idPedido . ' - ' . TITLE;
+                $mail->Body = '
+                <h2>¡Gracias por tu compra!</h2>
+                <p>Hola <strong>' . $pedido['nombre'] . '</strong>,</p>
+                <p>Tu pedido ha sido registrado exitosamente.</p>
+                <p><strong>Número de Pedido:</strong> #' . str_pad($idPedido, 6, '0', STR_PAD_LEFT) . '</p>
+                <p><strong>Total:</strong> ' . number_format($pedido['monto'], 2) . ' Bs</p>
+                <p>Adjunto encontrarás el detalle completo de tu pedido.</p>
+                <br>
+                <p>¡Vuelve pronto!</p>
+                <p><em>' . TITLE . '</em></p>
+            ';
+                $mail->AltBody = 'Gracias por tu compra. Tu pedido #' . $idPedido . ' ha sido registrado.';
+
+                $mail->send();
+                $mensaje = array('msg' => 'Ticket enviado a tu correo', 'icono' => 'success');
+            } catch (Exception $e) {
+                $mensaje = array('msg' => 'ERROR AL ENVIAR CORREO: ' . $mail->ErrorInfo, 'icono' => 'error');
+            }
+        } else {
+            $mensaje = array('msg' => 'ERROR FATAL', 'icono' => 'error');
+        }
+        echo json_encode($mensaje, JSON_UNESCAPED_UNICODE);
         die();
     }
     //listar productos pendientes

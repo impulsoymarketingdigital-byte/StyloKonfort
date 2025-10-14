@@ -229,7 +229,6 @@ function edit(id) {
     }
   };
 }
-
 function agregarImagenes(id) {
   const url = base_url + "productos/verGaleria/" + id;
   const http = new XMLHttpRequest();
@@ -239,25 +238,46 @@ function agregarImagenes(id) {
     if (this.readyState == 4 && this.status == 200) {
       const res = JSON.parse(this.responseText);
       document.querySelector("#idProducto").value = id;
+      
       let html = "";
       let destino = base_url + "assets/images/productos/" + id + "/";
-      for (let i = 0; i < res.length; i++) {
-        html += `<div class="col-md-3">
-                    <img class="img-thumbnail" src="${destino + res[i]}">
-                    <div class="d-grid">
-                        <button class="btn btn-danger btnEliminarImagen" type="button" data-id="${id}" data-name="${
-          id + "/" + res[i]
-        }">Eliminar</button>
-                    </div>     
-                </div>`;
+      
+      // Ocultar placeholder si hay imágenes
+      const placeholder = document.querySelector("#no-images-placeholder");
+      if (res.length > 0 && placeholder) {
+        placeholder.style.display = "none";
       }
+      
+      // Generar HTML con nuevo diseño
+      for (let i = 0; i < res.length; i++) {
+        html += `
+          <div class="gallery-item">
+            <span class="image-count-badge">${i + 1}</span>
+            <img class="img-thumbnail" src="${destino + res[i]}" alt="Imagen ${i + 1}">
+            <div class="image-overlay">
+              <button class="btnEliminarImagen" type="button" data-id="${id}" data-name="${id + "/" + res[i]}">
+                <i class="fas fa-trash-alt"></i> Eliminar
+              </button>
+            </div>
+          </div>`;
+      }
+      
+      // Si no hay imágenes, mostrar placeholder
+      if (res.length === 0) {
+        html = `
+          <div class="col-12 text-center text-muted py-5" id="no-images-placeholder">
+            <i class="fas fa-image display-1 opacity-25"></i>
+            <p class="mt-3">No hay imágenes disponibles</p>
+            <small>Sube imágenes usando el área de arriba</small>
+          </div>`;
+      }
+      
       containerGaleria.innerHTML = html;
       eliminarImagen();
       modalGaleria.show();
     }
   };
 }
-
 function eliminarImagen() {
   let lista = document.querySelectorAll(".btnEliminarImagen");
   for (let i = 0; i < lista.length; i++) {

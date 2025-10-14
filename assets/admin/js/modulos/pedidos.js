@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", function() {
         dom,
         buttons,
     });
+    
     tblProceso = $("#tblProceso").DataTable({
         ajax: {
             url: base_url + "pedidos/listarProceso",
@@ -47,6 +48,7 @@ document.addEventListener("DOMContentLoaded", function() {
         dom,
         buttons,
     });
+    
     tblFinalizados = $("#tblFinalizados").DataTable({
         ajax: {
             url: base_url + "pedidos/listarFinalizados",
@@ -72,59 +74,35 @@ document.addEventListener("DOMContentLoaded", function() {
 
     $.datetimepicker.setLocale('es');
 
-    $('#desde').datetimepicker({
-        format:'Y-m-d H:m:s'
-    });
-
-    $('#hasta').datetimepicker({
-        format:'Y-m-d H:m:s'
-    });
-
-    //filtro rango de fechas
+    // Filtro rango de fechas
     desde.addEventListener('blur', function () {
         tblPendientes.draw();
         tblProceso.draw();
         tblFinalizados.draw();
     })
+    
     hasta.addEventListener('blur', function () {
         tblPendientes.draw();
         tblProceso.draw();
         tblFinalizados.draw();
     })
 
+    // Agregar filtro personalizado solo UNA VEZ
     $.fn.dataTable.ext.search.push(
         function (settings, data, dataIndex) {
             var FilterStart = desde.value;
             var FilterEnd = hasta.value;
-            var DataTableStart = data[1].trim();
-            var DataTableEnd = data[1].trim();
+            var DataTableDate = data[1].trim();
+            
             if (FilterStart == '' || FilterEnd == '') {
                 return true;
             }
-            if (DataTableStart >= FilterStart && DataTableEnd <= FilterEnd) {
+            
+            if (DataTableDate >= FilterStart && DataTableDate <= FilterEnd) {
                 return true;
             } else {
                 return false;
             }
-
-        }
-    );
-
-    $.fn.dataTable.ext.search.push(
-        function (settings, data, dataIndex) {
-            var FilterStart = desde.value;
-            var FilterEnd = hasta.value;
-            var DataTableStart = data[1].trim();
-            var DataTableEnd = data[1].trim();
-            if (FilterStart == '' || FilterEnd == '') {
-                return true;
-            }
-            if (DataTableStart >= FilterStart && DataTableEnd <= FilterEnd) {
-                return true;
-            } else {
-                return false;
-            }
-
         }
     );
 });
@@ -160,7 +138,8 @@ function cambiarProceso(idPedido, proceso) {
 }
 
 function verPedido(idPedido) {
-    const url = base_url + "clientes/verPedido/" + idPedido;
+    // CAMBIO IMPORTANTE: Llamar al controlador correcto (pedidos en lugar de clientes)
+    const url = base_url + "pedidos/verPedido/" + idPedido;
     const http = new XMLHttpRequest();
     http.open('GET', url, true);
     http.send();
@@ -176,7 +155,7 @@ function verPedido(idPedido) {
                     <td>${row.atributos}</td>
                     <td><span class="badge bg-warning">${res.moneda + ' ' + row.precio}</span></td>
                     <td><span class="badge bg-primary">${row.cantidad}</span></td>
-                    <td>${subTotal.toFixed(2)}</td>
+                    <td>${res.moneda + ' ' + subTotal.toFixed(2)}</td>
                 </tr>`;
             });
             document.querySelector('#tablePedidos tbody').innerHTML = html;
