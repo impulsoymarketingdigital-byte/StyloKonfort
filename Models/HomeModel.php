@@ -23,7 +23,22 @@ class HomeModel extends Query{
         $sql = "SELECT t.mensaje, cl.nombre, cl.perfil FROM testimonial t INNER JOIN clientes cl ON t.id_cliente = cl.id ORDER BY RAND() LIMIT 12";
         return $this->selectAll($sql);
     }
+   public function getPrimeraImagen($id_producto)
+    {
+        $directorio = 'assets/images/productos/' . $id_producto;
 
+        if (file_exists($directorio)) {
+            $imagenes = scandir($directorio);
+            if (false !== $imagenes) {
+                foreach ($imagenes as $file) {
+                    if ('.' != $file && '..' != $file) {
+                        return $directorio . '/' . $file;
+                    }
+                }
+            }
+        }
+        return null;
+    }
     public function getSizeColor($table, $id)
     {
         $sql = "SELECT * FROM $table WHERE id = $id";

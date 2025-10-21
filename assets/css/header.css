@@ -103,7 +103,7 @@
 }
 
 .hed-logo img {
-  max-width: 80px;
+  max-width: 50px;
   filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
   transition: filter 0.3s ease;
 }
@@ -307,7 +307,7 @@
   border-radius: 10px;
 }
 
-/* Tarjeta Categoría - Tamaño fijo para horizontal */
+/* Tarjeta Categoría */
 .hed-category-card {
   background: #ffffff;
   border-radius: 12px;
@@ -573,6 +573,135 @@
 }
 
 /* ========================================
+   BOTÓN HAMBURGUESA MÓVIL
+======================================== */
+
+.hed-mobile-toggle {
+  display: none;
+  cursor: pointer;
+  background: #f85357;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.hed-mobile-toggle:hover {
+  background: #ff0008;
+  transform: scale(1.05);
+}
+
+.hed-hamburger {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hed-hamburger span {
+  width: 22px;
+  height: 2px;
+  background: #ffffff;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+/* ========================================
+   MENÚ MÓVIL LATERAL
+======================================== */
+
+.hed-mobile-nav {
+  position: fixed;
+  top: 0;
+  left: -100%;
+  width: 280px;
+  height: 100vh;
+  background: #ffffff;
+  z-index: 9999;
+  padding: 20px;
+  box-shadow: 2px 0 15px rgba(0, 0, 0, 0.2);
+  transition: left 0.3s ease;
+  overflow-y: auto;
+}
+
+.hed-mobile-nav.active {
+  left: 0;
+}
+
+.hed-mobile-nav-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #f85357;
+}
+
+.hed-mobile-nav-close {
+  background: #f85357;
+  color: #ffffff;
+  border: none;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 20px;
+  transition: all 0.3s ease;
+}
+
+.hed-mobile-nav-close:hover {
+  background: #ff0008;
+  transform: rotate(90deg);
+}
+
+.hed-mobile-menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.hed-mobile-menu-item {
+  margin-bottom: 5px;
+}
+
+.hed-mobile-menu-item a {
+  display: block;
+  padding: 15px 20px;
+  color: #333333;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.hed-mobile-menu-item a:hover,
+.hed-mobile-menu-item.active a {
+  background: #f85357;
+  color: #ffffff;
+}
+
+.hed-mobile-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9998;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.hed-mobile-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ========================================
    DROPDOWN USUARIO LOGUEADO
 ======================================== */
 
@@ -638,15 +767,15 @@
 }
 
 .hed-user-menu {
-  position: fixed; /* ← CAMBIO CRÍTICO: De absolute a fixed */
-  top: 60px; /* ← Ajusta según la altura de tu topbar */
-  right: 20px; /* ← Posición desde la derecha */
+  position: fixed;
+  top: 60px;
+  right: 20px;
   background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
   border: 1px solid rgba(0, 0, 0, 0.1);
   min-width: 220px;
-  z-index: 99999; /* ← Z-index muy alto */
+  z-index: 99999;
   opacity: 0;
   visibility: hidden;
   transform: translateY(-10px);
@@ -654,6 +783,7 @@
   pointer-events: none;
   overflow: hidden;
 }
+
 .hed-user-trigger[aria-expanded="true"] + .hed-user-menu,
 .hed-user-menu.show {
   opacity: 1;
@@ -694,15 +824,9 @@
 }
 
 /* ========================================
-   AJUSTES PARA SIDEBAR DE FILTROS
+   RESPONSIVE
 ======================================== */
 
-/* Sidebar de filtros - debe aparecer ENCIMA como overlay en móvil */
-.collection-filter.category-page-side {
-  transition: transform 0.3s ease;
-}
-
-/* Responsive */
 @media (max-width: 1200px) {
   .hed-search {
     width: 300px;
@@ -711,6 +835,10 @@
   .hed-menu-item a {
     padding: 25px 15px;
     font-size: 14px;
+  }
+  
+  .hed-user-menu {
+    right: 10px;
   }
 }
 
@@ -726,6 +854,10 @@
   .hed-search {
     display: none;
   }
+  
+  .hed-mobile-toggle {
+    display: block !important;
+  }
 
   .hed-mega-menu {
     flex-direction: column;
@@ -740,8 +872,12 @@
   .hed-category-card {
     width: 100%;
   }
+  
+  .hed-user-menu {
+    right: 10px;
+    top: 70px;
+  }
 
-  /* Sidebar de filtros en tablets - posición fija overlay */
   .collection-filter.category-page-side {
     position: fixed;
     top: 0;
@@ -760,7 +896,6 @@
     left: 0;
   }
 
-  /* Overlay oscuro cuando se abre el sidebar */
   .collection-filter.category-page-side.open::before {
     content: "";
     position: fixed;
@@ -772,7 +907,6 @@
     z-index: -1;
   }
 
-  /* Botón de filtros visible */
   .filter-main-btn {
     display: block !important;
     margin-bottom: 20px;
@@ -781,19 +915,59 @@
 
 @media (max-width: 576px) {
   .hed-topbar {
-    padding: 8px 0;
+    padding: 10px 0;
+  }
+  
+  .hed-topbar-content {
+    gap: 10px;
+  }
+
+  .hed-logo img {
+    max-width: 40px;
+  }
+  
+  .hed-navbar-content {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px 0;
   }
 
   .hed-categories-btn {
-    padding: 12px 16px;
-    min-width: 200px;
+    padding: 10px 14px;
+    min-width: auto;
+    flex: 1;
+    justify-content: center;
   }
 
   .hed-categories-title {
-    font-size: 12px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  
+  .hed-categories-icon {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .hed-user-info {
+    display: none;
+  }
+  
+  .hed-user-trigger {
+    padding: 4px;
+  }
+  
+  .hed-user-avatar {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .hed-user-menu {
+    right: 5px;
+    top: 60px;
+    min-width: 200px;
   }
 
-  /* MEGA MENÚ MÓVIL - Overlay desde abajo */
   .hed-mega-menu {
     position: fixed;
     top: auto;
@@ -811,7 +985,6 @@
     padding: 20px 15px 30px 15px;
   }
 
-  /* Cuando está activo en móvil */
   .hed-categories-btn[aria-expanded="true"] + .hed-mega-menu,
   .hed-mega-menu.show {
     opacity: 1;
@@ -839,12 +1012,17 @@
     font-size: 11px;
   }
 
-  /* Sidebar de filtros en móvil - más angosto */
   .collection-filter.category-page-side {
     width: 280px;
   }
 
   .collection-filter.category-page-side.open::before {
     left: 280px;
+  }
+  
+  .hed-mobile-toggle {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
   }
 }

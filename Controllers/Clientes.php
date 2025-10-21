@@ -383,16 +383,32 @@ class Clientes extends Controller
         if (!empty($_SESSION['idCliente']) || !empty($_SESSION['id_usuario'])) {
             $data['pedido'] = $this->model->getPedido($idPedido);
             $data['productos'] = $this->model->verPedidos($idPedido);
+
             for ($i = 0; $i < count($data['productos']); $i++) {
-                $detalle = json_decode($data['productos'][$i]['atributos'], true);
-                $data['productos'][$i]['atributos'] = $detalle['size'] . ' - <span class="badge" style="background: ' . $detalle['hexa'] . ';">' . $detalle['color'] . '</span>';
+                // Obtener datos de talla_color
+                $id_talla_color = $data['productos'][$i]['id_talla_color'];
+                $atributos = $this->model->getAtributosPorId($id_talla_color);
+
+                if (!empty($atributos)) {
+                    $data['productos'][$i]['atributos'] = json_encode([
+                        'size' => $atributos['size'],
+                        'color' => $atributos['nombre'],
+                        'hexa' => $atributos['color']
+                    ]);
+                } else {
+                    $data['productos'][$i]['atributos'] = json_encode([
+                        'size' => 'N/A',
+                        'color' => 'N/A',
+                        'hexa' => '#000000'
+                    ]);
+                }
             }
+
             $data['moneda'] = MONEDA;
             echo json_encode($data);
         }
         die();
     }
-
     //listar productos pendientes
     public function listarProductos()
     {
@@ -545,65 +561,6 @@ class Clientes extends Controller
         }
         echo json_encode($res);
         die();
-    }
-
-    public function success()
-    {
-        if (!empty($_SESSION['productos'])) {
-            $fecha = date('Y-m-d H:i:s');
-            $metodo = 'MERCADO PAGO';
-            $id_transaccion = $_GET['collection_id'];
-            $monto = 0;
-            $estado = $_GET['collection_status'];
-            $email = $_SESSION['correoCliente'];
-            $nombre = $_SESSION['nombreCliente'];
-            $apellido = $_SESSION['apellidoCliente'];
-            $direccion = $_SESSION['dirrecionCliente'];
-            $ciudad = null;
-            $id_cliente = $_SESSION['idCliente'];
-            $data = 0;
-            foreach ($_SESSION['productos'] as $producto) {
-                $monto += $producto['precio'] * $producto['cantidad'];
-            }
-            $data = $this->model->registrarPedido(
-                $id_transaccion,
-                $metodo,
-                $monto,
-                $estado,
-                $fecha,
-                $email,
-                $nombre,
-                $apellido,
-                $direccion,
-                $ciudad,
-                $id_cliente
-            );
-            if ($data > 0) {
-                foreach ($_SESSION['productos'] as $producto) {
-                    if ($producto['size'] > 0 && $producto['color'] > 0) {
-                        $result = $this->model->getAtributos($producto['size'], $producto['color'], $producto['id']);
-                        $datos = array(
-                            'id_size' => $producto['size'],
-                            'id_color' => $producto['color'],
-                            'size' => $result['size'],
-                            'color' => $result['nombre'],
-                            'hexa' => $result['color'],
-                        );
-                        $atributos = json_encode($datos);
-                    } else {
-                        $atributos = null;
-                    }
-                    $temp = $this->model->getProducto($producto['id']);
-                    $this->model->registrarDetalle($temp['nombre'], $producto['precio'], $producto['cantidad'], $atributos, $data, $producto['id']);
-                    if ($producto['size'] > 0 && $producto['color'] > 0) {
-                        $stock = $result['stock'] - $producto['cantidad'];
-                        $this->model->actualizarStockDetalle($stock, $producto['size'], $producto['color'], $producto['id']);
-                    }
-                }
-                unset($_SESSION['productos']);
-                header('Location: ' . BASE_URL . 'clientes?message=' . md5(TITLE));
-            }
-        }
     }
 
     public function salir()

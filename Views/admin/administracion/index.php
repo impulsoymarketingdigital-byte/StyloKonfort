@@ -176,14 +176,14 @@
             <div class="card-body">
 
                 <div class="table-responsive">
-                    <table class="table table-bordered table-striped table-hover align-middle" style="width: 100%;">
+                    <table class="table  table-striped table-hover align-middle" style="width: 100%;">
                         <thead>
                             <tr>
                                 <th>#</th>
                                 <th>Nombre</th>
-                                <th>Precio</th>
+                                <th>Precio Compra</th>
+                                <th>Precio Venta</th>
                                 <th>Categoria</th>
-                                <th>Stock</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -192,9 +192,9 @@
                                 <tr>
                                     <td><?php echo $producto['id']; ?></td>
                                     <td><?php echo $producto['nombre']; ?></td>
+                                    <td><span class="badge bg-info"><?php echo $producto['precio_compra']; ?></span></td>
                                     <td><span class="badge bg-success"><?php echo $producto['precio_venta']; ?></span></td>
                                     <td><?php echo $producto['categoria']; ?></td>
-                                    <td><?php echo '<span class="badge bg-info">'.$producto['cantidad'].'</span>'; ?></td>
                                     <th></th>
                                 </tr>
                             <?php } ?>

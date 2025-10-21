@@ -19,14 +19,12 @@ document.addEventListener("DOMContentLoaded", function () {
     getListaProductos();
   }
 
-  // Evento para el botón Finalizar Pedido
   if (btnFinalizarPedido) {
     btnFinalizarPedido.addEventListener("click", function () {
       if (listaCarrito.length === 0) {
         alertaPerzanalizada("EL CARRITO ESTÁ VACÍO", "warning");
         return;
       }
-
       Swal.fire({
         title: "¿Confirmar Pedido?",
         text: "Se registrará tu pedido para pago contra entrega",
@@ -44,7 +42,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  //cargar datos pendientes con DataTables
   $("#tblPendientes").DataTable({
     ajax: {
       url: base_url + "clientes/listarPendientes",
@@ -115,14 +112,9 @@ document.addEventListener("DOMContentLoaded", function () {
       const url = base_url + "clientes/agregarMensaje";
       const http = new XMLHttpRequest();
       http.open("POST", url, true);
-      http.send(
-        JSON.stringify({
-          mensaje: mensaje.getData(),
-        })
-      );
+      http.send(JSON.stringify({ mensaje: mensaje.getData() }));
       http.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
-          console.log(this.responseText);
           const res = JSON.parse(this.responseText);
           alertaPerzanalizada(res.msg, res.icono);
         }
@@ -154,6 +146,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 });
+
 let productosConPrecio = [];
 
 function getListaProductos() {
@@ -166,9 +159,8 @@ function getListaProductos() {
     if (this.readyState == 4 && this.status == 200) {
       const res = JSON.parse(this.responseText);
       if (res.totalPaypal > 0) {
-        productosConPrecio = []; // Limpiar array
+        productosConPrecio = [];
         res.productos.forEach((producto) => {
-          // Guardar producto con precio
           productosConPrecio.push({
             id: producto.id,
             precio: producto.precio,
@@ -177,22 +169,24 @@ function getListaProductos() {
             color: producto.color || 0,
           });
 
+          const atributoHTML = generarAtributo(
+            producto.size,
+            producto.color,
+            producto.nombreTalla,
+            producto.nombreColor,
+            producto.colorHexa
+          );
+
           html += `<tr>
-                            <td>
-                                <img class="img-thumbnail rounded-circle" src="${
-                                  producto.imagen
-                                }" alt="" width="100">
-                            </td>
-                            <td>${producto.nombre}</td>
-                            <td>${producto.atributo}</td>
-                            <td><span class="badge bg-warning">${
-                              res.moneda + " " + producto.precio
-                            }</span></td>
-                            <td><span class="badge bg-primary">${
-                              producto.cantidad
-                            }</span></td>
-                            <td>${producto.subTotal}</td>
-                        </tr>`;
+            <td class="text-center">
+              <img class="img-thumbnail rounded" src="${producto.imagen}" alt="" width="80" height="80" style="object-fit: cover;">
+            </td>
+            <td><strong>${producto.nombre}</strong></td>
+            <td>${atributoHTML}</td>
+            <td class="text-end"><span class="badge bg-warning text-dark">${res.moneda} ${producto.precio}</span></td>
+            <td class="text-center"><span class="badge bg-primary">${producto.cantidad}</span></td>
+            <td class="text-end"><strong>${producto.subTotal}</strong></td>
+          </tr>`;
         });
         tableLista.innerHTML = html;
         document.querySelector("#totalProducto").textContent =
@@ -201,31 +195,42 @@ function getListaProductos() {
         document.querySelector("#totalProducto").textContent =
           res.moneda + " 0.00";
         tableLista.innerHTML = `
-                <tr>
-                    <td colspan="7" class="text-center">CARRITO VACIO</td>
-                </tr>`;
+          <tr>
+            <td colspan="6" class="text-center text-muted py-4">
+              <i class="fa fa-shopping-cart fa-2x mb-2"></i><br>
+              CARRITO VACÍO
+            </td>
+          </tr>`;
       }
     }
   };
+}
+
+function generarAtributo(size, color, nombreTalla, nombreColor, colorHexa) {
+  if (!nombreTalla || !nombreColor) {
+    return '<span class="badge bg-secondary">Sin atributos</span>';
+  }
+  return `
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+      <span class="badge bg-light text-dark border border-secondary">${nombreTalla}</span>
+      <span class="badge rounded-circle" style="background-color: ${
+        colorHexa || "#ccc"
+      }; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; border: 2px solid #ddd;" title="${nombreColor}"></span>
+      <small class="text-muted">${nombreColor}</small>
+    </div>`;
 }
 
 function registrarPedido() {
   const url = base_url + "clientes/registrarPedido";
   const http = new XMLHttpRequest();
   http.open("POST", url, true);
-  http.send(
-    JSON.stringify({
-      productos: productosConPrecio,
-    })
-  );
+  http.send(JSON.stringify({ productos: productosConPrecio }));
   http.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
-      console.log(this.responseText);
       const res = JSON.parse(this.responseText);
       alertaPerzanalizada(res.msg, res.icono);
       if (res.icono == "success") {
         localStorage.removeItem("listaCarrito");
-        // Enviar ticket por correo
         enviarTicketCorreo(res.idPedido);
         window.location.reload();
       }
@@ -236,14 +241,12 @@ function registrarPedido() {
 function enviarTicketCorreo(idPedido) {
   const formData = new FormData();
   formData.append("idPedido", idPedido);
-
   const url = base_url + "clientes/enviarTicket";
   const http = new XMLHttpRequest();
   http.open("POST", url, true);
   http.send(formData);
   http.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
-      console.log("Respuesta envío correo:", this.responseText);
       const res = JSON.parse(this.responseText);
       if (res.icono == "success") {
         alertaPerzanalizada(res.msg, res.icono);
@@ -251,7 +254,6 @@ function enviarTicketCorreo(idPedido) {
     }
   };
 }
-
 function verPedido(idPedido) {
   estadoEnviado.classList.remove("border-success");
   estadoProceso.classList.remove("border-success");
@@ -263,9 +265,9 @@ function verPedido(idPedido) {
   http.send();
   http.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
-      console.log(this.responseText);
       const res = JSON.parse(this.responseText);
       let html = "";
+
       if (res.pedido.proceso == 1) {
         estadoEnviado.classList.add("border-success");
       } else if (res.pedido.proceso == 2) {
@@ -273,44 +275,55 @@ function verPedido(idPedido) {
       } else {
         estadoCompletado.classList.add("border-success");
       }
+
       res.productos.forEach((row) => {
-        let verify =
-          row.atributos == "Descargable"
-            ? `<a href="${res.descarga.ruta}" class="btn btn-danger"><i class="fas fa-download"></i></a>`
-            : "";
+        let atributos = JSON.parse(row.atributos);
         let subTotal = parseFloat(row.precio) * parseInt(row.cantidad);
+
         html += `<tr>
                     <td>${row.producto}</td>
-                    <td>${row.atributos}</td>
-                    <td><span class="badge bg-warning">${
+                    <td>
+                        <span class="badge rounded-pill me-2">${
+                          atributos.size
+                        }</span>
+                        <span class="badge rounded-pill" style="background-color: ${
+                          atributos.hexa
+                        }; color: ${
+          getLuminance(atributos.hexa) > 0.5 ? "#000" : "#fff"
+        };">
+                            ${atributos.color}
+                        </span>
+                    </td>
+                    <td><span class="badge bg-warning text-dark">${
                       res.moneda + " " + row.precio
                     }</span></td>
                     <td><span class="badge bg-primary">${
                       row.cantidad
                     }</span></td>
                     <td>${subTotal.toFixed(2)}</td>
-                    <td>${verify}</td>
                 </tr>`;
       });
+
       document.querySelector("#tablePedidos tbody").innerHTML = html;
       mPedido.show();
     }
   };
 }
 
+function getLuminance(hex) {
+  const rgb = parseInt(hex.slice(1), 16);
+  const r = (rgb >> 16) & 0xff;
+  const g = (rgb >> 8) & 0xff;
+  const b = (rgb >> 0) & 0xff;
+  return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+}
 function agregarCalificacion(id_producto, cantidad) {
   const url = base_url + "clientes/agregarCalificacion";
   const http = new XMLHttpRequest();
   http.open("POST", url, true);
-  http.send(
-    JSON.stringify({
-      id_producto: id_producto,
-      cantidad: cantidad,
-    })
-  );
+  http.send(JSON.stringify({ id_producto: id_producto, cantidad: cantidad }));
   http.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
-      console.log(this.responseText);
       const res = JSON.parse(this.responseText);
       alertaPerzanalizada(res.msg, res.icono);
       if (res.icono == "success") {

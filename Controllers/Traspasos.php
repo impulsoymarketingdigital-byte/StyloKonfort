@@ -24,6 +24,14 @@ class Traspasos extends Controller
         $this->views->getView('admin/traspasos', 'index', $data);
     }
 
+    
+    public function listar_traspasos()
+    {
+        $data['title'] = 'Listar Traspasos';
+        $this->views->getView('admin/traspasos', 'listar_traspasos', $data);
+    }
+
+
     public function buscarPorNombre()
     {
         $array = array();

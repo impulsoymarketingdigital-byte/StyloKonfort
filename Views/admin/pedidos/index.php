@@ -27,7 +27,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered table-striped table-hover align-middle nowrap" style="width: 100%;" id="tblPendientes">
+                    <table class="table  table-striped table-hover align-middle nowrap" style="width: 100%;" id="tblPendientes">
                         <thead>
                             <tr>
                                 <th>Id</th>
@@ -53,7 +53,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered table-striped table-hover align-middle" style="width: 100%;" id="tblProceso">
+                    <table class="table  table-striped table-hover align-middle" style="width: 100%;" id="tblProceso">
                         <thead>
                             <tr>
                                 <th>Id</th>
@@ -79,7 +79,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered table-striped table-hover align-middle nowrap" style="width: 100%;" id="tblFinalizados">
+                    <table class="table  table-striped table-hover align-middle nowrap" style="width: 100%;" id="tblFinalizados">
                         <thead>
                             <tr>
                                 <th>Id</th>

@@ -34,7 +34,7 @@
                     <div class="col mx-auto">
                         <!-- Logo -->
                         <div class="lg-logo-container lg-text-center">
-                            <img src="<?php echo BASE_URL; ?>assets/admin/images/logo.png" width="180" alt="LOGO" />
+                            <img src="<?php echo BASE_URL; ?>assets/admin/images/login.png" width="180" alt="LOGO" />
                         </div>
                         
                         <!-- Card Principal -->

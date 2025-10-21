@@ -19,7 +19,7 @@ class Categorias extends Controller
     {
         $data = $this->model->getCategorias(1);
         for ($i = 0; $i < count($data); $i++) {
-            $data[$i]['imagen'] = '<img class="img-thumbnail" src="' . $data[$i]['imagen'] . '" alt="' . $data[$i]['categoria'] . '" width="50">';
+            $data[$i]['imagen'] = '<img class="img-thumbnail" src="' . $data[$i]['imagen'] . '" alt="' . $data[$i]['categoria'] . '" width="10">';
             $estado = $data[$i]['estado'];
             $color = $estado == 1 ? 'success' : 'danger';
             $texto = $estado == 1 ? 'ACTIVO' : 'INACTIVO';
@@ -92,7 +92,7 @@ class Categorias extends Controller
         die();
     }
     //eliminar cat
-   public function delete($id)
+    public function delete($id)
     {
         if (is_numeric($id)) {
             $data = $this->model->eliminar(0, $id);

@@ -4,7 +4,6 @@ const correoLogin = document.querySelector("#correoLogin");
 const claveLogin = document.querySelector("#claveLogin");
 
 const inputSearch = document.querySelector('#inputSearch');
-const inputSearch1 = document.querySelector('#inputSearch1');
 
 document.addEventListener("DOMContentLoaded", function () {
     // //login directo
@@ -38,9 +37,6 @@ document.addEventListener("DOMContentLoaded", function () {
         buscarProducto('resultBusqueda', e.target.value);
     })
 
-    inputSearch1.addEventListener('keyup', function (e) {
-        buscarProducto('resultBusqueda1', e.target.value);
-    })
 
     //SUSCRIBIRSE
     // suscribirse.addEventListener('click', function () {

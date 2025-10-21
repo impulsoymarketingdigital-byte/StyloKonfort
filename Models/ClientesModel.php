@@ -205,6 +205,17 @@ class ClientesModel extends Query
         return $res;
     }
 
+
+    public function getAtributosPorId($id_talla_color)
+    {
+        $sql = "SELECT t.nombre AS size, c.nombre, c.color
+            FROM tallas_colores d 
+            INNER JOIN tallas t ON d.id_talla = t.id 
+            INNER JOIN colores c ON d.id_color = c.id 
+            WHERE d.id = $id_talla_color";
+        return $this->select($sql);
+    }
+
     public function getTestimonio($id_cliente)
     {
         $sql = "SELECT * FROM testimonial WHERE id_cliente = $id_cliente";

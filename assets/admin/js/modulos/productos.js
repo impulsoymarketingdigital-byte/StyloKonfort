@@ -349,6 +349,8 @@ function mantenimiento(id) {
         responsive: true,
         language,
         order: [[0, "asc"]],
+        pageLength: 5,
+         lengthChange: false,
       });
 
       modalMantenimiento.show();

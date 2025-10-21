@@ -1,4 +1,4 @@
-<?php $empresa = $this->base->getEmpresa();  ?>
+<?php $empresa = $this->base->getEmpresa(); ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -29,6 +29,7 @@
   <!-- Theme css -->
   <link rel="stylesheet" type="text/css" href="<?php echo BASE_URL; ?>assets/css/color4.css" media="screen" id="color">
   <link rel="stylesheet" type="text/css" href="<?php echo BASE_URL; ?>assets/css/header.css" media="screen" id="color">
+  <link rel="stylesheet" type="text/css" href="<?php echo BASE_URL; ?>assets/css/home.css" media="screen" id="color">
   <link rel="stylesheet" type="text/css" href="<?php echo BASE_URL; ?>assets/css/app.css" media="screen" id="color">
   <link rel="stylesheet" type="text/css" href="<?php echo BASE_URL . 'assets/DataTables/datatables.min.css'; ?>">
   <script
@@ -44,7 +45,6 @@
   <!-- loader end -->
   <!--header start-->
   <header class="hed-wrapper" id="stickyheader">
-    <div class="mobile-fix-option"></div>
 
     <!-- Top Bar -->
     <div class="hed-topbar">
@@ -183,12 +183,7 @@
               <li class="hed-menu-item">
                 <a href="<?php echo BASE_URL . 'principal/shop'; ?>">Tienda</a>
               </li>
-              <li class="hed-menu-item">
-                <a href="<?php echo BASE_URL . 'principal/about'; ?>">Servicios</a>
-              </li>
-              <li class="hed-menu-item">
-                <a href="<?php echo BASE_URL . 'principal/contactos'; ?>">Contactos</a>
-              </li>
+
             </ul>
           </nav>
 
@@ -208,6 +203,15 @@
 
           <!-- Iconos Derecha -->
           <div class="hed-actions">
+            <!-- Botón Hamburguesa (solo móvil) -->
+            <div class="hed-mobile-toggle" id="mobileMenuBtn">
+              <div class="hed-hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+
             <div class="hed-action-item" onclick="openWishlist()">
               <svg viewBox="0 -28 512.001 512" xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -223,16 +227,65 @@
               </svg>
               <span class="hed-action-badge" id="btnCantidadCarrito">0</span>
             </div>
-
-            <div class="hed-mobile-toggle">
-            </div>
           </div>
         </div>
       </div>
     </div>
   </header>
+
+  <div class="hed-mobile-overlay" id="mobileOverlay"></div>
+  <nav class="hed-mobile-nav" id="mobileNav">
+    <div class="hed-mobile-nav-header">
+      <img src="<?php echo BASE_URL; ?>assets/images/logo.png" alt="Logo" style="max-width: 45px;">
+      <button class="hed-mobile-nav-close" id="mobileNavClose">
+        <i class="fa fa-times"></i>
+      </button>
+    </div>
+
+    <ul class="hed-mobile-menu-list">
+      <li class="hed-mobile-menu-item">
+        <a href="<?php echo BASE_URL; ?>">
+          <i class="fa fa-home" style="margin-right: 10px;"></i> Inicio
+        </a>
+      </li>
+      <li class="hed-mobile-menu-item">
+        <a href="<?php echo BASE_URL . 'principal/shop'; ?>">
+          <i class="fa fa-shopping-bag" style="margin-right: 10px;"></i> Tienda
+        </a>
+      </li>
+    </ul>
+  </nav>
+  
+  
   <script>
     document.addEventListener('DOMContentLoaded', function () {
+      // MENÚ MÓVIL HAMBURGUESA
+      const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+      const mobileNav = document.getElementById('mobileNav');
+      const mobileOverlay = document.getElementById('mobileOverlay');
+      const mobileNavClose = document.getElementById('mobileNavClose');
+
+      if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          mobileNav.classList.add('active');
+          mobileOverlay.classList.add('active');
+        });
+      }
+
+      if (mobileNavClose) {
+        mobileNavClose.addEventListener('click', function() {
+          mobileNav.classList.remove('active');
+          mobileOverlay.classList.remove('active');
+        });
+      }
+
+      if (mobileOverlay) {
+        mobileOverlay.addEventListener('click', function() {
+          mobileNav.classList.remove('active');
+          mobileOverlay.classList.remove('active');
+        });
+      }
 
       // DROPDOWN USUARIO LOGUEADO
       const userTrigger = document.querySelector('.hed-user-trigger');
@@ -309,4 +362,4 @@
         });
       }
     });
-  </script> <!--header end-->
+  </script>

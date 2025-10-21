@@ -3,7 +3,7 @@
 <div class="card">
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-bordered table-striped display nowrap table-hover align-middle" style="width: 100%;" id="tblSliders">
+            <table class="table  table-striped display nowrap table-hover align-middle" style="width: 100%;" id="tblSliders">
                 <thead>
                     <tr>
                         <th>#</th>

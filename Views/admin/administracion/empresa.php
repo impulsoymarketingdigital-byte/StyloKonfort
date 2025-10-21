@@ -8,10 +8,10 @@
             <input type="hidden" id="id" name="id" value="<?php echo $data['empresa']['id']; ?>">
             <div class="row mb-3">
                 <div class="col-md-3 mb-3">
-                    <label for="ruc">Ruc <span class="text-danger">*</span></label>
+                    <label for="ruc">Documento <span class="text-danger">*</span></label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-list"></i></span>
-                        <input class="form-control" type="text" name="ruc" id="ruc" value="<?php echo $data['empresa']['ruc']; ?>" placeholder="Identidad">
+                        <input class="form-control" type="text" name="ruc" id="ruc" value="<?php echo $data['empresa']['ruc']; ?>" placeholder="Documento">
                     </div>
                 </div>
                 <div class="col-md-5 mb-3">

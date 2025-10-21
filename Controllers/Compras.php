@@ -5,7 +5,7 @@ use Dompdf\Dompdf;
 class Compras extends Controller
 {
     private $id_usuario;
-    
+
     public function __construct()
     {
         parent::__construct();
@@ -24,6 +24,14 @@ class Compras extends Controller
         $data['almacenes'] = $this->model->getAlmacenes();
         $this->views->getView('admin/compras', 'index', $data);
     }
+
+    public function listar_compras()
+    {
+        $data['title'] = 'Listar Compras';
+        $this->views->getView('admin/compras', 'listar_compras', $data);
+    }
+
+
 
     public function buscarPorNombre()
     {
@@ -84,12 +92,12 @@ class Compras extends Controller
                 foreach ($datos['productos'] as $producto) {
                     // USAR getOrCreateAtributos - crea automáticamente si no existe
                     $atributo = $this->model->getOrCreateAtributos(
-                        $producto['size'], 
-                        $producto['color'], 
+                        $producto['size'],
+                        $producto['color'],
                         $producto['idProducto'],
                         $idAlmacen
                     );
-                    
+
                     if (empty($atributo)) {
                         $res = array('msg' => 'ERROR: No se pudo crear el producto en este almacén', 'type' => 'error');
                         echo json_encode($res);
@@ -122,11 +130,11 @@ class Compras extends Controller
                     // Registrar detalles y actualizar stock
                     foreach ($datos['productos'] as $producto) {
                         $result = $this->model->getProducto($producto['idProducto']);
-                        
+
                         // USAR getOrCreateAtributos
                         $atributo = $this->model->getOrCreateAtributos(
-                            $producto['size'], 
-                            $producto['color'], 
+                            $producto['size'],
+                            $producto['color'],
                             $producto['idProducto'],
                             $idAlmacen
                         );
@@ -174,7 +182,7 @@ class Compras extends Controller
         $array = explode(',', $datos);
         $tipo = $array[0];
         $idCompra = $array[1];
-        
+
         $data['title'] = 'Reporte Compra';
         $data['empresa'] = $this->model->getEmpresa();
         $data['compra'] = $this->model->getCompra($idCompra);
@@ -193,13 +201,13 @@ class Compras extends Controller
         $options->set('isRemoteEnabled', true);
         $dompdf->setOptions($options);
         $dompdf->loadHtml($html);
-        
+
         if ($tipo == 'ticked') {
             $dompdf->setPaper(array(0, 0, 226.77, 500), 'portrait');
         } else {
             $dompdf->setPaper('A4', 'vertical');
         }
-        
+
         $dompdf->render();
         $dompdf->stream('compra.pdf', array('Attachment' => false));
     }
@@ -207,7 +215,7 @@ class Compras extends Controller
     public function listar()
     {
         $data = $this->model->getCompras();
-        
+
         for ($i = 0; $i < count($data); $i++) {
             if ($data[$i]['estado'] == 'COMPLETADO') {
                 $data[$i]['estado'] = '<span class="badge bg-success">Completado</span>';
@@ -259,20 +267,21 @@ class Compras extends Controller
     {
         if (isset($_GET) && is_numeric($idCompra)) {
             $data = $this->model->anular($idCompra);
-            
+
             if ($data == 1) {
                 $detalles = $this->model->getDetalleCompra($idCompra);
-                
+
                 foreach ($detalles as $detalle) {
                     $tallasColores = $this->model->getTallaColorPorId($detalle['id_talla_color']);
-                    
+
                     if (!empty($tallasColores)) {
                         $nuevoStock = $tallasColores['stock'] - $detalle['cantidad'];
-                        if ($nuevoStock < 0) $nuevoStock = 0;
+                        if ($nuevoStock < 0)
+                            $nuevoStock = 0;
                         $this->model->actualizarStockDetalle($nuevoStock, $detalle['id_talla_color']);
                     }
                 }
-                
+
                 $res = array('msg' => 'COMPRA ANULADA', 'type' => 'success');
             } else {
                 $res = array('msg' => 'ERROR AL ANULAR', 'type' => 'error');

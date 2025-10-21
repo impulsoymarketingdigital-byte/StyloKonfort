@@ -43,7 +43,7 @@
         <div class="sidebar-wrapper" data-simplebar="true">
             <div class="sidebar-header">
                 <div>
-                    <img src="<?php echo BASE_URL; ?>assets/admin/images/logo.png" class="logo-icon" alt="logo icon">
+                    <img src="<?php echo BASE_URL; ?>assets/admin/images/login.png" class="logo-icon" alt="logo icon">
                 </div>
                 <div>
                     <h4 class="logo-text"><?php echo TITLE; ?></h4>
@@ -87,7 +87,7 @@
                     <a href="javascript:;" class="has-arrow">
                         <div class="parent-icon"><i class='fas fa-list'></i>
                         </div>
-                        <div class="menu-title">Mantenimientos</div>
+                        <div class="menu-title">Inventario</div>
                     </a>
                     <ul>
                         <li> <a href="<?php echo BASE_URL . 'productos'; ?>"><i
@@ -124,61 +124,66 @@
                     </a>
                 </li>
 
-                <li>
-                    <a href="<?php echo BASE_URL . 'ventas'; ?>">
-                        <div class="parent-icon"><i class='fas fa-cash-register'></i></div>
-                        <div class="menu-title">Ventas</div>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="<?php echo BASE_URL . 'compras'; ?>">
-                        <div class="parent-icon"><i class='fas fa-shopping-cart'></i></div>
+                 <li>
+                    <a href="javascript:;" class="has-arrow">
+                        <div class="parent-icon"><i class="bx bx-cart"></i></div>
                         <div class="menu-title">Compras</div>
                     </a>
-                </li>
-
-                <li>
-                    <a href="<?php echo BASE_URL . 'traspasos'; ?>">
-                        <div class="parent-icon"><i class='fas fa-exchange-alt'></i></div>
-                        <div class="menu-title">Traspasos</div>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="javascript:;" class="has-arrow">
-                        <div class="parent-icon"><i class='fas fa-file-pdf'></i>
-                        </div>
-                        <div class="menu-title">Reportes Pdf</div>
-                    </a>
                     <ul>
-                        <li> <a href="<?php echo BASE_URL . 'ventas/reportesPDF/dia'; ?>" target="_blank"><i
-                                    class="bx bx-right-arrow-alt"></i>Dia</a>
+
+                        <li>
+                            <a href="<?php echo BASE_URL . 'compras'; ?>">
+                                <i class="bx bx-radio-circle"></i>Nueva Compra
+                            </a>
                         </li>
-                        <li> <a href="<?php echo BASE_URL . 'ventas/reportesPDF/semana'; ?>" target="_blank"><i
-                                    class="bx bx-right-arrow-alt"></i>Ultimos 7 días</a>
-                        </li>
-                        <li> <a href="<?php echo BASE_URL . 'ventas/reportesPDF/mes'; ?>" target="_blank"><i
-                                    class="bx bx-right-arrow-alt"></i>Ultimos 30 días</a>
+
+                        <li>
+                            <a href="<?php echo BASE_URL . 'compras/listar_compras'; ?>">
+                                <i class="bx bx-radio-circle"></i>Listar Compras
+                            </a>
                         </li>
                     </ul>
                 </li>
 
+
                 <li>
                     <a href="javascript:;" class="has-arrow">
-                        <div class="parent-icon"><i class='fas fa-file-excel'></i>
-                        </div>
-                        <div class="menu-title">Reportes Pdf</div>
+                        <div class="parent-icon"><i class="bx bx-cart"></i></div>
+                        <div class="menu-title">Ventas</div>
                     </a>
                     <ul>
-                        <li> <a href="<?php echo BASE_URL . 'ventas/reportesExcel/dia'; ?>" target="_blank"><i
-                                    class="bx bx-right-arrow-alt"></i>Dia</a>
+
+                        <li>
+                            <a href="<?php echo BASE_URL . 'ventas'; ?>">
+                                <i class="bx bx-radio-circle"></i>Nueva Venta
+                            </a>
                         </li>
-                        <li> <a href="<?php echo BASE_URL . 'ventas/reportesExcel/semana'; ?>" target="_blank"><i
-                                    class="bx bx-right-arrow-alt"></i>Ultimos 7 días</a>
+
+                        <li>
+                            <a href="<?php echo BASE_URL . 'ventas/listar_ventas'; ?>">
+                                <i class="bx bx-radio-circle"></i>Listar Ventas
+                            </a>
                         </li>
-                        <li> <a href="<?php echo BASE_URL . 'ventas/reportesExcel/mes'; ?>" target="_blank"><i
-                                    class="bx bx-right-arrow-alt"></i>Ultimos 30 días</a>
+                    </ul>
+                </li>
+
+                   <li>
+                    <a href="javascript:;" class="has-arrow">
+                        <div class="parent-icon"><i class="bx bx-cart"></i></div>
+                        <div class="menu-title">Traspasos</div>
+                    </a>
+                    <ul>
+
+                        <li>
+                            <a href="<?php echo BASE_URL . 'traspasos'; ?>">
+                                <i class="bx bx-radio-circle"></i>Nuevo Traspaso
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="<?php echo BASE_URL . 'traspasos/listar_traspasos'; ?>">
+                                <i class="bx bx-radio-circle"></i>Listar Traspasos
+                            </a>
                         </li>
                     </ul>
                 </li>

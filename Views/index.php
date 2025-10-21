@@ -28,429 +28,177 @@
     </div>
   </div>
 </section>
-
-<section class="section-pt-space">
-  <div class="tab-product-main">
-    <div class="tab-prodcut-contain">
-      <ul class="tabs tab-title">
-        <?php $item = 0;
-        foreach ($this->base->getCategorias() as $categoria) { ?>
-          <li class="<?php echo ($item == 0) ? 'current' : ''; ?>"><a href="tab-<?php echo $categoria['id']; ?>"><?php echo $categoria['categoria']; ?></a></a></li>
-        <?php $item++;
-        } ?>
-      </ul>
-    </div>
-  </div>
-</section>
-<!--tab product-->
-<!-- product tab  -->
-<section class="section-py-space ratio_square product">
-  <div class="custom-container">
-    <div class="row">
-      <div class="col pr-0">
-        <div class="theme-tab product no-arrow">
-          <div class="tab-content-cls ">
-            <?php $item = 0;
-            foreach ($this->base->getCategorias() as $categoria) { ?>
-              <div id="tab-<?php echo $categoria['id']; ?>" class="tab-content <?php echo ($item == 0) ? 'default' : ''; ?> product">
-                <div class="product-slide-6 product-m no-arrow">
-                  <?php foreach ($this->base->getProductosCategoria($categoria['id']) as $producto) {
-                    // CALIFICACION
-                    $calificacion = $this->base->getCalificacion('SUM', $producto['id']);
-                    $cantidad = $this->base->getCalificacion('COUNT', $producto['id']);
-                    $totalCantidad = ($cantidad['total'] == 0) ? 5 : $cantidad['total'];
-                    $total = ($calificacion['total'] != null) ? $calificacion['total'] / $totalCantidad : $totalCantidad;
-                    $calificacionTotal = round($total);
-                    
-                    // IMAGEN POR DEFECTO SI NO EXISTE
-                    $imagenProducto = (!empty($producto['imagen']) && file_exists($producto['imagen'])) 
-                        ? BASE_URL . $producto['imagen'] 
-                        : BASE_URL . 'assets/images/productos/product.png';
-                  ?>
-                    <div>
-                      <div class="product-box">
-                        <div class="product-imgbox">
-                          <div class="product-front">
-                            <a href="#"> 
-                              <img src="<?php echo $imagenProducto; ?>" class="img-fluid" alt="product"> 
-                            </a>
-                          </div>
-                          <div class="product-back">
-                            <a href="#"> 
-                              <img src="<?php echo $imagenProducto; ?>" class="img-fluid" alt="product"> 
-                            </a>
-                          </div>
-                          <div class="new-label3">
-                            <div>new</div>
-                          </div>
-                          <div class="on-sale3">on sale</div>
-                        </div>
-                        <div class="product-detail detail-center detail-inverse">
-                          <div class="detail-title">
-                            <div class="detail-left">
-                              <div class="rating-star">
-                                <?php
-                                $uno = ($calificacionTotal >= 1) ? 'text-warning' : 'text-muted';
-                                $dos = ($calificacionTotal >= 2) ? 'text-warning' : 'text-muted';
-                                $tres = ($calificacionTotal >= 3) ? 'text-warning' : 'text-muted';
-                                $cuatro = ($calificacionTotal >= 4) ? 'text-warning' : 'text-muted';
-                                $cinco = ($calificacionTotal == 5) ? 'text-warning' : 'text-muted';
-                                ?>
-                                <i class="<?php echo $uno; ?> fa fa-star"></i>
-                                <i class="<?php echo $dos; ?> fa fa-star"></i>
-                                <i class="<?php echo $tres; ?> fa fa-star"></i>
-                                <i class="<?php echo $cuatro; ?> fa fa-star"></i>
-                                <i class="<?php echo $cinco; ?> fa fa-star"></i>
-                              </div>
-                              <a href="#">
-                                <h6 class="price-title">
-                                  <?php echo $producto['nombre']; ?>
-                                </h6>
-                              </a>
-                            </div>
-                            <div class="detail-right">
-                              <div class="price">
-                                <div class="price">PRECIO VARIADO</div>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="icon-detail">
-                            <a href="javascript:void(0)" onclick="verDetalle(<?php echo $producto['id']; ?>)" class="tooltip-top" data-tippy-content="Vista previa"> 
-                              <i data-feather="eye"></i> 
-                            </a>
-                            <a href="<?php echo BASE_URL . 'principal/detail/' . $producto['slug']; ?>" class="tooltip-top" data-tippy-content="Ver Detalle">
-                              <i data-feather="refresh-cw"></i>
-                            </a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  <?php } ?>
-                </div>
-              </div>
-            <?php $item++;
-            } ?>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- product tab end -->
-<!--services start-->
-<section class="services">
-  <div class="container">
-    <div class="row service-block">
-      <div class="col-lg-3 col-md-6  col-sm-12">
-        <div class="media">
-          <svg height="679pt" viewBox="0 -117 679.99892 679" width="679pt" xmlns="http://www.w3.org/2000/svg">
-            <path d="m12.347656 378.382812h37.390625c4.371094 37.714844 36.316407 66.164063 74.277344 66.164063 37.96875 0 69.90625-28.449219 74.28125-66.164063h241.789063c4.382812 37.714844 36.316406 66.164063 74.277343 66.164063 37.96875 0 69.902344-28.449219 74.285157-66.164063h78.890624c6.882813 0 12.460938-5.578124 12.460938-12.460937v-352.957031c0-6.882813-5.578125-12.464844-12.460938-12.464844h-432.476562c-6.875 0-12.457031 5.582031-12.457031 12.464844v69.914062h-105.570313c-4.074218.011719-7.890625 2.007813-10.21875 5.363282l-68.171875 97.582031-26.667969 37.390625-9.722656 13.835937c-1.457031 2.082031-2.2421872 4.558594-2.24999975 7.101563v121.398437c-.09765625 3.34375 1.15624975 6.589844 3.47656275 9.003907 2.320312 2.417968 5.519531 3.796874 8.867187 3.828124zm111.417969 37.386719c-27.527344 0-49.851563-22.320312-49.851563-49.847656 0-27.535156 22.324219-49.855469 49.851563-49.855469 27.535156 0 49.855469 22.320313 49.855469 49.855469 0 27.632813-22.21875 50.132813-49.855469 50.472656zm390.347656 0c-27.53125 0-49.855469-22.320312-49.855469-49.847656 0-27.535156 22.324219-49.855469 49.855469-49.855469 27.539063 0 49.855469 22.320313 49.855469 49.855469.003906 27.632813-22.21875 50.132813-49.855469 50.472656zm140.710938-390.34375v223.34375h-338.375c-6.882813 0-12.464844 5.578125-12.464844 12.460938 0 6.882812 5.582031 12.464843 12.464844 12.464843h338.375v79.761719h-66.421875c-4.382813-37.710937-36.320313-66.15625-74.289063-66.15625-37.960937 0-69.898437 28.445313-74.277343 66.15625h-192.308594v-271.324219h89.980468c6.882813 0 12.464844-5.582031 12.464844-12.464843 0-6.882813-5.582031-12.464844-12.464844-12.464844h-89.980468v-31.777344zm-531.304688 82.382813h99.703125v245.648437h-24.925781c-4.375-37.710937-36.3125-66.15625-74.28125-66.15625-37.960937 0-69.90625 28.445313-74.277344 66.15625h-24.929687v-105.316406l3.738281-5.359375h152.054687c6.882813 0 12.460938-5.574219 12.460938-12.457031v-92.226563c0-6.882812-5.578125-12.464844-12.460938-12.464844h-69.796874zm-30.160156 43h74.777344v67.296875h-122.265625zm0 0" />
-          </svg>
-          <div class="media-body">
-            <h5>ENVÍO GRATIS</h5>
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-3 col-md-6  col-sm-12">
-        <div class="media">
-          <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 417.12 417.12" style="enable-background:new 0 0 417.12 417.12;" xml:space="preserve">
-            <g>
-              <g>
-                <path d="M409.12,200.741c-4.418,0-8,3.582-8,8c-0.06,106.525-86.464,192.831-192.988,192.772
-      C101.607,401.453,15.3,315.049,15.36,208.524C15.42,102,101.824,15.693,208.348,15.753c51.36,0.029,100.587,20.54,136.772,56.988
-      l-17.84-0.72c-4.418,0-8,3.582-8,8s3.582,8,8,8l36.72,1.52c1.013,0.003,2.018-0.188,2.96-0.56l0.88-0.56
-      c1.381-0.859,2.534-2.039,3.36-3.44c0.034-0.426,0.034-0.854,0-1.28c0.183-0.492,0.317-1.001,0.4-1.52l3.2-36.72
-      c0.376-4.418-2.902-8.304-7.32-8.68s-8.304,2.902-8.68,7.32l-1.6,18.16c-80.799-82.092-212.848-83.14-294.939-2.341
-      s-83.14,212.848-2.341,294.939s212.848,83.14,294.939,2.341c39.786-39.159,62.212-92.635,62.261-148.459
-      C417.12,204.323,413.538,200.741,409.12,200.741z" />
-              </g>
-            </g>
-            <g>
-              <g>
-                <path d="M200.4,256.341c-3.716-2.516-8.162-3.726-12.64-3.44h-56c1.564-2.442,3.302-4.768,5.2-6.96
-      c6.727-7.402,14.088-14.201,22-20.32c10.667-8.747,18.293-15.147,22.88-19.2c5.252-4.976,9.752-10.689,13.36-16.96
-      c4.377-7.234,6.649-15.545,6.56-24c-0.009-11.177-4.27-21.931-11.92-30.08c-3.725-3.941-8.181-7.12-13.12-9.36
-      c-8.709-3.645-18.08-5.443-27.52-5.28c-8.048-0.163-16.055,1.194-23.6,4c-6.2,2.328-11.862,5.894-16.64,10.48
-      c-4.219,4.117-7.565,9.042-9.84,14.48c-2.098,4.853-3.213,10.074-3.28,15.36c-0.192,3.547,1.081,7.018,3.52,9.6
-      c2.345,2.352,5.56,3.626,8.88,3.52c3.499,0.231,6.903-1.19,9.2-3.84c2.503-3.303,4.424-7.01,5.68-10.96
-      c0.939-3.008,2.144-5.926,3.6-8.72c4.562-7.738,12.94-12.416,21.92-12.24c4.114,0.077,8.149,1.147,11.76,3.12
-      c3.625,1.82,6.693,4.583,8.88,8c2.194,3.673,3.329,7.882,3.28,12.16c-0.067,4.437-1.105,8.806-3.04,12.8
-      c-2.129,4.829-5.019,9.286-8.56,13.2c-4.419,4.617-9.298,8.772-14.56,12.4c-5.616,4.247-10.96,8.843-16,13.76
-      c-7.787,7.04-16.453,15.467-26,25.28c-2.638,2.966-4.773,6.344-6.32,10c-1.632,3.159-2.612,6.614-2.88,10.16
-      c-0.018,3.939,1.605,7.707,4.48,10.4c3.393,3.096,7.896,4.684,12.48,4.4h78.4c3.842,0.312,7.641-0.993,10.48-3.6
-      c2.291-2.379,3.53-5.579,3.44-8.88C204.691,262.051,203.173,258.598,200.4,256.341z" />
-              </g>
-            </g>
-            <g>
-              <g>
-                <path d="M333.76,222.901c-4.254-1.637-8.809-2.346-13.36-2.08h-4.56v-82.48c0-12.373-5.333-18.56-16-18.56
-      c-3.185-0.052-6.261,1.155-8.56,3.36c-3.331,3.343-6.382,6.956-9.12,10.8l-56.48,75.6l-3.92,5.2c-1.067,1.44-2.107,2.907-3.12,4.4
-      c-0.916,1.374-1.668,2.851-2.24,4.4c-0.475,1.308-0.718,2.689-0.72,4.08c-0.237,4.699,1.607,9.263,5.04,12.48
-      c4.323,3.358,9.742,4.984,15.2,4.56h53.52v20.08c-0.273,4.252,1.006,8.459,3.6,11.84c5.276,5.346,13.887,5.403,19.233,0.127
-      c0.043-0.042,0.085-0.084,0.127-0.127c2.587-3.384,3.866-7.589,3.6-11.84v-20h6.48c4.242,0.298,8.476-0.677,12.16-2.8
-      c2.877-2.141,4.425-5.63,4.08-9.2C339.301,228.744,337.319,224.811,333.76,222.901z M289.36,220.581h-45.84l45.84-61.92V220.581z" />
-              </g>
-            </g>
-          </svg>
-          <div class="media-body">
-            <h5>SERVICIO 24X7</h5>
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-3 col-md-6  col-sm-12 ">
-        <div class="media">
-          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 295.82 295.82" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 295.82 295.82">
-            <g>
-              <g>
-                <path d="m269.719,43.503h-243.617c-13.921,0-26.102,12.181-26.102,26.102v156.611c0,13.921 12.181,26.102 26.102,26.102h243.617c13.921,0 26.102-12.181 26.102-26.102v-156.611c-0.001-13.921-12.182-26.102-26.102-26.102zm-243.617,17.401h243.617c5.22,0 8.701,3.48 8.701,8.701v13.921h-261.019v-13.921c-1.06581e-14-5.22 3.481-8.701 8.701-8.701zm252.317,40.023v13.921h-261.018v-13.921h261.018zm-8.7,133.989h-243.617c-5.22,0-8.701-3.48-8.701-8.701v-93.966h261.018v93.966c0,5.221-3.48,8.701-8.7,8.701z" />
-                <path d="m45.243,172.272h45.243c5.22,0 8.701-3.48 8.701-8.701 0-5.22-3.48-8.701-8.701-8.701h-45.243c-5.22,0-8.701,3.48-8.701,8.701 0.001,5.221 3.481,8.701 8.701,8.701z" />
-                <path d="m151.391,191.413h-106.148c-5.22,0-8.701,3.48-8.701,8.701s3.48,8.701 8.701,8.701h106.147c3.48,0 8.701-3.48 8.701-8.701s-3.48-8.701-8.7-8.701z" />
-              </g>
-            </g>
-          </svg>
-          <div class="media-body">
-            <h5>FÁCIL DEVOLUCIÓN</h5>
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-3 col-md-6  col-sm-12 ">
-        <div class="media">
-          <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 448 448" style="enable-background:new 0 0 448 448;" xml:space="preserve">
-            <g>
-              <g>
-                <g>
-                  <path d="M384,172.4C384,83.6,312.4,12,224,12S64,83.6,64,172c0,0,0,0,0,0.4C28.4,174.4,0,204,0,240v8c0,37.6,30.4,68,68,68h3.6
-        l28.4,45.2c20,32,54,50.8,91.6,50.8h5.6c3.6,13.6,16,24,30.8,24c17.6,0,32-14.4,32-32c0-17.6-14.4-32-32-32
-        c-14.8,0-27.2,10.4-30.8,24h-5.6c-32,0-61.2-16.4-78-43.6L90.4,316H96c8.8,0,16-7.2,16-16V188c0-8.8-7.2-16-16-16H80
-        c0-79.6,64.4-144,144-144s144,64.4,144,144h-16c-8.8,0-16,7.2-16,16v112c0,8.8,7.2,16,16,16h28c37.6,0,68-30.4,68-68v-8
-        C448,204,419.6,174.4,384,172.4z M228,388c8.8,0,16,7.2,16,16s-7.2,16-16,16s-16-7.2-16-16S219.2,388,228,388z M96,188v112H68
-        c-28.8,0-52-23.2-52-52v-8c0-28.8,23.2-52,52-52H96z M432,248c0,28.8-23.2,52-52,52h-28V188h28c28.8,0,52,23.2,52,52V248z" />
-                  <path d="M290.4,72.4c-0.8-0.4-2-1.2-3.2-2c-1.2-0.8-2.4-1.6-3.2-2c-3.6-2.4-8.8-1.2-10.8,2.8S272,79.6,276,82
-        c0.8,0.4,2,1.2,3.2,2s2.4,1.6,3.6,2c1.2,0.8,2.8,1.2,4,1.2c2.8,0,5.2-1.2,6.8-4C295.6,79.6,294.4,74.8,290.4,72.4z" />
-                  <path d="M224,52c-34,0-66,14.8-88,40.4c-2.8,3.2-2.4,8.4,0.8,11.2c1.6,1.2,3.2,2,5.2,2c2.4,0,4.4-0.8,6-2.8
-        c19.2-22,46.8-34.8,76-34.8c7.2,0,14.4,0.8,21.6,2.4c4.4,0.8,8.4-2,9.6-6s-2-8.4-6-9.6C240.8,52.8,232.4,52,224,52z" />
-                </g>
-              </g>
-            </g>
-          </svg>
-          <div class="media-body">
-            <h5>PAGO EN LÍNEA</h5>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<!--services end-->
+<!--slider end-->
 
 <!--tab product-->
-<section class="section-pb-space">
-  <div class="tab-product-main">
-    <div class="tab-prodcut-contain">
-      <ul class="tabs tab-title">
-        <li class="current"><a href="tab-nuevos">NUEVO PRODUCTO</a></li>
-        <li class=""><a href="tab-especial">PRODUCTOS DESTACADOS</a></li>
-        <li class=""><a href="tab-vendidos">MÁS VENDIDOS</a></li>
-      </ul>
-    </div>
-  </div>
-</section>
-<!--tab product-->
-
-<!--media banner start-->
-<section class="section-pb-space">
-  <div class="custom-container">
-    <div class="row ">
-      <div class="col-12">
-        <div class="theme-tab">
-          <div class="tab-content-cls">
-            <!-- TAB NUEVOS -->
-            <div id="tab-nuevos" class="tab-content active default">
-              <div class="slide-5 no-arrow">
-                <?php foreach ($data['nuevoProductos'] as $producto) { 
-                  // IMAGEN POR DEFECTO
-                  $imagenProducto = (!empty($producto['imagen']) && file_exists($producto['imagen'])) 
-                      ? BASE_URL . $producto['imagen'] 
-                      : BASE_URL . 'assets/images/productos/product.png';
-                ?>
-                  <div>
-                    <div class="media-banner b-g-white1 border-0">
-                      <div class="media-banner-box">
-                        <div class="media">
-                          <a href="#" tabindex="0"> 
-                            <img src="<?php echo $imagenProducto; ?>" class="img-fluid" alt="banner"> 
-                          </a>
-                          <div class="media-body">
-                            <div class="media-contant">
-                              <div>
-                                <div class="product-detail">
-                                  <?php
-                                  $uno = ($producto['calificacion'] >= 1) ? 'text-warning' : 'text-muted';
-                                  $dos = ($producto['calificacion'] >= 2) ? 'text-warning' : 'text-muted';
-                                  $tres = ($producto['calificacion'] >= 3) ? 'text-warning' : 'text-muted';
-                                  $cuatro = ($producto['calificacion'] >= 4) ? 'text-warning' : 'text-muted';
-                                  $cinco = ($producto['calificacion'] == 5) ? 'text-warning' : 'text-muted';
-                                  ?>
-                                  <ul class="rating">
-                                    <i class="<?php echo $uno; ?> fa fa-star"></i>
-                                    <i class="<?php echo $dos; ?> fa fa-star"></i>
-                                    <i class="<?php echo $tres; ?> fa fa-star"></i>
-                                    <i class="<?php echo $cuatro; ?> fa fa-star"></i>
-                                    <i class="<?php echo $cinco; ?> fa fa-star"></i>
-                                  </ul>
-                                  <a href="#" tabindex="0">
-                                    <p><?php echo $producto['nombre']; ?></p>
-                                  </a>
-                                  <h6>PRECIO VARIADO</h6>
-                                </div>
-                                <div class="cart-info">
-                                  <a href="javascript:void(0)" onclick="verDetalle(<?php echo $producto['id']; ?>)" class="tooltip-top" data-tippy-content="Vista previa"><i data-feather="eye"></i></a>
-                                  <a href="<?php echo BASE_URL . 'principal/detail/' . $producto['slug']; ?>" class="tooltip-top" data-tippy-content="Ver Detalle"><i data-feather="refresh-cw"></i></a>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                <?php } ?>
-              </div>
-            </div>
-
-            <!-- TAB DESTACADOS -->
-            <div id="tab-especial" class="tab-content">
-              <div class="slide-5 no-arrow">
-                <?php foreach ($data['destacados'] as $producto) { 
-                  // IMAGEN POR DEFECTO
-                  $imagenProducto = (!empty($producto['prod']['imagen']) && file_exists($producto['prod']['imagen'])) 
-                      ? BASE_URL . $producto['prod']['imagen'] 
-                      : BASE_URL . 'assets/images/productos/product.png';
-                ?>
-                  <div>
-                    <div class="media-banner b-g-white1 border-0">
-                      <div class="media-banner-box">
-                        <div class="media">
-                          <a href="#" tabindex="0"> 
-                            <img src="<?php echo $imagenProducto; ?>" class="img-fluid" alt="banner"> 
-                          </a>
-                          <div class="media-body">
-                            <div class="media-contant">
-                              <div>
-                                <div class="product-detail">
-                                  <?php
-                                  $uno = ($producto['calificacion'] >= 1) ? 'text-warning' : 'text-muted';
-                                  $dos = ($producto['calificacion'] >= 2) ? 'text-warning' : 'text-muted';
-                                  $tres = ($producto['calificacion'] >= 3) ? 'text-warning' : 'text-muted';
-                                  $cuatro = ($producto['calificacion'] >= 4) ? 'text-warning' : 'text-muted';
-                                  $cinco = ($producto['calificacion'] == 5) ? 'text-warning' : 'text-muted';
-                                  ?>
-                                  <ul class="rating">
-                                    <i class="<?php echo $uno; ?> fa fa-star"></i>
-                                    <i class="<?php echo $dos; ?> fa fa-star"></i>
-                                    <i class="<?php echo $tres; ?> fa fa-star"></i>
-                                    <i class="<?php echo $cuatro; ?> fa fa-star"></i>
-                                    <i class="<?php echo $cinco; ?> fa fa-star"></i>
-                                  </ul>
-                                  <a href="#" tabindex="0">
-                                    <p><?php echo $producto['prod']['nombre']; ?></p>
-                                  </a>
-                                  <h6>PRECIO VARIADO</h6>
-                                </div>
-                                <div class="cart-info">
-                                  <a href="javascript:void(0)" onclick="verDetalle(<?php echo $producto['id_producto']; ?>)" class="tooltip-top" data-tippy-content="Vista previa"><i data-feather="eye"></i></a>
-                                  <a href="<?php echo BASE_URL . 'principal/detail/' . $producto['prod']['slug']; ?>" class="tooltip-top" data-tippy-content="Ver Detalle"><i data-feather="refresh-cw"></i></a>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                <?php } ?>
-              </div>
-            </div>
-
-            <!-- TAB ESPECIALES -->
-            <div id="tab-vendidos" class="tab-content">
-              <div class="slide-5 no-arrow">
-                <?php foreach ($data['especiales'] as $producto) { 
-                  // IMAGEN POR DEFECTO
-                  $imagenProducto = (!empty($producto['prod']['imagen']) && file_exists($producto['prod']['imagen'])) 
-                      ? BASE_URL . $producto['prod']['imagen'] 
-                      : BASE_URL . 'assets/images/productos/product.png';
-                ?>
-                  <div>
-                    <div class="media-banner b-g-white1 border-0">
-                      <div class="media-banner-box">
-                        <div class="media">
-                          <a href="#" tabindex="0"> 
-                            <img src="<?php echo $imagenProducto; ?>" class="img-fluid" alt="banner"> 
-                          </a>
-                          <div class="media-body">
-                            <div class="media-contant">
-                              <div>
-                                <div class="product-detail">
-                                  <?php
-                                  $uno = ($producto['calificacion'] >= 1) ? 'text-warning' : 'text-muted';
-                                  $dos = ($producto['calificacion'] >= 2) ? 'text-warning' : 'text-muted';
-                                  $tres = ($producto['calificacion'] >= 3) ? 'text-warning' : 'text-muted';
-                                  $cuatro = ($producto['calificacion'] >= 4) ? 'text-warning' : 'text-muted';
-                                  $cinco = ($producto['calificacion'] == 5) ? 'text-warning' : 'text-muted';
-                                  ?>
-                                  <ul class="rating">
-                                    <i class="<?php echo $uno; ?> fa fa-star"></i>
-                                    <i class="<?php echo $dos; ?> fa fa-star"></i>
-                                    <i class="<?php echo $tres; ?> fa fa-star"></i>
-                                    <i class="<?php echo $cuatro; ?> fa fa-star"></i>
-                                    <i class="<?php echo $cinco; ?> fa fa-star"></i>
-                                  </ul>
-                                  <a href="#" tabindex="0">
-                                    <p><?php echo $producto['prod']['nombre']; ?></p>
-                                  </a>
-                                  <h6>PRECIO VARIADO</h6>
-                                </div>
-                                <div class="cart-info">
-                                  <a href="javascript:void(0)" onclick="verDetalle(<?php echo $producto['id_producto']; ?>)" class="tooltip-top" data-tippy-content="Vista previa"><i data-feather="eye"></i></a>
-                                  <a href="<?php echo BASE_URL . 'principal/detail/' . $producto['prod']['slug']; ?>" class="tooltip-top" data-tippy-content="Ver Detalle"><i data-feather="refresh-cw"></i></a>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                <?php } ?>
-              </div>
-            </div>
-          </div>
-        </div>
+<section class="hm-products-section">
+  <div class="hm-container">
+    <div class="hm-tabs-wrapper">
+      <div class="hm-tabs-header">
+        <button class="hm-tab-btn active" data-tab="hm-tab-nuevos">
+          <span class="hm-tab-icon"></span>
+          Nuevos Productos
+        </button>
+        <button class="hm-tab-btn" data-tab="hm-tab-destacados">
+          <span class="hm-tab-icon"></span>
+          Destacados
+        </button>
+        <button class="hm-tab-btn" data-tab="hm-tab-vendidos">
+          <span class="hm-tab-icon"></span>
+          Más Vendidos
+        </button>
       </div>
-    </div>
-  </div>
-</section>
-<!--media banner end-->
 
-
-<!--testimonial start-->
-<section class="testimonial">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="slide-1 no-arrow">
-          <?php foreach ($data['testimonios'] as $testimonio) { ?>
-            <div>
-              <div class="testimonial-contain text-center">
-                <div class="media">
-                  <div class="testimonial-img overflow-hidden"> <img src="<?php echo BASE_URL . 'assets/images/clientes/' . $testimonio['perfil']; ?>" class="img-fluid rounded-circle  " alt="testimonial"> </div>
-                  <div class="media-body">
-                    <h5><?php echo $testimonio['nombre']; ?></h5>
-                    <p><?php echo $testimonio['mensaje']; ?></p>
+      <div class="hm-tabs-content">
+        <!-- TAB NUEVOS -->
+        <div id="hm-tab-nuevos" class="hm-tab-panel active">
+          <?php if (!empty($data['nuevoProductos'])) { ?>
+            <div class="hm-products-grid">
+              <?php foreach ($data['nuevoProductos'] as $producto) { 
+                $imagenProducto = (!empty($producto['imagen']) && file_exists($producto['imagen'])) 
+                    ? BASE_URL . $producto['imagen'] 
+                    : BASE_URL . 'assets/images/productos/product.png';
+              ?>
+                <div class="hm-product-card">
+                  <div class="hm-product-image">
+                    <img src="<?php echo $imagenProducto; ?>" alt="<?php echo $producto['nombre']; ?>">
+                    <div class="hm-product-badge">Nuevo</div>
+                    <div class="hm-product-actions">
+                      <button onclick="verDetalle(<?php echo $producto['id']; ?>)" class="hm-action-btn" title="Vista previa">
+                        <i data-feather="eye"></i>
+                      </button>
+                      <a href="<?php echo BASE_URL . 'principal/detail/' . $producto['slug']; ?>" class="hm-action-btn" title="Ver Detalle">
+                        <i data-feather="shopping-cart"></i>
+                      </a>
+                    </div>
+                  </div>
+                  <div class="hm-product-info">
+                    <div class="hm-product-rating">
+                      <?php
+                      for ($i = 1; $i <= 5; $i++) {
+                        echo ($producto['calificacion'] >= $i) 
+                          ? '<i class="hm-star-filled" data-feather="star"></i>' 
+                          : '<i class="hm-star-empty" data-feather="star"></i>';
+                      }
+                      ?>
+                    </div>
+                    <h3 class="hm-product-title">
+                      <a href="<?php echo BASE_URL . 'principal/detail/' . $producto['slug']; ?>">
+                        <?php echo $producto['nombre']; ?>
+                      </a>
+                    </h3>
+                    <p class="hm-product-price">Precio Variado</p>
                   </div>
                 </div>
-              </div>
+              <?php } ?>
+            </div>
+          <?php } else { ?>
+            <div class="hm-empty-state">
+              <div class="hm-empty-icon">📦</div>
+              <h3>No hay productos nuevos</h3>
+              <p>Pronto tendremos novedades para ti</p>
+            </div>
+          <?php } ?>
+        </div>
+
+        <!-- TAB DESTACADOS -->
+        <div id="hm-tab-destacados" class="hm-tab-panel">
+          <?php if (!empty($data['destacados'])) { ?>
+            <div class="hm-products-grid">
+              <?php foreach ($data['destacados'] as $producto) { 
+                $imagenProducto = (!empty($producto['prod']['imagen']) && file_exists($producto['prod']['imagen'])) 
+                    ? BASE_URL . $producto['prod']['imagen'] 
+                    : BASE_URL . 'assets/images/productos/product.png';
+              ?>
+                <div class="hm-product-card">
+                  <div class="hm-product-image">
+                    <img src="<?php echo $imagenProducto; ?>" alt="<?php echo $producto['prod']['nombre']; ?>">
+                    <div class="hm-product-badge hm-badge-featured">Destacado</div>
+                    <div class="hm-product-actions">
+                      <button onclick="verDetalle(<?php echo $producto['id_producto']; ?>)" class="hm-action-btn" title="Vista previa">
+                        <i data-feather="eye"></i>
+                      </button>
+                      <a href="<?php echo BASE_URL . 'principal/detail/' . $producto['prod']['slug']; ?>" class="hm-action-btn" title="Ver Detalle">
+                        <i data-feather="shopping-cart"></i>
+                      </a>
+                    </div>
+                  </div>
+                  <div class="hm-product-info">
+                    <div class="hm-product-rating">
+                      <?php
+                      for ($i = 1; $i <= 5; $i++) {
+                        echo ($producto['calificacion'] >= $i) 
+                          ? '<i class="hm-star-filled" data-feather="star"></i>' 
+                          : '<i class="hm-star-empty" data-feather="star"></i>';
+                      }
+                      ?>
+                    </div>
+                    <h3 class="hm-product-title">
+                      <a href="<?php echo BASE_URL . 'principal/detail/' . $producto['prod']['slug']; ?>">
+                        <?php echo $producto['prod']['nombre']; ?>
+                      </a>
+                    </h3>
+                    <p class="hm-product-price">Precio Variado</p>
+                  </div>
+                </div>
+              <?php } ?>
+            </div>
+          <?php } else { ?>
+            <div class="hm-empty-state">
+              <div class="hm-empty-icon">⭐</div>
+              <h3>No hay productos destacados</h3>
+              <p>Estamos seleccionando los mejores productos para ti</p>
+            </div>
+          <?php } ?>
+        </div>
+
+        <!-- TAB MÁS VENDIDOS -->
+        <div id="hm-tab-vendidos" class="hm-tab-panel">
+          <?php if (!empty($data['especiales'])) { ?>
+            <div class="hm-products-grid">
+              <?php foreach ($data['especiales'] as $producto) { 
+                $imagenProducto = (!empty($producto['prod']['imagen']) && file_exists($producto['prod']['imagen'])) 
+                    ? BASE_URL . $producto['prod']['imagen'] 
+                    : BASE_URL . 'assets/images/productos/product.png';
+              ?>
+                <div class="hm-product-card">
+                  <div class="hm-product-image">
+                    <img src="<?php echo $imagenProducto; ?>" alt="<?php echo $producto['prod']['nombre']; ?>">
+                    <div class="hm-product-badge hm-badge-hot">Top Ventas</div>
+                    <div class="hm-product-actions">
+                      <button onclick="verDetalle(<?php echo $producto['id_producto']; ?>)" class="hm-action-btn" title="Vista previa">
+                        <i data-feather="eye"></i>
+                      </button>
+                      <a href="<?php echo BASE_URL . 'principal/detail/' . $producto['prod']['slug']; ?>" class="hm-action-btn" title="Ver Detalle">
+                        <i data-feather="shopping-cart"></i>
+                      </a>
+                    </div>
+                  </div>
+                  <div class="hm-product-info">
+                    <div class="hm-product-rating">
+                      <?php
+                      for ($i = 1; $i <= 5; $i++) {
+                        echo ($producto['calificacion'] >= $i) 
+                          ? '<i class="hm-star-filled" data-feather="star"></i>' 
+                          : '<i class="hm-star-empty" data-feather="star"></i>';
+                      }
+                      ?>
+                    </div>
+                    <h3 class="hm-product-title">
+                      <a href="<?php echo BASE_URL . 'principal/detail/' . $producto['prod']['slug']; ?>">
+                        <?php echo $producto['prod']['nombre']; ?>
+                      </a>
+                    </h3>
+                    <p class="hm-product-price">Precio Variado</p>
+                  </div>
+                </div>
+              <?php } ?>
+            </div>
+          <?php } else { ?>
+            <div class="hm-empty-state">
+              <div class="hm-empty-icon">🔥</div>
+              <h3>No hay productos más vendidos</h3>
+              <p>Pronto tendremos nuestros bestsellers aquí</p>
             </div>
           <?php } ?>
         </div>
@@ -458,12 +206,53 @@
     </div>
   </div>
 </section>
+<!--tab product end-->
+
+<!--testimonial start-->
+<section class="hm-testimonials-section">
+  <div class="hm-container">
+    <div class="hm-section-header">
+      <h2 class="hm-section-title">Lo que dicen nuestros clientes</h2>
+      <p class="hm-section-subtitle">Experiencias reales de quienes confían en nosotros</p>
+    </div>
+    
+    <?php if (!empty($data['testimonios'])) { ?>
+      <div class="hm-testimonials-slider">
+        <?php foreach ($data['testimonios'] as $testimonio) { ?>
+          <div class="hm-testimonial-card">
+            <div class="hm-testimonial-quote">"</div>
+            <p class="hm-testimonial-message"><?php echo $testimonio['mensaje']; ?></p>
+            <div class="hm-testimonial-author">
+              <img src="<?php echo BASE_URL . 'assets/images/clientes/' . $testimonio['perfil']; ?>" alt="<?php echo $testimonio['nombre']; ?>" class="hm-author-avatar">
+              <div class="hm-author-info">
+                <h4 class="hm-author-name"><?php echo $testimonio['nombre']; ?></h4>
+                <div class="hm-author-rating">
+                  <i data-feather="star"></i>
+                  <i data-feather="star"></i>
+                  <i data-feather="star"></i>
+                  <i data-feather="star"></i>
+                  <i data-feather="star"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        <?php } ?>
+      </div>
+    <?php } else { ?>
+      <div class="hm-empty-state">
+        <div class="hm-empty-icon">💬</div>
+        <h3>Aún no hay testimonios</h3>
+        <p>Sé el primero en compartir tu experiencia</p>
+      </div>
+    <?php } ?>
+  </div>
+</section>
 <!--testimonial end-->
 
 <?php include_once 'Views/template/footer-principal.php'; ?>
 
 <script>
-
+// Slider principal (mantener como está)
 $(document).ready(function(){
   $('.hero-slides').slick({
     dots: true,
@@ -482,8 +271,8 @@ $(document).ready(function(){
     swipe: true,
     touchMove: true,
     adaptiveHeight: false,
-    prevArrow: '<button type="button" class="slick-prev"></i></button>',
-    nextArrow: '<button type="button" class="slick-next"></i></button>',
+    prevArrow: '<button type="button" class="slick-prev"></button>',
+    nextArrow: '<button type="button" class="slick-next"></button>',
     responsive: [
       {
         breakpoint: 768,
@@ -502,8 +291,57 @@ $(document).ready(function(){
       }
     ]
   });
+
+  // Tabs de productos
+  $('.hm-tab-btn').on('click', function() {
+    const targetTab = $(this).data('tab');
+    
+    $('.hm-tab-btn').removeClass('active');
+    $(this).addClass('active');
+    
+    $('.hm-tab-panel').removeClass('active');
+    $('#' + targetTab).addClass('active');
+  });
+
+  // Slider de testimonios
+  if ($('.hm-testimonials-slider').length) {
+    $('.hm-testimonials-slider').slick({
+      dots: true,
+      infinite: true,
+      speed: 600,
+      slidesToShow: 3,
+      slidesToScroll: 1,
+      autoplay: true,
+      autoplaySpeed: 5000,
+      pauseOnHover: true,
+      arrows: true,
+      prevArrow: '<button type="button" class="hm-testimonial-prev"><i data-feather="chevron-left"></i></button>',
+      nextArrow: '<button type="button" class="hm-testimonial-next"><i data-feather="chevron-right"></i></button>',
+      responsive: [
+        {
+          breakpoint: 1024,
+          settings: {
+            slidesToShow: 2,
+            slidesToScroll: 1
+          }
+        },
+        {
+          breakpoint: 768,
+          settings: {
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            arrows: false
+          }
+        }
+      ]
+    });
+  }
+
+  // Inicializar iconos de Feather
+  if (typeof feather !== 'undefined') {
+    feather.replace();
+  }
 });
 </script>
 </body>
-
 </html>

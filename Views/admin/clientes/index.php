@@ -13,7 +13,7 @@
                 <h5 class="card-title text-center"><i class="fas fa-users"></i> Listado de Clientes</h5>
                 <hr>
                 <div class="table-responsive">
-                    <table class="table table-bordered table-striped table-hover align-middle nowrap" id="tblClientes" style="width: 100%;">
+                    <table class="table  table-striped table-hover align-middle nowrap" id="tblClientes" style="width: 100%;">
                         <thead>
                             <tr>
                                 <th>Id</th>

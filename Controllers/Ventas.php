@@ -163,6 +163,12 @@ class Ventas extends Controller
         $dompdf->stream('reporte.pdf', array('Attachment' => false));
     }
 
+    public function listar_ventas()
+    {
+        $data['title'] = 'Listar Ventas';
+        $this->views->getView('admin/ventas', 'listar_ventas', $data);
+    }
+
     public function listar()
     {
         $data = $this->model->getVentas();
