@@ -38,8 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
       { data: "accion" },
     ],
     language,
-    dom,
-    buttons,
+    
   });
 
   //levantar modal

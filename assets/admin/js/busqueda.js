@@ -12,10 +12,6 @@ const idProducto = document.querySelector("#idProducto");
 const btnAgregar = document.querySelector("#btnAgregar");
 const cantidad = document.querySelector("#cantidad");
 
-//para filtro por rango de fechas
-const desde = document.querySelector("#desde");
-const hasta = document.querySelector("#hasta");
-
 let listaCarrito, tblHistorial;
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -143,30 +139,6 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   $.datetimepicker.setLocale("es");
-
-
-  //filtro rango de fechas
-  desde.addEventListener("blur", function () {
-    tblHistorial.draw();
-  });
-  hasta.addEventListener("blur", function () {
-    tblHistorial.draw();
-  });
-
-  $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
-    var FilterStart = desde.value;
-    var FilterEnd = hasta.value;
-    var DataTableStart = data[1].trim();
-    var DataTableEnd = data[1].trim();
-    if (FilterStart == "" || FilterEnd == "") {
-      return true;
-    }
-    if (DataTableStart >= FilterStart && DataTableEnd <= FilterEnd) {
-      return true;
-    } else {
-      return false;
-    }
-  });
 });
 
 function cambiarStock(size, color) {

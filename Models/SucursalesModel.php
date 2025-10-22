@@ -24,7 +24,7 @@ class SucursalesModel extends Query
     {
         if ($accion == 'registrar' && $id == 0) {
             $sql = "SELECT id FROM sucursales WHERE $campo = '$valor'";
-        }else{
+        } else {
             $sql = "SELECT id FROM sucursales WHERE $campo = '$valor' AND id != $id";
         }
         return $this->select($sql);

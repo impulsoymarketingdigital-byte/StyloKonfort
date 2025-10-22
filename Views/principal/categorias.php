@@ -130,11 +130,11 @@
                                                     <div class="product-box">
                                                         <div class="product-imgbox">
                                                             <div class="product-front">
-                                                                <a href="#"> <img src="<?php echo $imagenProducto; ?>"
+                                                                <a href="javascript:;"> <img src="<?php echo $imagenProducto; ?>"
                                                                         class="img-fluid" alt="product" loading="lazy"> </a>
                                                             </div>
                                                             <div class="product-back">
-                                                                <a href="#"> <img src="<?php echo $imagenProducto; ?>"
+                                                                <a href="javascript:;"> <img src="<?php echo $imagenProducto; ?>"
                                                                         class="img-fluid" alt="product" loading="lazy"> </a>
                                                             </div>
                                                         </div>
@@ -156,7 +156,7 @@
                                                                         <i class="<?php echo $cinco; ?> fa fa-star"></i>
                                                                     </div>
                                                                     <p><?php echo $producto['descripcion']; ?></p>
-                                                                    <a href="#">
+                                                                    <a href="javascript:;">
                                                                         <h6 class="price-title">
                                                                             <?php echo $producto['nombre']; ?>
                                                                         </h6>
@@ -292,10 +292,10 @@
                         <div class="product-box">
                             <div class="product-imgbox">
                                 <div class="product-front">
-                                    <a href="#"> <img src="${imagenProducto}" class="img-fluid" alt="product" loading="lazy"> </a>
+                                    <a href="javascript:;"> <img src="${imagenProducto}" class="img-fluid" alt="product" loading="lazy"> </a>
                                 </div>
                                 <div class="product-back">
-                                    <a href="#"> <img src="${imagenProducto}" class="img-fluid" alt="product" loading="lazy"> </a>
+                                    <a href="javascript:;"> <img src="${imagenProducto}" class="img-fluid" alt="product" loading="lazy"> </a>
                                 </div>
                             </div>
                             <div class="product-detail detail-center detail-inverse">
@@ -309,7 +309,7 @@
                                             <i class="${cinco} fa fa-star"></i>
                                         </div>
                                         <p>${producto.descripcion}</p>
-                                        <a href="#">
+                                        <a href="javascript:;">
                                             <h6 class="price-title">
                                                 ${producto.nombre}
                                             </h6>

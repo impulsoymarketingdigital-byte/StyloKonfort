@@ -22,8 +22,8 @@ a {
 }
 
 .form-check-input:checked {
-    background-color: #fc0038;
-    border-color: #fc0038;
+    background-color: #057997;
+    border-color: #057997;
 }
 
 .form-check-label {
@@ -34,8 +34,8 @@ a {
 }
 
 .form-check-input[type="checkbox"]:indeterminate {
-    background-color: #fc0038;
-    border-color: #fc0038;
+    background-color: #057997;
+    border-color: #057997;
 }
 
 .valid-feedback {
@@ -75,36 +75,36 @@ a {
 }
 
 .invalid-feedback {
-    color: #fc0038;
+    color: #057997;
 }
 
 .form-control.is-invalid,
 .was-validated .form-control:invalid {
-    border-color: #fc0038;
+    border-color: #057997;
 }
 .form-control.is-invalid:focus,
 .was-validated .form-control:invalid:focus {
-    border-color: #fc0038;
+    border-color: #057997;
 }
 .form-select.is-invalid,
 .was-validated .form-select:invalid {
-    border-color: #fc0038;
+    border-color: #057997;
 }
 .form-select.is-invalid:focus,
 .was-validated .form-select:invalid:focus {
-    border-color: #fc0038;
+    border-color: #057997;
 }
 .form-check-input.is-invalid,
 .was-validated .form-check-input:invalid {
-    border-color: #fc0038;
+    border-color: #057997;
 }
 .form-check-input.is-invalid:checked,
 .was-validated .form-check-input:invalid:checked {
-    background-color: #fc0038;
+    background-color: #057997;
 }
 .form-check-input.is-invalid ~ .form-check-label,
 .was-validated .form-check-input:invalid ~ .form-check-label {
-    color: #fc0038;
+    color: #057997;
 }
 
 .input-group-text {
@@ -208,7 +208,7 @@ a {
 
 .btn-danger {
     color: #fff;
-    background-color: #fc0038;
+  background-color: #fc0038;
     border-color: #fc0038;
     box-shadow: 0 5px 10px rgba(252, 0, 56, 0.25) !important;
 }
@@ -243,8 +243,8 @@ a {
 .btn-danger.disabled,
 .btn-danger:disabled {
     color: #fff;
-    background-color: #fc0038;
-    border-color: #fc0038;
+    background-color: #057997;
+    border-color: #057997;
 }
 
 .btn-outline-primary {
@@ -320,13 +320,13 @@ a {
 }
 
 .btn-outline-danger {
-    color: #fc0038;
-    border-color: #fc0038;
+    color: #057997;
+    border-color: #057997;
 }
 .btn-outline-danger:hover {
     color: #fff;
-    background-color: #fc0038;
-    border-color: #fc0038;
+    background-color: #057997;
+    border-color: #057997;
 }
 .btn-check:focus + .btn-outline-danger,
 .btn-outline-danger:focus {
@@ -338,8 +338,8 @@ a {
 .btn-outline-danger.dropdown-toggle.show,
 .btn-outline-danger:active {
     color: #fff;
-    background-color: #fc0038;
-    border-color: #fc0038;
+    background-color: #057997;
+    border-color: #057997;
 }
 .btn-check:active + .btn-outline-danger:focus,
 .btn-check:checked + .btn-outline-danger:focus,
@@ -350,7 +350,7 @@ a {
 }
 .btn-outline-danger.disabled,
 .btn-outline-danger:disabled {
-    color: #fc0038;
+    color: #057997;
     background-color: transparent;
 }
 
@@ -409,7 +409,7 @@ a {
 }
 
 .border-danger {
-    border-color: #fc0038 !important;
+    border-color: #057997 !important;
 }
 
 .text-primary {
@@ -461,7 +461,7 @@ a {
 }
 
 .bg-danger {
-    background-color: #fc0038 !important;
+    background-color: #e20e22 !important;
 }
 
 .form-check-success .form-check-input:checked {
@@ -482,18 +482,18 @@ a {
 }
 
 .form-check-danger .form-check-input:checked {
-    background-color: #fc0038;
-    border-color: #fc0038;
+    background-color: #057997;
+    border-color: #057997;
 }
 
 .form-check-danger .form-check-input[type="checkbox"]:indeterminate {
-    background-color: #fc0038;
-    border-color: #fc0038;
+    background-color: #057997;
+    border-color: #057997;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10h8'/%3e%3c/svg%3e");
 }
 
 .form-check-danger .form-check-input:focus {
-    border-color: #fc0038;
+    border-color: #057997;
     outline: 0;
     box-shadow: 0 0 0 0.25rem rgba(253, 53, 80, 0.25);
 }

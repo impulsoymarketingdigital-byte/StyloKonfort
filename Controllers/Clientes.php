@@ -19,37 +19,6 @@ class Clientes extends Controller
             exit;
         }
 
-        if (!empty($_SESSION['productos'])) {
-            MercadoPago\SDK::setAccessToken(ACCESS_TOKEN);
-            $preference = new MercadoPago\Preference();
-
-            $datos = array();
-
-            foreach ($_SESSION['productos'] as $producto) {
-                $item = new MercadoPago\Item();
-                // Crea un ítem en la preferencia
-                $item->id = $producto['id'];
-                $item->title = $producto['nombre'] . ' - ' . $producto['atributoMP'];
-                $item->currency_id = CURRENCY;
-                $item->quantity = $producto['cantidad'];
-                $item->unit_price = $producto['precio'];
-                array_push($datos, $item);
-            }
-
-            $preference->items = $datos;
-
-            $preference->back_urls = array(
-                "success" => BASE_URL . 'clientes/success',
-                "failure" => BASE_URL . 'clientes',
-                "pending" => BASE_URL . 'clientes'
-            );
-            $preference->auto_return = "approved";
-            $preference->binary_mode = true;
-
-            $preference->save();
-            $data['preferenceid'] = $preference->id;
-        }
-
         $data['perfil'] = 'si';
         $data['title'] = 'Tu Perfil';
         $data['testimonio'] = $this->model->getTestimonio($_SESSION['idCliente']);
@@ -62,32 +31,53 @@ class Clientes extends Controller
         $data['title'] = 'Registrarse';
         $this->views->getView('principal', "registro", $data);
     }
+
     public function registroDirecto()
     {
         if (isset($_POST['nombreRegistro']) && isset($_POST['claveRegistro'])) {
-            if (empty($_POST['nombreRegistro']) || empty($_POST['apellidoRegistro']) || empty($_POST['correoRegistro']) || empty($_POST['claveRegistro'])) {
-                $mensaje = array('msg' => 'TODO LOS CAMPOS SON REQUERIDOS', 'icono' => 'warning');
+            if (
+                empty($_POST['nombreRegistro']) ||
+                empty($_POST['apellidoRegistro']) ||
+                empty($_POST['correoRegistro']) ||
+                empty($_POST['claveRegistro']) ||
+                empty($_POST['telefonoRegistro']) ||
+                empty($_POST['direccionRegistro']) ||
+                empty($_POST['documentoRegistro']) ||
+                empty($_POST['tipoClienteRegistro'])
+            ) {
+                $mensaje = array('msg' => 'TODOS LOS CAMPOS SON REQUERIDOS', 'icono' => 'warning');
             } else {
                 $nombre = strClean($_POST['nombreRegistro']);
                 $apellido = strClean($_POST['apellidoRegistro']);
                 $correo = strClean($_POST['correoRegistro']);
                 $clave = strClean($_POST['claveRegistro']);
+                $telefono = strClean($_POST['telefonoRegistro']);
+                $direccion = strClean($_POST['direccionRegistro']);
+                $documento = strClean($_POST['documentoRegistro']);
+                $tipo_cliente = strClean($_POST['tipoClienteRegistro']);
+
                 $verificar = $this->model->getVerificar('clientes', $correo);
                 if (empty($verificar)) {
-                    $token = md5($correo);
-                    $hash = password_hash($clave, PASSWORD_DEFAULT);
-                    $data = $this->model->registroDirecto($nombre, $apellido, $correo, $hash, $token);
-                    if ($data > 0) {
-                        $cliente = $this->model->editar($data);
-                        $_SESSION['idCliente'] = $cliente['id'];
-                        $_SESSION['correoCliente'] = $cliente['correo'];
-                        $_SESSION['nombreCliente'] = $cliente['nombre'];
-                        $_SESSION['apellidoCliente'] = $cliente['apellido'];
-                        $_SESSION['dirrecionCliente'] = $cliente['direccion'];
-                        $_SESSION['perfilCliente'] = $cliente['perfil'];
-                        $mensaje = array('msg' => 'registrado con éxito', 'icono' => 'success', 'token' => $token);
+                    // Verificar si el documento ya existe
+                    $verificarDocumento = $this->model->getVerificarDocumento($documento);
+                    if (empty($verificarDocumento)) {
+                        $token = md5($correo);
+                        $hash = password_hash($clave, PASSWORD_DEFAULT);
+                        $data = $this->model->registroDirecto($nombre, $apellido, $correo, $hash, $token, $telefono, $direccion, $documento, $tipo_cliente);
+                        if ($data > 0) {
+                            $cliente = $this->model->editar($data);
+                            $_SESSION['idCliente'] = $cliente['id'];
+                            $_SESSION['correoCliente'] = $cliente['correo'];
+                            $_SESSION['nombreCliente'] = $cliente['nombre'];
+                            $_SESSION['apellidoCliente'] = $cliente['apellido'];
+                            $_SESSION['dirrecionCliente'] = $cliente['direccion'];
+                            $_SESSION['perfilCliente'] = $cliente['perfil'];
+                            $mensaje = array('msg' => 'Registrado con éxito', 'icono' => 'success', 'token' => $token);
+                        } else {
+                            $mensaje = array('msg' => 'Error al registrarse', 'icono' => 'error');
+                        }
                     } else {
-                        $mensaje = array('msg' => 'error al registrarse', 'icono' => 'error');
+                        $mensaje = array('msg' => 'EL DOCUMENTO YA ESTÁ REGISTRADO', 'icono' => 'warning');
                     }
                 } else {
                     $mensaje = array('msg' => 'YA TIENES UNA CUENTA', 'icono' => 'warning');
@@ -97,6 +87,7 @@ class Clientes extends Controller
             die();
         }
     }
+
     public function enviarCorreo()
     {
         if (isset($_POST['correo']) && isset($_POST['token'])) {
@@ -280,6 +271,89 @@ class Clientes extends Controller
         die();
     }
 
+    public function enviarTicketWhatsApp()
+    {
+        if (isset($_POST['idPedido'])) {
+            $idPedido = strClean($_POST['idPedido']);
+
+            // Obtener datos del pedido
+            $pedido = $this->model->getPedido($idPedido);
+
+            if (empty($pedido)) {
+                $mensaje = array('msg' => 'Pedido no encontrado', 'icono' => 'error');
+                echo json_encode($mensaje, JSON_UNESCAPED_UNICODE);
+                die();
+            }
+
+            // Obtener empresa (incluye WhatsApp)
+            $empresa = $this->model->getEmpresa();
+            $whatsappNumber = preg_replace('/[^0-9]/', '', $empresa['whatsapp']);
+
+            // Obtener detalles del pedido
+            $productos = $this->model->verPedidos($idPedido);
+
+            // Construir mensaje para WhatsApp
+            $mensajeWhatsApp = "*🛒 NUEVO PEDIDO #" . str_pad($idPedido, 6, '0', STR_PAD_LEFT) . "*\n";
+            $mensajeWhatsApp .= "━━━━━━━━━━━━━━━━━━━\n\n";
+
+            $mensajeWhatsApp .= "*👤 DATOS DEL CLIENTE:*\n";
+            $mensajeWhatsApp .= "📌 Nombre: " . $pedido['nombre'] . " " . $pedido['apellido'] . "\n";
+            $mensajeWhatsApp .= "📧 Email: " . $pedido['email'] . "\n";
+            if (!empty($pedido['direccion'])) {
+                $mensajeWhatsApp .= "📍 Dirección: " . $pedido['direccion'] . "\n";
+            }
+            $mensajeWhatsApp .= "💳 Método: " . strtoupper($pedido['metodo']) . "\n";
+            $mensajeWhatsApp .= "📊 Estado: " . strtoupper($pedido['estado']) . "\n\n";
+
+            $mensajeWhatsApp .= "*📦 DETALLE DE PRODUCTOS:*\n";
+            $mensajeWhatsApp .= "━━━━━━━━━━━━━━━━━━━\n";
+
+            $subtotal = 0;
+            foreach ($productos as $producto) {
+                $total_producto = $producto['cantidad'] * $producto['precio'];
+                $subtotal += $total_producto;
+
+                $mensajeWhatsApp .= "\n*" . $producto['producto'] . "*\n";
+
+                // Decodificar atributos si existen
+                if (!empty($producto['atributos'])) {
+                    $atributos = json_decode($producto['atributos'], true);
+                    if ($atributos) {
+                        $mensajeWhatsApp .= "   • Talla: " . $atributos['size'] . "\n";
+                        $mensajeWhatsApp .= "   • Color: " . $atributos['color'] . "\n";
+                    }
+                }
+
+                $mensajeWhatsApp .= "   • Cantidad: " . $producto['cantidad'] . "\n";
+                $mensajeWhatsApp .= "   • Precio: Bs " . number_format($producto['precio'], 2) . "\n";
+                $mensajeWhatsApp .= "   • Subtotal: Bs " . number_format($total_producto, 2) . "\n";
+            }
+
+            $mensajeWhatsApp .= "\n━━━━━━━━━━━━━━━━━━━\n";
+            $mensajeWhatsApp .= "*💰 TOTAL A PAGAR: Bs " . number_format($pedido['monto'], 2) . "*\n";
+            $mensajeWhatsApp .= "━━━━━━━━━━━━━━━━━━━\n\n";
+
+            $mensajeWhatsApp .= "📅 Fecha: " . date('d/m/Y H:i:s', strtotime($pedido['fecha'])) . "\n\n";
+            $mensajeWhatsApp .= "✅ _Pedido registrado exitosamente_\n";
+            $mensajeWhatsApp .= "🏪 *" . $empresa['nombre'] . "*";
+
+            // Codificar mensaje para URL
+            $mensajeCodificado = urlencode($mensajeWhatsApp);
+
+            // Generar link de WhatsApp
+            $whatsappLink = "https://wa.me/{$whatsappNumber}?text={$mensajeCodificado}";
+
+            $mensaje = array(
+                'msg' => 'Redirigiendo a WhatsApp',
+                'icono' => 'success',
+                'whatsappLink' => $whatsappLink
+            );
+        } else {
+            $mensaje = array('msg' => 'ERROR FATAL', 'icono' => 'error');
+        }
+        echo json_encode($mensaje, JSON_UNESCAPED_UNICODE);
+        die();
+    }
     public function enviarTicket()
     {
         if (isset($_POST['idPedido'])) {
@@ -585,12 +659,28 @@ class Clientes extends Controller
             header('Location: ' . BASE_URL . 'admin');
             exit;
         }
-        $data = $this->model->getClientes(1);
+        $data = $this->model->getClientes();
         for ($i = 0; $i < count($data); $i++) {
-            $data[$i]['acciones'] = '<div>
-            <button class="btn btn-danger" type="button" onclick="eliminarCliente(' . $data[$i]['id'] . ')"><i class="fas fa-trash"></i></button>
-            <button class="btn btn-info" type="button" onclick="editarCliente(' . $data[$i]['id'] . ')"><i class="fas fa-edit"></i></button>
-            </div>';
+            $estado = $data[$i]['estado'];
+            $color = $estado == 1 ? 'success' : 'danger';
+            $texto = $estado == 1 ? 'ACTIVO' : 'INACTIVO';
+            $data[$i]['estado'] = "<div class='badge rounded-pill text-$color bg-light-$color p-2 text-uppercase px-3'>$texto</div>";
+
+            $tipo = $data[$i]['tipo_cliente'];
+            $colorTipo = $tipo == 'mayorista' ? 'primary' : 'info';
+            $textoTipo = $tipo == 'mayorista' ? 'MAYORISTA' : 'FINAL';
+            $data[$i]['tipo_cliente'] = "<span class='badge bg-$colorTipo'>$textoTipo</span>";
+
+            if ($estado == 1) {
+                $botonAccion = '<button class="btn btn-danger" type="button" onclick="eliminar(' . $data[$i]['id'] . ')"><i class="fas fa-trash"></i></button>';
+            } else {
+                $botonAccion = '<button class="btn btn-success" type="button" onclick="restaurar(' . $data[$i]['id'] . ')"><i class="fas fa-undo"></i></button>';
+            }
+
+            $data[$i]['accion'] = '<div class="d-flex">
+        <button class="btn btn-primary" type="button" onclick="editCat(' . $data[$i]['id'] . ')"><i class="fas fa-edit"></i></button>
+        ' . $botonAccion . '
+        </div>';
         }
         echo json_encode($data, JSON_UNESCAPED_UNICODE);
         die();
@@ -608,14 +698,14 @@ class Clientes extends Controller
             $telefono = strClean($_POST['telefono']);
             $correo = (empty($_POST['correo'])) ? null : strClean($_POST['correo']);
             $direccion = strClean($_POST['direccion']);
+            $tipo_cliente = strClean($_POST['tipo_cliente']);
+
             if (empty($nombre)) {
-                $res = array('msg' => 'EL NOMBRE ES REQUERIDO', 'type' => 'warning');
+                $res = array('msg' => 'EL NOMBRE ES REQUERIDO', 'icono' => 'warning');
             } else if (empty($apellido)) {
-                $res = array('msg' => 'EL APELIDO ES REQUERIDO', 'type' => 'warning');
-            } else if (empty($telefono)) {
-                $res = array('msg' => 'EL TELEFONO ES REQUERIDO', 'type' => 'warning');
-            } else if (empty($direccion)) {
-                $res = array('msg' => 'LA DIRECCION ES REQUERIDO', 'type' => 'warning');
+                $res = array('msg' => 'EL APELLIDO ES REQUERIDO', 'icono' => 'warning');
+            } else if (empty($tipo_cliente)) {
+                $res = array('msg' => 'EL TIPO DE CLIENTE ES REQUERIDO', 'icono' => 'warning');
             } else {
                 if ($id == '') {
                     $verificarTelefono = $this->model->getValidar('telefono', $telefono, 'registrar', 0);
@@ -623,7 +713,7 @@ class Clientes extends Controller
                         if ($correo != null) {
                             $verificarCorreo = $this->model->getValidar('correo', $correo, 'registrar', 0);
                             if (!empty($verificarCorreo)) {
-                                $res = array('msg' => 'EL CORREO DEBE SER UNICO', 'type' => 'warning');
+                                $res = array('msg' => 'EL CORREO DEBE SER UNICO', 'icono' => 'warning');
                                 echo json_encode($res);
                                 die();
                             }
@@ -634,15 +724,16 @@ class Clientes extends Controller
                             $telefono,
                             $correo,
                             $direccion,
+                            $tipo_cliente,
                             'ADMINISTRACION'
                         );
                         if ($data > 0) {
-                            $res = array('msg' => 'CLIENTE REGISTRADO', 'type' => 'success');
+                            $res = array('msg' => 'CLIENTE REGISTRADO', 'icono' => 'success');
                         } else {
-                            $res = array('msg' => 'ERROR AL REGISTRAR', 'type' => 'error');
+                            $res = array('msg' => 'ERROR AL REGISTRAR', 'icono' => 'error');
                         }
                     } else {
-                        $res = array('msg' => 'EL TELEFONO DEBE SER UNICO', 'type' => 'warning');
+                        $res = array('msg' => 'EL TELEFONO DEBE SER UNICO', 'icono' => 'warning');
                     }
                 } else {
                     $verificarTelefono = $this->model->getValidar('telefono', $telefono, 'actualizar', $id);
@@ -650,7 +741,7 @@ class Clientes extends Controller
                         if ($correo != null) {
                             $verificarCorreo = $this->model->getValidar('correo', $correo, 'actualizar', $id);
                             if (!empty($verificarCorreo)) {
-                                $res = array('msg' => 'EL CORREO DEBE SER UNICO', 'type' => 'warning');
+                                $res = array('msg' => 'EL CORREO DEBE SER UNICO', 'icono' => 'warning');
                                 echo json_encode($res);
                                 die();
                             }
@@ -661,54 +752,77 @@ class Clientes extends Controller
                             $telefono,
                             $correo,
                             $direccion,
+                            $tipo_cliente,
                             'default.png',
                             $id
                         );
                         if ($data > 0) {
-                            $res = array('msg' => 'CLIENTE MODIFICADO', 'type' => 'success');
+                            $res = array('msg' => 'CLIENTE MODIFICADO', 'icono' => 'success');
                         } else {
-                            $res = array('msg' => 'ERROR AL MODIFICAR', 'type' => 'error');
+                            $res = array('msg' => 'ERROR AL MODIFICAR', 'icono' => 'error');
                         }
                     } else {
-                        $res = array('msg' => 'EL TELEFONO DEBE SER UNICO', 'type' => 'warning');
+                        $res = array('msg' => 'EL TELEFONO DEBE SER UNICO', 'icono' => 'warning');
                     }
                 }
             }
         } else {
-            $res = array('msg' => 'ERROR DESCONOCIDO', 'type' => 'error');
+            $res = array('msg' => 'ERROR DESCONOCIDO', 'icono' => 'error');
         }
         echo json_encode($res);
         die();
     }
 
-    public function eliminar($idCliente)
+    public function delete($idCliente)
     {
         if (empty($_SESSION['id_usuario'])) {
             header('Location: ' . BASE_URL . 'admin');
             exit;
         }
-        if (isset($_GET) && is_numeric($idCliente)) {
+        if (is_numeric($idCliente)) {
             $data = $this->model->eliminar(0, $idCliente);
             if ($data > 0) {
-                $res = array('msg' => 'CLIENTE DADO DE BAJA', 'type' => 'success');
+                $res = array('msg' => 'CLIENTE INACTIVO', 'icono' => 'success');
             } else {
-                $res = array('msg' => 'ERROR AL ELIMINAR', 'type' => 'error');
+                $res = array('msg' => 'ERROR AL ELIMINAR', 'icono' => 'error');
             }
         } else {
-            $res = array('msg' => 'ERROR DESCONOCIDO', 'type' => 'error');
+            $res = array('msg' => 'ERROR DESCONOCIDO', 'icono' => 'error');
         }
         echo json_encode($res, JSON_UNESCAPED_UNICODE);
         die();
     }
 
-    public function editar($idCliente)
+    public function restaurar($idCliente)
     {
         if (empty($_SESSION['id_usuario'])) {
             header('Location: ' . BASE_URL . 'admin');
             exit;
         }
-        $data = $this->model->editar($idCliente);
-        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        if (is_numeric($idCliente)) {
+            $data = $this->model->eliminar(1, $idCliente);
+            if ($data == 1) {
+                $res = array('msg' => 'CLIENTE RESTAURADO', 'icono' => 'success');
+            } else {
+                $res = array('msg' => 'ERROR AL RESTAURAR', 'icono' => 'error');
+            }
+        } else {
+            $res = array('msg' => 'ERROR DESCONOCIDO', 'icono' => 'error');
+        }
+        echo json_encode($res);
+        die();
+    }
+
+    public function edit($idCliente)
+    {
+        if (empty($_SESSION['id_usuario'])) {
+            header('Location: ' . BASE_URL . 'admin');
+            exit;
+        }
+        if (is_numeric($idCliente)) {
+            $data = $this->model->editar($idCliente);
+            echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        }
         die();
     }
 }

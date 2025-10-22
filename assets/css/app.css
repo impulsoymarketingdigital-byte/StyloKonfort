@@ -542,13 +542,13 @@
 }
 
 .filter-sidebar::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #ff4757 0%, #ff3838 100%);
+  background: linear-gradient(180deg, #ff4757 0%, #057997 100%);
   border-radius: 10px;
   transition: all 0.3s ease;
 }
 
 .filter-sidebar::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #ff3838 0%, #e63946 100%);
+  background: linear-gradient(180deg, #057997 0%, #e63946 100%);
   width: 8px;
 }
 
@@ -564,7 +564,7 @@
 
 /* Header del filtro */
 .filter-header {
-  background: linear-gradient(135deg, #ff4757 0%, #ff3838 100%);
+  background: linear-gradient(135deg, #ff4757 0%, #057997 100%);
   color: white;
   padding: 25px;
   display: flex;
@@ -739,12 +739,12 @@
 }
 
 .btn-apply-filter {
-  background: linear-gradient(135deg, #ff4757 0%, #ff3838 100%);
+  background: linear-gradient(135deg, #ff4757 0%, #057997 100%);
   color: white;
 }
 
 .btn-apply-filter:hover {
-  background: linear-gradient(135deg, #ff3838 0%, #e63946 100%);
+  background: linear-gradient(135deg, #057997 0%, #e63946 100%);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(255, 71, 87, 0.4);
 }
@@ -763,7 +763,7 @@
   padding: 14px 28px;
   font-size: 16px;
   font-weight: 700;
-  background: linear-gradient(135deg, #ff4757 0%, #ff3838 100%);
+  background: linear-gradient(135deg, #ff4757 0%, #057997 100%);
   border: none;
   color: white;
   border-radius: 10px;
@@ -774,7 +774,7 @@
 }
 
 .filter-main-btn .btn-theme:hover {
-  background: linear-gradient(135deg, #ff3838 0%, #e63946 100%);
+  background: linear-gradient(135deg, #057997 0%, #e63946 100%);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(255, 71, 87, 0.5);
 }
@@ -1846,7 +1846,7 @@
 
 /* Botón ROJO - Ver página completa (DETALLE) */
 .shop-icon-btn-detail {
-  background: linear-gradient(135deg, #ff4757 0%, #ff3838 50%, #ee2e2e 100%);
+  background: linear-gradient(135deg, #ff4757 0%, #057997 50%, #ee2e2e 100%);
   box-shadow: 0 6px 15px rgba(255, 71, 87, 0.4),
     inset 0 2px 0 rgba(255, 255, 255, 0.3), inset 0 -3px 6px rgba(0, 0, 0, 0.2);
 }
@@ -2201,7 +2201,7 @@
   transform: translate(-50%, -50%) scale(0);
   width: 32px;
   height: 32px;
-  background: linear-gradient(135deg, #ff4757 0%, #ff3838 100%);
+  background: linear-gradient(135deg, #ff4757 0%, #057997 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -2879,18 +2879,300 @@
   flex-shrink: 0;
 }
 
-.dtl-alert-content strong {
-  display: block;
-  color: #c92a2a;
-  font-size: 16px;
-  margin-bottom: 5px;
-  font-weight: 700;
+/* ================================
+   WHATSAPP ALERT - SIN STOCK
+   ================================ */
+
+.dtl-alert-whatsapp {
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+  border-radius: 20px;
+  padding: 30px;
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  box-shadow: 
+    0 15px 40px rgba(37, 211, 102, 0.25),
+    0 5px 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  margin: 20px 0;
+  animation: dtlWhatsappSlideIn 0.6s ease;
 }
 
-.dtl-alert-content p {
-  color: #868e96;
-  margin-bottom: 10px;
-  font-size: 13px;
+.dtl-alert-whatsapp::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  animation: dtlWhatsappPulse 3s ease-in-out infinite;
+}
+
+@keyframes dtlWhatsappSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dtlWhatsappPulse {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.1) rotate(180deg);
+    opacity: 0.5;
+  }
+}
+
+.dtl-whatsapp-icon {
+  width: 70px;
+  height: 70px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  animation: dtlWhatsappIconBounce 2s ease-in-out infinite;
+}
+
+@keyframes dtlWhatsappIconBounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.dtl-whatsapp-icon i {
+  font-size: 40px;
+  color: #ffffff;
+  animation: dtlWhatsappIconRotate 3s ease-in-out infinite;
+}
+
+@keyframes dtlWhatsappIconRotate {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-10deg);
+  }
+  75% {
+    transform: rotate(10deg);
+  }
+}
+
+.dtl-whatsapp-content {
+  flex: 1;
+  position: relative;
+  z-index: 2;
+}
+
+.dtl-whatsapp-content strong {
+  display: block;
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dtl-whatsapp-content p {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 15px;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.dtl-whatsapp-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: #ffffff;
+  color: #25D366;
+  padding: 14px 30px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 15px;
+  text-decoration: none;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 8px 20px rgba(0, 0, 0, 0.15),
+    0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.dtl-whatsapp-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(37, 211, 102, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.dtl-whatsapp-btn:hover::before {
+  left: 100%;
+}
+
+.dtl-whatsapp-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 
+    0 12px 30px rgba(0, 0, 0, 0.2),
+    0 4px 12px rgba(0, 0, 0, 0.15);
+  color: #128C7E;
+}
+
+.dtl-whatsapp-btn i {
+  font-size: 22px;
+  transition: transform 0.3s ease;
+}
+
+.dtl-whatsapp-btn:hover i {
+  transform: scale(1.2) rotate(15deg);
+}
+
+/* ================================
+   RESPONSIVE - WHATSAPP ALERT
+   ================================ */
+
+@media (max-width: 768px) {
+  .dtl-alert-whatsapp {
+    padding: 25px 20px;
+    gap: 20px;
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .dtl-whatsapp-icon {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .dtl-whatsapp-icon i {
+    font-size: 35px;
+  }
+  
+  .dtl-whatsapp-content strong {
+    font-size: 18px;
+  }
+  
+  .dtl-whatsapp-content p {
+    font-size: 14px;
+    margin-bottom: 18px;
+  }
+  
+  .dtl-whatsapp-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 14px 25px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 576px) {
+  .dtl-alert-whatsapp {
+    padding: 20px 15px;
+    border-radius: 15px;
+  }
+  
+  .dtl-whatsapp-icon {
+    width: 55px;
+    height: 55px;
+  }
+  
+  .dtl-whatsapp-icon i {
+    font-size: 30px;
+  }
+  
+  .dtl-whatsapp-content strong {
+    font-size: 17px;
+    margin-bottom: 6px;
+  }
+  
+  .dtl-whatsapp-content p {
+    font-size: 13px;
+    margin-bottom: 15px;
+  }
+  
+  .dtl-whatsapp-btn {
+    padding: 12px 20px;
+    font-size: 13px;
+    gap: 10px;
+  }
+  
+  .dtl-whatsapp-btn i {
+    font-size: 20px;
+  }
+}
+
+/* ================================
+   ANIMACIONES ADICIONALES
+   ================================ */
+
+@keyframes dtlWhatsappShine {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.dtl-alert-whatsapp::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: dtlWhatsappShine 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* ================================
+   ACCESIBILIDAD
+   ================================ */
+
+.dtl-whatsapp-btn:focus {
+  outline: 3px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dtl-alert-whatsapp,
+  .dtl-alert-whatsapp::before,
+  .dtl-alert-whatsapp::after,
+  .dtl-whatsapp-icon,
+  .dtl-whatsapp-icon i,
+  .dtl-whatsapp-btn,
+  .dtl-whatsapp-btn::before {
+    animation: none !important;
+    transition: none !important;
+  }
 }
 
 .dtl-btn-whatsapp {

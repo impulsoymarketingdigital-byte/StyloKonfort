@@ -71,54 +71,58 @@ function cantidadDeseo() {
 
 //agregar productos al carrito
 function agregarCarrito(idProducto, cantidad, size, color, accion = false) {
-    // Primero verificar si hay stock disponible
-    const url = base_url + "principal/getStock/" + size + "/" + color + "/" + idProducto;
-    const http = new XMLHttpRequest();
-    http.open("GET", url, true);
-    http.send();
-    http.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            const res = JSON.parse(this.responseText);
-            
-            // Validar que haya stock
-            if (!res || res.stock <= 0) {
-                alertaPerzanalizada("ESTE PRODUCTO NO TIENE STOCK DISPONIBLE", "error");
-                return;
-            }
-            
-            // Verificar si ya está en el carrito
-            for (let i = 0; i < listaCarrito.length; i++) {
-                if (accion) {
-                    eliminarListaDeseo(idProducto, size, color, false);
-                }
-                if (
-                    listaCarrito[i]["idProducto"] == idProducto &&
-                    listaCarrito[i]["size"] == size &&
-                    listaCarrito[i]["color"] == color
-                ) {
-                    alertaPerzanalizada("EL PRODUCTO YA ESTÁ AGREGADO", "warning");
-                    return;
-                }
-            }
-            
-            // Validar que no exceda el stock disponible
-            if (cantidad > res.stock) {
-                alertaPerzanalizada("SOLO HAY " + res.stock + " UNIDADES DISPONIBLES", "warning");
-                return;
-            }
-            
-            listaCarrito.concat(localStorage.getItem("listaCarrito"));
-            listaCarrito.push({
-                idProducto: idProducto,
-                cantidad: cantidad,
-                size: size,
-                color: color,
-            });
-            localStorage.setItem("listaCarrito", JSON.stringify(listaCarrito));
-            alertaPerzanalizada("PRODUCTO AGREGADO AL CARRITO", "success");
-            cantidadCarrito();
+  // Primero verificar si hay stock disponible
+  const url =
+    base_url + "principal/getStock/" + size + "/" + color + "/" + idProducto;
+  const http = new XMLHttpRequest();
+  http.open("GET", url, true);
+  http.send();
+  http.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      const res = JSON.parse(this.responseText);
+
+      // Validar que haya stock
+      if (!res || res.stock <= 0) {
+        alertaPerzanalizada("ESTE PRODUCTO NO TIENE STOCK DISPONIBLE", "error");
+        return;
+      }
+
+      // Verificar si ya está en el carrito
+      for (let i = 0; i < listaCarrito.length; i++) {
+        if (accion) {
+          eliminarListaDeseo(idProducto, size, color, false);
         }
-    };
+        if (
+          listaCarrito[i]["idProducto"] == idProducto &&
+          listaCarrito[i]["size"] == size &&
+          listaCarrito[i]["color"] == color
+        ) {
+          alertaPerzanalizada("EL PRODUCTO YA ESTÁ AGREGADO", "warning");
+          return;
+        }
+      }
+
+      // Validar que no exceda el stock disponible
+      if (cantidad > res.stock) {
+        alertaPerzanalizada(
+          "SOLO HAY " + res.stock + " UNIDADES DISPONIBLES",
+          "warning"
+        );
+        return;
+      }
+
+      listaCarrito.concat(localStorage.getItem("listaCarrito"));
+      listaCarrito.push({
+        idProducto: idProducto,
+        cantidad: cantidad,
+        size: size,
+        color: color,
+      });
+      localStorage.setItem("listaCarrito", JSON.stringify(listaCarrito));
+      alertaPerzanalizada("PRODUCTO AGREGADO AL CARRITO", "success");
+      cantidadCarrito();
+    }
+  };
 }
 
 function cantidadCarrito() {
@@ -146,7 +150,7 @@ function getListaCarrito() {
             base_url + "clientes"
           }" class="btn btn-solid btn-sm ">Comprar</a>`;
         } else {
-          acciones = `<a href="#" onclick="openAccount()" class="btn btn-solid btn-sm ">login</a>`;
+          acciones = `<a href="javascript:;" onclick="openAccount()" class="btn btn-solid btn-sm ">login</a>`;
         }
         let html = "";
         res.productos.forEach((producto) => {
@@ -154,13 +158,13 @@ function getListaCarrito() {
             producto.stock == "Ilimitado" ? "" : `max="${producto.stock}"`;
           html += `<li>
                     <div class="media">
-                      <a href="#">
+                      <a href="javascript:;">
                         <img alt="megastore1" class="me-3" src="${
                           base_url + producto.imagen
                         }">
                       </a>
                       <div class="media-body">
-                        <a href="#">
+                        <a href="javascript:;">
                           <h6>${producto.nombre}</h6>
                           <p>${producto.atributo}</p>
                         </a>
@@ -224,13 +228,13 @@ function getListaDeseo() {
             producto.stock == "Ilimitado" ? "" : `max="${producto.stock}"`;
           html += `<li>
                     <div class="media">
-                      <a href="#">
+                      <a href="javascript:;">
                         <img alt="megastore1" class="me-3" src="${
                           base_url + producto.imagen
                         }">
                       </a>
                       <div class="media-body">
-                        <a href="#">
+                        <a href="javascript:;">
                           <h6>${producto.nombre}</h6>
                           <p>${producto.atributo}</p>
                         </a>
@@ -371,7 +375,6 @@ function incrementarCantidad(idProducto, cantidad, size, color) {
   getListaCarrito();
 }
 
-
 function verDetalle(idProducto) {
   const url = base_url + "principal/getProducto/" + idProducto;
   const http = new XMLHttpRequest();
@@ -382,34 +385,39 @@ function verDetalle(idProducto) {
       const res = JSON.parse(this.responseText);
       document.querySelector("#idSize").value = "";
       document.querySelector("#idColor").value = "";
-      
-      let imagenesSliderHTML = '';
-      let miniaturasHTML = '';
-      
+
+      let imagenesSliderHTML = "";
+      let miniaturasHTML = "";
+
       if (res.imagenes && res.imagenes.length > 0) {
         res.imagenes.forEach((imagen, index) => {
           const rutaImagen = `${base_url}assets/images/productos/${res.producto.id}/${imagen}`;
-          
+
           imagenesSliderHTML += `
-            <div class="dtl-slide ${index === 0 ? 'active' : ''}" data-image="${rutaImagen}">
+            <div class="dtl-slide ${
+              index === 0 ? "active" : ""
+            }" data-image="${rutaImagen}">
               <img src="${rutaImagen}" 
                    alt="${res.producto.nombre}" 
                    class="dtl-zoom-image"
                    onerror="this.src='${base_url}assets/images/productos/product.png'">
             </div>`;
-          
+
           miniaturasHTML += `
-            <div class="dtl-thumbnail ${index === 0 ? 'active' : ''}" onclick="cambiarImagenModal(${index})">
+            <div class="dtl-thumbnail ${
+              index === 0 ? "active" : ""
+            }" onclick="cambiarImagenModal(${index})">
               <img src="${rutaImagen}" 
                    alt="${res.producto.nombre}"
                    onerror="this.src='${base_url}assets/images/productos/product.png'">
             </div>`;
         });
       } else {
-        const imagenProducto = (res.producto.imagen && res.producto.imagen.trim() !== '') 
-          ? base_url + res.producto.imagen 
-          : base_url + 'assets/images/productos/product.png';
-        
+        const imagenProducto =
+          res.producto.imagen && res.producto.imagen.trim() !== ""
+            ? base_url + res.producto.imagen
+            : base_url + "assets/images/productos/product.png";
+
         imagenesSliderHTML = `
           <div class="dtl-slide active" data-image="${imagenProducto}">
             <img src="${imagenProducto}" 
@@ -417,7 +425,7 @@ function verDetalle(idProducto) {
                  class="dtl-zoom-image"
                  onerror="this.src='${base_url}assets/images/productos/product.png'">
           </div>`;
-        
+
         miniaturasHTML = `
           <div class="dtl-thumbnail active">
             <img src="${imagenProducto}" 
@@ -425,29 +433,41 @@ function verDetalle(idProducto) {
                  onerror="this.src='${base_url}assets/images/productos/product.png'">
           </div>`;
       }
-      
+
       const showArrows = res.imagenes && res.imagenes.length > 1;
-      
+
       // Estrellas
       let uno = res.calificacion >= 1 ? "text-warning" : "text-muted";
       let dos = res.calificacion >= 2 ? "text-warning" : "text-muted";
       let tres = res.calificacion >= 3 ? "text-warning" : "text-muted";
       let cuatro = res.calificacion >= 4 ? "text-warning" : "text-muted";
       let cinco = res.calificacion == 5 ? "text-warning" : "text-muted";
-      
+
       // Crear tallas
       let contentSize = "";
       if (!res.tiene_stock) {
+        // NUEVO ALERT CON WHATSAPP DINÁMICO
+        const whatsappNumber = res.whatsapp.replace(/[^0-9]/g, ""); // Limpiar formato
+
+        const mensaje = encodeURIComponent(
+          `Hola! Me interesa el producto: ${res.producto.nombre}. ¿Tienen disponibilidad?`
+        );
+        const whatsappLink = `https://wa.me/${whatsappNumber}?text=${mensaje}`;
+
         contentSize = `
-          <div class="dtl-alert-warning">
-            <div class="dtl-alert-icon">
-              <i class="fa fa-exclamation-triangle"></i>
-            </div>
-            <div class="dtl-alert-content">
-              <strong>Sin Stock</strong>
-              <p>Este producto no está disponible.</p>
-            </div>
-          </div>`;
+      <div class="dtl-alert-whatsapp">
+        <div class="dtl-whatsapp-icon">
+          <i class="fa fa-whatsapp"></i>
+        </div>
+        <div class="dtl-whatsapp-content">
+          <strong>¿No encuentras tu talla?</strong>
+          <p>Consúltanos por WhatsApp y te ayudamos</p>
+          <a href="${whatsappLink}" target="_blank" class="dtl-whatsapp-btn">
+            <i class="fa fa-whatsapp"></i>
+            Consultar disponibilidad
+          </a>
+        </div>
+      </div>`;
       } else if (res.sizes.length > 0) {
         res.sizes.forEach((size) => {
           if (size.stock_disponible > 0) {
@@ -465,7 +485,7 @@ function verDetalle(idProducto) {
           }
         });
       }
-      
+
       document.querySelector("#content-quick").innerHTML = `
         <div class="col-lg-5 col-xs-12">
           <div class="dtl-product-gallery">
@@ -476,7 +496,9 @@ function verDetalle(idProducto) {
               </div>
             </div>
             
-            ${showArrows ? `
+            ${
+              showArrows
+                ? `
             <div class="dtl-thumbnails-wrapper">
               <button class="dtl-thumb-arrow dtl-thumb-prev" onclick="navegarMiniaturas(-1)">
                 <i class="fa fa-chevron-left"></i>
@@ -490,18 +512,24 @@ function verDetalle(idProducto) {
                 <i class="fa fa-chevron-right"></i>
               </button>
             </div>
-            ` : `
+            `
+                : `
             <div class="dtl-thumbnails-container">
               ${miniaturasHTML}
             </div>
-            `}
+            `
+            }
           </div>
         </div>
         
         <div class="col-lg-7">
           <div class="product-right">
-            <h2 style="font-size: 22px; margin-bottom: 8px;">${res.producto.nombre}</h2>
-            <div class="dtl-price">${res.moneda + " " + res.producto.precio_venta}</div>
+            <h2 style="font-size: 22px; margin-bottom: 8px;">${
+              res.producto.nombre
+            }</h2>
+            <div class="dtl-price">${
+              res.moneda + " " + res.producto.precio_venta
+            }</div>
             <div class="revieu-box">
               <ul>
                 <li><i class="${uno} fa fa-star"></i></li>
@@ -510,7 +538,7 @@ function verDetalle(idProducto) {
                 <li><i class="${cuatro} fa fa-star"></i></li>
                 <li><i class="${cinco} fa fa-star"></i></li>
               </ul>
-              <a href="#"><span>(${res.totalCantidad} reviews)</span></a>
+              <a href="javascript:;"><span>(${res.totalCantidad} reviews)</span></a>
             </div>
             
             <p class="dtl-description">${res.producto.descripcion}</p>
@@ -518,7 +546,9 @@ function verDetalle(idProducto) {
             <h6 class="dtl-section-title"><i class="fa fa-ruler-combined"></i> Tamaño</h6>
             <div class="dtl-size-container">${contentSize}</div>
             
-            ${res.tiene_stock ? `
+            ${
+              res.tiene_stock
+                ? `
             <h6 class="dtl-section-title"><i class="fa fa-palette"></i> Color</h6>
             <div id="content-color">
               <div class="dtl-select-size-msg">
@@ -545,93 +575,98 @@ function verDetalle(idProducto) {
                 <i class="fa fa-heart"></i> Deseos
               </a>
             </div>
-            ` : ''}
+            `
+                : ""
+            }
           </div>
         </div>`;
-      
+
       inicializarZoomInteractivo();
-      
+
       quickview.show();
     }
   };
 }
 
 function inicializarZoomInteractivo() {
-  const container = document.getElementById('zoomContainer');
+  const container = document.getElementById("zoomContainer");
   if (!container) return;
-  
-  container.addEventListener('mousemove', function(e) {
-    const activeSlide = container.querySelector('.dtl-slide.active');
-    const img = activeSlide.querySelector('.dtl-zoom-image');
+
+  container.addEventListener("mousemove", function (e) {
+    const activeSlide = container.querySelector(".dtl-slide.active");
+    const img = activeSlide.querySelector(".dtl-zoom-image");
     if (!img) return;
-    
+
     const rect = container.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width) * 100;
     const y = ((e.clientY - rect.top) / rect.height) * 100;
-    
+
     img.style.transformOrigin = `${x}% ${y}%`;
-    img.style.transform = 'scale(2.5)';
+    img.style.transform = "scale(2.5)";
   });
-  
-  container.addEventListener('mouseleave', function() {
-    const activeSlide = container.querySelector('.dtl-slide.active');
-    const img = activeSlide.querySelector('.dtl-zoom-image');
+
+  container.addEventListener("mouseleave", function () {
+    const activeSlide = container.querySelector(".dtl-slide.active");
+    const img = activeSlide.querySelector(".dtl-zoom-image");
     if (!img) return;
-    
-    img.style.transform = 'scale(1)';
+
+    img.style.transform = "scale(1)";
   });
 }
 
 function cambiarImagenModal(index) {
-  const slides = document.querySelectorAll('.dtl-slide');
-  const thumbnails = document.querySelectorAll('.dtl-thumbnail');
-  
+  const slides = document.querySelectorAll(".dtl-slide");
+  const thumbnails = document.querySelectorAll(".dtl-thumbnail");
+
   slides.forEach((slide, i) => {
-    slide.classList.toggle('active', i === index);
+    slide.classList.toggle("active", i === index);
   });
-  
+
   thumbnails.forEach((thumb, i) => {
-    thumb.classList.toggle('active', i === index);
+    thumb.classList.toggle("active", i === index);
   });
-  
+
   centrarMiniaturaActiva();
 }
 
 let thumbnailScrollPosition = 0;
 
 function navegarMiniaturas(direction) {
-  const container = document.getElementById('thumbnailsContainer');
+  const container = document.getElementById("thumbnailsContainer");
   if (!container) return;
-  
+
   const scrollAmount = 100;
   thumbnailScrollPosition += direction * scrollAmount;
-  
+
   const maxScroll = container.scrollWidth - container.clientWidth;
-  thumbnailScrollPosition = Math.max(0, Math.min(thumbnailScrollPosition, maxScroll));
-  
+  thumbnailScrollPosition = Math.max(
+    0,
+    Math.min(thumbnailScrollPosition, maxScroll)
+  );
+
   container.scrollTo({
     left: thumbnailScrollPosition,
-    behavior: 'smooth'
+    behavior: "smooth",
   });
 }
 
 function centrarMiniaturaActiva() {
-  const container = document.getElementById('thumbnailsContainer');
-  const activeThumb = document.querySelector('.dtl-thumbnail.active');
-  
+  const container = document.getElementById("thumbnailsContainer");
+  const activeThumb = document.querySelector(".dtl-thumbnail.active");
+
   if (!container || !activeThumb) return;
-  
+
   const containerWidth = container.clientWidth;
   const thumbLeft = activeThumb.offsetLeft;
   const thumbWidth = activeThumb.offsetWidth;
-  
-  const scrollPosition = thumbLeft - (containerWidth / 2) + (thumbWidth / 2);
-  
+
+  const scrollPosition = thumbLeft - containerWidth / 2 + thumbWidth / 2;
+
   container.scrollTo({
     left: scrollPosition,
-    behavior: 'smooth'
+    behavior: "smooth",
   });
-  
+
   thumbnailScrollPosition = scrollPosition;
 }
 

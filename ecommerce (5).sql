@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 21-10-2025 a las 01:57:55
+-- Tiempo de generación: 23-10-2025 a las 01:28:39
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -43,7 +43,7 @@ CREATE TABLE `almacenes` (
 --
 
 INSERT INTO `almacenes` (`id`, `nombre`, `codigo`, `direccion`, `id_sucursal`, `estado`, `created_at`, `updated_at`) VALUES
-(1, 'Almacén Central', 'A001', 'Zona Industrial #100', 1, 1, '2025-10-02 15:21:45', '2025-10-02 15:21:45'),
+(1, 'Almacén Central', 'A00', 'Zona Industrial #100', 1, 1, '2025-10-02 15:21:45', '2025-10-22 12:31:24'),
 (2, 'Bodega Sucursal Central', 'A002', 'Av. Principal #123 - Subsuelo', 1, 1, '2025-10-02 15:21:45', '2025-10-02 15:21:45'),
 (3, 'Bodega Norte', 'A003', 'Av. Norte #456 - Depósito', 2, 1, '2025-10-02 15:21:45', '2025-10-02 15:21:45');
 
@@ -103,11 +103,13 @@ INSERT INTO `categorias` (`id`, `categoria`, `slug`, `imagen`, `estado`) VALUES
 
 CREATE TABLE `clientes` (
   `id` int(11) NOT NULL,
+  `documento` varchar(50) DEFAULT NULL,
   `nombre` varchar(150) DEFAULT NULL,
   `apellido` varchar(100) DEFAULT NULL,
   `correo` varchar(80) NOT NULL,
   `telefono` varchar(15) DEFAULT NULL,
   `direccion` varchar(150) DEFAULT NULL,
+  `tipo_cliente` enum('final','mayorista') DEFAULT 'final',
   `clave` varchar(100) DEFAULT NULL,
   `perfil` varchar(100) NOT NULL DEFAULT 'default.png',
   `token` varchar(100) DEFAULT NULL,
@@ -121,9 +123,10 @@ CREATE TABLE `clientes` (
 -- Volcado de datos para la tabla `clientes`
 --
 
-INSERT INTO `clientes` (`id`, `nombre`, `apellido`, `correo`, `telefono`, `direccion`, `clave`, `perfil`, `token`, `verify`, `estado`, `accion`, `metodo`) VALUES
-(1, 'ANGEL', 'SIFUENTES', 'info@angelsifuentes.net', NULL, NULL, '$2y$10$viOqVFp82XOVmMqUM9EScu.5vPOGDWhKpidWdJtAaSPyd/4OauOiq', 'default.png', '0bf9395070f9f3077843dda3930ef0e2', 1, 1, 'PRINCIPAL', 'directo'),
-(2, 'luis', 'santnader', 'luissantander2002@gmail.com', NULL, NULL, '$2y$10$EdtPiH2bBT7paVdqtWJnpO.ZZ1Dl8/GKjFfMLzPL2Ep60NiUbgAWO', 'default.png', NULL, 1, 1, 'PRINCIPAL', 'directo');
+INSERT INTO `clientes` (`id`, `documento`, `nombre`, `apellido`, `correo`, `telefono`, `direccion`, `tipo_cliente`, `clave`, `perfil`, `token`, `verify`, `estado`, `accion`, `metodo`) VALUES
+(1, '01', 'prueba', 'sa', 'prueba@gmail.com', '76786', 'ASDAD', 'final', '$2y$10$viOqVFp82XOVmMqUM9EScu.5vPOGDWhKpidWdJtAaSPyd/4OauOiq', 'default.png', '0bf9395070f9f3077843dda3930ef0e2', 1, 1, 'PRINCIPAL', 'directo'),
+(2, '0', 'luis', 'santnader', 'luissantander2002@gmail.com', '', '', 'mayorista', '$2y$10$EdtPiH2bBT7paVdqtWJnpO.ZZ1Dl8/GKjFfMLzPL2Ep60NiUbgAWO', 'default.png', NULL, 1, 1, 'PRINCIPAL', 'directo'),
+(3, '0000', 'luis', 'josue', 'luis@gmail.com', '76593917', 'Av Miraflores 123 Zona Saavedra', 'final', '$2y$10$tQmpfe3nYUpk5MCGvZaJQOa5tqJavDTAFACZpOyukKQhqq4VA80iK', 'default.png', '19ff31020abd6906f2f975a3e77e07c7', 0, 1, 'PRINCIPAL', 'directo');
 
 -- --------------------------------------------------------
 
@@ -179,7 +182,8 @@ CREATE TABLE `compras` (
 INSERT INTO `compras` (`id`, `numero_compra`, `tipo_comprobante`, `total`, `descuento`, `fecha`, `estado`, `id_proveedor`, `id_almacen`, `id_usuario`) VALUES
 (1, 'COMP-20251014-0001', 'FACTURA', 2000.00, 0.00, '2025-10-14 00:06:19', 'COMPLETADO', 1, 1, 1),
 (4, 'COMP-25-1', 'FACTURA', 500.00, 0.00, '2025-10-14 00:15:00', 'COMPLETADO', 1, 1, 1),
-(5, 'COMP-25-2', 'FACTURA', 500.00, 0.00, '2025-10-14 00:35:01', 'ANULADO', 1, 2, 1);
+(5, 'COMP-25-2', 'FACTURA', 500.00, 0.00, '2025-10-14 00:35:01', 'ANULADO', 1, 2, 1),
+(6, 'COMP-25-3', 'FACTURA', 50.00, 0.00, '2025-10-21 16:08:00', 'COMPLETADO', 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -207,7 +211,7 @@ CREATE TABLE `configuracion` (
 --
 
 INSERT INTO `configuracion` (`id`, `ruc`, `nombre`, `telefono`, `correo`, `direccion`, `mensaje`, `whatsapp`, `facebook`, `twitter`, `instagram`, `ubicacion`) VALUES
-(1, '7084984', 'Mastec', '5032124', 'info@angelsifuentes.net', 'AV. SIN NUMERO', 'GRACIAS POR LA PREFERENCIA', '7086901', 'https://es-la.facebook.com/', 'https://twitter.com/', 'https://www.instagram.com/', '<iframe src=\"https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d239.08977841968385!2d-68.13066968552305!3d-16.504049027961628!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTbCsDMwJzE0LjgiUyA2OMKwMDcnNTAuNiJX!5e0!3m2!1ses-419!2sbo!4v1760455991442!5m2!1ses-419!2sbo\" width=\"400\" height=\"300\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"></iframe>');
+(1, '7084984', 'Mastec', '59176593917', 'info@angelsifuentes.net', 'AV. SIN NUMERO', 'GRACIAS POR LA PREFERENCIA', '59176593917', 'https://es-la.facebook.com/', 'https://twitter.com/', 'https://www.instagram.com/', '<iframe src=\"https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d239.08977841968385!2d-68.13066968552305!3d-16.504049027961628!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTbCsDMwJzE0LjgiUyA2OMKwMDcnNTAuNiJX!5e0!3m2!1ses-419!2sbo!4v1760455991442!5m2!1ses-419!2sbo\" width=\"400\" height=\"300\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"></iframe>');
 
 -- --------------------------------------------------------
 
@@ -234,7 +238,8 @@ CREATE TABLE `detalle_compras` (
 INSERT INTO `detalle_compras` (`id`, `id_compra`, `id_producto`, `id_talla_color`, `producto`, `cantidad`, `precio_compra`, `descuento`, `subtotal`) VALUES
 (1, 1, 6, 13, 'Tenis Nike Air Max', 100, 20.00, 0.00, 2000.00),
 (2, 4, 6, 34, 'Tenis Nike Air Max', 10, 50.00, 0.00, 500.00),
-(3, 5, 6, 35, 'Tenis Nike Air Max', 10, 50.00, 0.00, 500.00);
+(3, 5, 6, 35, 'Tenis Nike Air Max', 10, 50.00, 0.00, 500.00),
+(4, 6, 6, 13, 'Tenis Nike Air Max', 1, 50.00, 0.00, 50.00);
 
 -- --------------------------------------------------------
 
@@ -265,7 +270,15 @@ INSERT INTO `detalle_pedidos` (`id`, `producto`, `precio`, `cantidad`, `id_pedid
 (20, 'Tenis Adidas Ultraboost', 450.00, 1, 18, 29, 7),
 (21, 'Tenis Nike Air Max', 50.00, 1, 19, 13, 6),
 (22, 'Tenis Nike Air Max', 50.00, 1, 20, 13, 6),
-(23, 'Tenis Nike Air Max', 50.00, 2, 21, 13, 6);
+(23, 'Tenis Nike Air Max', 50.00, 2, 21, 13, 6),
+(24, 'Tenis Nike Air Max', 50.00, 1, 22, 17, 6),
+(25, 'Tenis Adidas Ultraboost', 450.00, 1, 23, 29, 7),
+(26, 'Tenis Adidas Ultraboost', 450.00, 1, 24, 29, 7),
+(27, 'Tenis Adidas Ultraboost', 450.00, 1, 25, 29, 7),
+(28, 'Tenis Nike Air Max', 50.00, 1, 26, 13, 6),
+(29, 'Tenis Nike Air Max', 50.00, 1, 27, 17, 6),
+(30, 'Tenis Nike Air Max', 50.00, 1, 28, 18, 6),
+(31, 'Tenis Nike Air Max', 50.00, 1, 28, 13, 6);
 
 -- --------------------------------------------------------
 
@@ -289,27 +302,8 @@ CREATE TABLE `detalle_traspasos` (
 
 INSERT INTO `detalle_traspasos` (`id`, `id_traspaso`, `id_producto`, `id_talla_color_origen`, `id_talla_color_destino`, `producto`, `cantidad`) VALUES
 (1, 1, 6, 13, 36, 'Tenis Nike Air Max', 1),
-(2, 2, 6, 34, 35, 'Tenis Nike Air Max', 5);
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `inventarios`
---
-
-CREATE TABLE `inventarios` (
-  `id` int(11) NOT NULL,
-  `id_producto` int(11) NOT NULL,
-  `id_talla` int(11) NOT NULL,
-  `id_color` int(11) NOT NULL,
-  `id_almacen` int(11) NOT NULL,
-  `cantidad` int(11) DEFAULT 0,
-  `precio_compra` decimal(10,2) DEFAULT 0.00,
-  `precio_venta` decimal(10,2) DEFAULT 0.00,
-  `estado` tinyint(4) DEFAULT 1,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+(2, 2, 6, 34, 35, 'Tenis Nike Air Max', 5),
+(3, 3, 6, 13, 36, 'Tenis Nike Air Max', 1);
 
 -- --------------------------------------------------------
 
@@ -355,7 +349,7 @@ CREATE TABLE `pedidos` (
   `direccion` varchar(255) DEFAULT NULL,
   `ciudad` varchar(50) DEFAULT NULL,
   `id_cliente` int(11) NOT NULL,
-  `proceso` enum('1','2','3') NOT NULL DEFAULT '1'
+  `proceso` enum('1','2','3') DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -363,13 +357,61 @@ CREATE TABLE `pedidos` (
 --
 
 INSERT INTO `pedidos` (`id`, `id_transaccion`, `metodo`, `monto`, `estado`, `fecha`, `email`, `nombre`, `apellido`, `direccion`, `ciudad`, `id_cliente`, `proceso`) VALUES
-(15, 'LLEVAR-68ea565ea5fe7', 'LLEVAR', 450.00, 'PENDIENTE', '2025-10-11 15:06:38', 'luissantander2002@gmail.com', 'luis', 'santnader', NULL, NULL, 2, '3'),
+(15, 'LLEVAR-68ea565ea5fe7', 'LLEVAR', 450.00, 'COMPLETADO', '2025-10-11 15:06:38', 'luissantander2002@gmail.com', 'luis', 'santnader', NULL, NULL, 2, '3'),
 (16, 'VENTA DIRECTA-68ea56b19140b', 'VENTA DIRECTA', 50.00, 'COMPLETADO', '2025-10-11 15:08:01', '', '', '', NULL, NULL, 1, '1'),
 (17, 'LLEVAR-68ec30122161c', 'LLEVAR', 150.00, 'COMPLETADO', '2025-10-13 00:47:46', 'luissantander2002@gmail.com', 'luis', 'santnader', NULL, NULL, 2, '3'),
 (18, 'VENTA DIRECTA-68ec306a804d1', 'VENTA DIRECTA', 500.00, 'COMPLETADO', '2025-10-13 00:49:14', '', '', '', NULL, NULL, 1, '1'),
-(19, 'LLEVAR-68eed1422d1e3', 'LLEVAR', 50.00, 'PENDIENTE', '2025-10-15 00:40:02', 'luissantander2002@gmail.com', 'luis', 'santnader', NULL, NULL, 2, '2'),
-(20, 'LLEVAR-68f16fb7502d4', 'LLEVAR', 50.00, 'PENDIENTE', '2025-10-17 00:20:39', 'luissantander2002@gmail.com', 'luis', 'santnader', NULL, NULL, 2, '2'),
-(21, 'VENTA DIRECTA-68f1706db7c5c', 'VENTA DIRECTA', 100.00, 'COMPLETADO', '2025-10-17 00:23:41', '', '', '', NULL, NULL, 1, '1');
+(19, 'LLEVAR-68eed1422d1e3', 'LLEVAR', 50.00, 'PENDIENTE', '2025-10-15 00:40:02', 'luissantander2002@gmail.com', 'luis', 'santnader', NULL, NULL, 2, '1'),
+(20, 'LLEVAR-68f16fb7502d4', 'LLEVAR', 50.00, 'PENDIENTE', '2025-10-17 00:20:39', 'luissantander2002@gmail.com', 'luis', 'santnader', NULL, NULL, 2, '1'),
+(21, 'VENTA DIRECTA-68f1706db7c5c', 'VENTA DIRECTA', 100.00, 'COMPLETADO', '2025-10-17 00:23:41', '', '', '', NULL, NULL, 1, '1'),
+(22, 'VENTA DIRECTA-68f78e23e86bf', 'VENTA DIRECTA', 50.00, 'ANULADO', '2025-10-21 15:44:03', '', '', '', NULL, NULL, 1, '1'),
+(23, 'LLEVAR-68f824883b6ed', 'LLEVAR', 450.00, 'PENDIENTE', '2025-10-22 02:25:44', 'luissantander2002@gmail.com', 'luis', 'santnader', NULL, NULL, 2, '1'),
+(24, 'LLEVAR-68f824bfe738b', 'LLEVAR', 450.00, 'PENDIENTE', '2025-10-22 02:26:39', 'luissantander2002@gmail.com', 'luis', 'santnader', NULL, NULL, 2, '1'),
+(25, 'LLEVAR-68f824e218eff', 'LLEVAR', 450.00, 'PENDIENTE', '2025-10-22 02:27:14', 'luissantander2002@gmail.com', 'luis', 'santnader', NULL, NULL, 2, '1'),
+(26, 'LLEVAR-68f825387ff9c', 'LLEVAR', 50.00, 'PENDIENTE', '2025-10-22 02:28:40', 'luissantander2002@gmail.com', 'luis', 'santnader', NULL, NULL, 2, '1'),
+(27, 'LLEVAR-68f825ddede6f', 'LLEVAR', 50.00, 'PENDIENTE', '2025-10-22 02:31:25', 'luissantander2002@gmail.com', 'luis', 'santnader', NULL, NULL, 2, '3'),
+(28, 'LLEVAR-68f9204d9ca8a', 'LLEVAR', 100.00, 'PENDIENTE', '2025-10-22 20:19:57', 'luissantander2002@gmail.com', 'luis', 'santnader', '', NULL, 2, '1');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `permisos`
+--
+
+CREATE TABLE `permisos` (
+  `id` int(11) NOT NULL,
+  `nombre` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `permisos`
+--
+
+INSERT INTO `permisos` (`id`, `nombre`) VALUES
+(1, 'configuracion'),
+(2, 'usuarios'),
+(3, 'almacenes'),
+(4, 'sucursales'),
+(5, 'sliders'),
+(6, 'promociones'),
+(7, 'productos'),
+(8, 'marcas'),
+(9, 'categorias'),
+(10, 'sizes'),
+(11, 'colores'),
+(12, 'clientes'),
+(13, 'pedidos'),
+(14, 'proveedores'),
+(15, 'compras'),
+(16, 'listar_compras'),
+(17, 'ventas'),
+(18, 'listar_ventas'),
+(19, 'traspasos'),
+(20, 'listar_traspasos'),
+(21, 'reporte_ventas'),
+(22, 'reporte_compras'),
+(23, 'roles'),
+(24, 'stock');
 
 -- --------------------------------------------------------
 
@@ -409,6 +451,33 @@ INSERT INTO `productos` (`id`, `codigo`, `nombre`, `slug`, `descripcion`, `gener
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `promociones`
+--
+
+CREATE TABLE `promociones` (
+  `id` int(11) NOT NULL,
+  `titulo` varchar(150) NOT NULL,
+  `descripcion` text DEFAULT NULL,
+  `imagen` varchar(255) DEFAULT NULL,
+  `link` varchar(255) DEFAULT NULL,
+  `fecha_inicio` date NOT NULL,
+  `fecha_fin` date NOT NULL,
+  `estado` tinyint(4) DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `promociones`
+--
+
+INSERT INTO `promociones` (`id`, `titulo`, `descripcion`, `imagen`, `link`, `fecha_inicio`, `fecha_fin`, `estado`, `created_at`, `updated_at`) VALUES
+(1, 'PROMOCION 3', 'PROMOCION', 'assets/images/promociones/20251022010153.jpg', '', '2025-10-21', '2025-10-24', 1, '2025-10-21 23:00:54', '2025-10-21 23:42:11'),
+(2, 'TENIS PROMCOION HALLOWEN', 'TENNSI HASTA LA FECHA 10 DESCUTOS', 'assets/images/promociones/20251022012424.jpg', '', '2025-10-21', '2025-10-21', 0, '2025-10-21 23:24:24', '2025-10-21 23:45:55');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `proveedores`
 --
 
@@ -431,9 +500,31 @@ CREATE TABLE `proveedores` (
 --
 
 INSERT INTO `proveedores` (`id`, `nombre`, `persona_contacto`, `documento`, `ruc`, `telefono`, `direccion`, `email`, `estado`, `created_at`, `updated_at`) VALUES
-(1, 'Proveedor Nike SAC', 'Juan Pérez', '20123456789', '20123456789', '987654321', 'Av. Los Incas 123, Lima', 'ventas@nike.com', 1, '2025-10-13 22:04:34', '2025-10-13 22:04:34'),
+(1, 'Proveedor Nike SAC', 'Juan Pérez', '20123456789', '20123456789', '987654321', 'Av. Los Incas 123, Lima', 'ventas@nike.com', 1, '2025-10-13 22:04:34', '2025-10-22 12:26:13'),
 (2, 'Distribuidora Adidas EIRL', 'María López', '20987654321', '20987654321', '912345678', 'Jr. Comercio 456, Arequipa', 'contacto@adidas.com', 1, '2025-10-13 22:04:34', '2025-10-13 22:04:34'),
 (3, 'Importaciones Puma SRL', 'Carlos Rodríguez', '20555666777', '20555666777', '998877665', 'Calle Industrial 789, Cusco', 'info@puma.com', 1, '2025-10-13 22:04:34', '2025-10-13 22:04:34');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `roles`
+--
+
+CREATE TABLE `roles` (
+  `id` int(11) NOT NULL,
+  `nombre` varchar(100) NOT NULL,
+  `permisos` text DEFAULT NULL COMMENT 'JSON con permisos asignados',
+  `estado` int(11) NOT NULL DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `roles`
+--
+
+INSERT INTO `roles` (`id`, `nombre`, `permisos`, `estado`, `created_at`) VALUES
+(1, 'ADMINISTRADOR', '[\"almacenes\",\"categorias\",\"clientes\",\"colores\",\"compras\",\"configuracion\",\"listar_compras\",\"listar_traspasos\",\"listar_ventas\",\"marcas\",\"pedidos\",\"productos\",\"promociones\",\"proveedores\",\"reporte_compras\",\"reporte_ventas\",\"sizes\",\"sliders\",\"sucursales\",\"traspasos\",\"usuarios\",\"ventas\",\"roles\",\"stock\"]', 1, '2025-10-22 20:02:43'),
+(2, 'adasd', NULL, 1, '2025-10-22 20:25:30');
 
 -- --------------------------------------------------------
 
@@ -529,23 +620,23 @@ CREATE TABLE `tallas_colores` (
 --
 
 INSERT INTO `tallas_colores` (`id`, `id_talla`, `id_color`, `id_producto`, `id_almacen`, `stock`, `created_at`, `updated_at`) VALUES
-(13, 1, 1, 6, 1, 103, '2025-10-03 16:06:57', '2025-10-16 22:23:41'),
+(13, 1, 1, 6, 1, 99, '2025-10-03 16:06:57', '2025-10-22 18:19:57'),
 (14, 1, 2, 6, 1, 49, '2025-10-03 16:06:57', '2025-10-11 13:08:01'),
 (15, 1, 3, 6, 1, 5, '2025-10-03 16:06:57', '2025-10-11 11:53:41'),
 (16, 1, 4, 6, 1, 5, '2025-10-03 16:06:57', '2025-10-03 16:06:57'),
-(17, 2, 1, 6, 1, 3, '2025-10-03 16:06:57', '2025-10-11 12:01:48'),
-(18, 2, 2, 6, 1, 9, '2025-10-03 16:06:57', '2025-10-12 22:47:46'),
+(17, 2, 1, 6, 1, 2, '2025-10-03 16:06:57', '2025-10-22 00:31:26'),
+(18, 2, 2, 6, 1, 7, '2025-10-03 16:06:57', '2025-10-22 18:19:57'),
 (25, 1, 2, 6, 3, 30, '2025-10-03 16:20:17', '2025-10-07 18:39:19'),
 (26, 2, 3, 6, 3, 0, '2025-10-03 16:20:36', '2025-10-03 16:20:36'),
 (28, 2, 4, 6, 2, 0, '2025-10-03 16:22:48', '2025-10-03 16:22:48'),
-(29, 1, 1, 7, 1, 3, '2025-10-03 17:29:34', '2025-10-12 22:49:14'),
+(29, 1, 1, 7, 1, -1, '2025-10-03 17:29:34', '2025-10-22 14:42:41'),
 (30, 1, 3, 6, 2, 0, '2025-10-03 17:42:26', '2025-10-03 17:42:26'),
 (31, 1, 1, 13, 1, 0, '2025-10-07 15:43:25', '2025-10-11 12:45:38'),
 (32, 1, 2, 13, 1, 0, '2025-10-07 18:48:22', '2025-10-07 18:48:22'),
 (33, 3, 1, 13, 2, 0, '2025-10-07 18:52:27', '2025-10-07 18:52:27'),
 (34, 3, 1, 6, 1, 10, '2025-10-12 14:33:02', '2025-10-14 14:45:03'),
 (35, 3, 1, 6, 2, 0, '2025-10-13 22:35:01', '2025-10-14 14:45:03'),
-(36, 1, 1, 6, 2, 1, '2025-10-14 14:37:48', '2025-10-14 14:37:48');
+(36, 1, 1, 6, 2, 2, '2025-10-14 14:37:48', '2025-10-21 14:24:24');
 
 -- --------------------------------------------------------
 
@@ -591,7 +682,8 @@ CREATE TABLE `traspasos` (
 
 INSERT INTO `traspasos` (`id`, `numero_traspaso`, `total_productos`, `fecha`, `estado`, `id_almacen_origen`, `id_almacen_destino`, `id_usuario`) VALUES
 (1, 'TRSP-25-0001', 1, '2025-10-14 16:37:48', 'COMPLETADO', 1, 2, 1),
-(2, 'TRSP-25-0002', 5, '2025-10-14 16:40:32', 'ANULADO', 1, 2, 1);
+(2, 'TRSP-25-0002', 5, '2025-10-14 16:40:32', 'ANULADO', 1, 2, 1),
+(3, 'TRSP-25-0003', 1, '2025-10-21 16:24:24', 'COMPLETADO', 1, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -604,6 +696,7 @@ CREATE TABLE `usuarios` (
   `nombres` varchar(100) NOT NULL,
   `apellidos` varchar(100) NOT NULL,
   `correo` varchar(100) NOT NULL,
+  `id_rol` int(11) DEFAULT 1,
   `clave` varchar(100) NOT NULL,
   `perfil` varchar(50) DEFAULT NULL,
   `id_sucursal` int(11) DEFAULT NULL,
@@ -616,24 +709,8 @@ CREATE TABLE `usuarios` (
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`id`, `nombres`, `apellidos`, `correo`, `clave`, `perfil`, `id_sucursal`, `estado`, `created_at`, `updated_at`) VALUES
-(1, 'Luis', 'Sant', 'luissantander2002@gmail.com', '$2y$10$rdZI4KwCTlG0ERv9TTd0BuJzw3kB74H5NWBisLS4nV.3martitd/6', 'assets/images/perfil/20230326174601.jpg', 1, 1, '2025-10-02 15:23:03', '2025-10-20 23:51:39');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `ventas`
---
-
-CREATE TABLE `ventas` (
-  `id` int(11) NOT NULL,
-  `productos` longtext NOT NULL,
-  `total` decimal(10,2) NOT NULL,
-  `fecha` datetime NOT NULL,
-  `estado` int(11) NOT NULL DEFAULT 1,
-  `id_cliente` int(11) NOT NULL,
-  `id_usuario` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+INSERT INTO `usuarios` (`id`, `nombres`, `apellidos`, `correo`, `id_rol`, `clave`, `perfil`, `id_sucursal`, `estado`, `created_at`, `updated_at`) VALUES
+(1, 'Luis', 'Sant', 'luissantander2002@gmail.com', 1, '$2y$10$rdZI4KwCTlG0ERv9TTd0BuJzw3kB74H5NWBisLS4nV.3martitd/6', 'assets/images/perfil/20230326174601.jpg', 1, 1, '2025-10-02 15:23:03', '2025-10-22 22:28:10');
 
 --
 -- Índices para tablas volcadas
@@ -663,7 +740,8 @@ ALTER TABLE `categorias`
 -- Indices de la tabla `clientes`
 --
 ALTER TABLE `clientes`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `documento_unique` (`documento`);
 
 --
 -- Indices de la tabla `colores`
@@ -714,16 +792,6 @@ ALTER TABLE `detalle_traspasos`
   ADD KEY `id_talla_color_destino` (`id_talla_color_destino`);
 
 --
--- Indices de la tabla `inventarios`
---
-ALTER TABLE `inventarios`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `id_producto` (`id_producto`),
-  ADD KEY `id_talla` (`id_talla`),
-  ADD KEY `id_color` (`id_color`),
-  ADD KEY `id_almacen` (`id_almacen`);
-
---
 -- Indices de la tabla `marcas`
 --
 ALTER TABLE `marcas`
@@ -734,6 +802,12 @@ ALTER TABLE `marcas`
 -- Indices de la tabla `pedidos`
 --
 ALTER TABLE `pedidos`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `permisos`
+--
+ALTER TABLE `permisos`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -748,6 +822,12 @@ ALTER TABLE `productos`
   ADD KEY `id_sucursal` (`id_sucursal`);
 
 --
+-- Indices de la tabla `promociones`
+--
+ALTER TABLE `promociones`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `proveedores`
 --
 ALTER TABLE `proveedores`
@@ -755,6 +835,12 @@ ALTER TABLE `proveedores`
   ADD UNIQUE KEY `documento` (`documento`),
   ADD KEY `idx_nombre` (`nombre`),
   ADD KEY `idx_estado` (`estado`);
+
+--
+-- Indices de la tabla `roles`
+--
+ALTER TABLE `roles`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `sliders`
@@ -809,12 +895,6 @@ ALTER TABLE `usuarios`
   ADD KEY `fk_usuario_sucursal` (`id_sucursal`);
 
 --
--- Indices de la tabla `ventas`
---
-ALTER TABLE `ventas`
-  ADD PRIMARY KEY (`id`);
-
---
 -- AUTO_INCREMENT de las tablas volcadas
 --
 
@@ -840,7 +920,7 @@ ALTER TABLE `categorias`
 -- AUTO_INCREMENT de la tabla `clientes`
 --
 ALTER TABLE `clientes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `colores`
@@ -852,7 +932,7 @@ ALTER TABLE `colores`
 -- AUTO_INCREMENT de la tabla `compras`
 --
 ALTER TABLE `compras`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `configuracion`
@@ -864,25 +944,19 @@ ALTER TABLE `configuracion`
 -- AUTO_INCREMENT de la tabla `detalle_compras`
 --
 ALTER TABLE `detalle_compras`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `detalle_pedidos`
 --
 ALTER TABLE `detalle_pedidos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT de la tabla `detalle_traspasos`
 --
 ALTER TABLE `detalle_traspasos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT de la tabla `inventarios`
---
-ALTER TABLE `inventarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `marcas`
@@ -894,7 +968,13 @@ ALTER TABLE `marcas`
 -- AUTO_INCREMENT de la tabla `pedidos`
 --
 ALTER TABLE `pedidos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+
+--
+-- AUTO_INCREMENT de la tabla `permisos`
+--
+ALTER TABLE `permisos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
@@ -903,10 +983,22 @@ ALTER TABLE `productos`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
+-- AUTO_INCREMENT de la tabla `promociones`
+--
+ALTER TABLE `promociones`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT de la tabla `proveedores`
 --
 ALTER TABLE `proveedores`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT de la tabla `roles`
+--
+ALTER TABLE `roles`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `sliders`
@@ -942,19 +1034,13 @@ ALTER TABLE `testimonial`
 -- AUTO_INCREMENT de la tabla `traspasos`
 --
 ALTER TABLE `traspasos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT de la tabla `ventas`
---
-ALTER TABLE `ventas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Restricciones para tablas volcadas
@@ -971,15 +1057,6 @@ ALTER TABLE `almacenes`
 --
 ALTER TABLE `detalle_pedidos`
   ADD CONSTRAINT `detalle_pedidos_ibfk_1` FOREIGN KEY (`id_pedido`) REFERENCES `pedidos` (`id`);
-
---
--- Filtros para la tabla `inventarios`
---
-ALTER TABLE `inventarios`
-  ADD CONSTRAINT `inventarios_ibfk_1` FOREIGN KEY (`id_producto`) REFERENCES `productos` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `inventarios_ibfk_2` FOREIGN KEY (`id_talla`) REFERENCES `tallas` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `inventarios_ibfk_3` FOREIGN KEY (`id_color`) REFERENCES `colores` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `inventarios_ibfk_4` FOREIGN KEY (`id_almacen`) REFERENCES `almacenes` (`id`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `productos`

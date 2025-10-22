@@ -3,7 +3,7 @@
 <footer class="ft-main">
   <div class="ft-container">
     <div class="ft-grid">
-      
+
       <!-- Columna Logo y Descripción -->
       <div class="ft-column ft-brand">
         <div class="ft-logo-wrapper">
@@ -31,8 +31,6 @@
         <ul class="ft-links">
           <li><a href="<?php echo BASE_URL; ?>" class="ft-link">Inicio</a></li>
           <li><a href="<?php echo BASE_URL . 'principal/shop'; ?>" class="ft-link">Tienda</a></li>
-          <li><a href="<?php echo BASE_URL . 'principal/about'; ?>" class="ft-link">Servicios</a></li>
-          <li><a href="<?php echo BASE_URL . 'principal/contactos'; ?>" class="ft-link">Contacto</a></li>
         </ul>
       </div>
 
@@ -84,7 +82,7 @@
       <div class="modal-body">
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         <div class="row" id="content-quick">
-          
+
         </div>
         <input type="hidden" id="idSize">
         <input type="hidden" id="idColor">
@@ -93,6 +91,20 @@
   </div>
 </div>
 <!-- Quick-view modal popup end-->
+
+<!-- Modal Promociones start-->
+<div class="modal fade bd-example-modal-lg" id="modal-promociones" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body p-0" id="content-promociones">
+        <button type="button" class="btn-close position-absolute top-0 end-0 m-3 z-index-1" data-bs-dismiss="modal"
+          aria-label="Close" style="z-index: 9999;"></button>
+        <!-- Aquí se cargarán las promociones dinámicamente -->
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal Promociones end-->
 
 <!-- Add to cart bar -->
 <div id="cart_side" class="add_to_cart right">
@@ -129,7 +141,7 @@
       </div>
     </div>
     <div class="cart_media">
-    <ul class="cart_product" id="contentListaDeseo">
+      <ul class="cart_product" id="contentListaDeseo">
       </ul>
       <ul class="cart_total" id="contentTotalDeseo">
       </ul>
@@ -154,7 +166,7 @@
       <span id="errorLogin" class=""></span>
       <div class="form-group mt-2">
         <label for="correoLogin">Correo electrónico</label>
-        <input type="text" class="form-control" id="correoLogin"  name="correoLogin"placeholder="Correo electrónico">
+        <input type="text" class="form-control" id="correoLogin" name="correoLogin" placeholder="Correo electrónico">
       </div>
       <div class="form-group">
         <label for="claveLogin">Contraseña</label>
@@ -218,3 +230,4 @@
 <!-- Theme js-->
 <script src="<?php echo BASE_URL; ?>assets/js/script.js"></script>
 <script src="<?php echo BASE_URL; ?>assets/js/modal.js"></script>
+<script src="<?php echo BASE_URL; ?>assets/js/promociones.js"></script>

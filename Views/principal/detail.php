@@ -146,7 +146,7 @@
                                     <div class="media-banner plrb-0 b-g-white1 border-0">
                                         <div class="media-banner-box">
                                             <div class="media">
-                                                <a href="#" tabindex="0">
+                                                <a href="javascript:;" tabindex="0">
                                                     <img src="<?php echo $imagenProducto; ?>" class="img-fluid"
                                                         alt="banner">
                                                 </a>
@@ -168,7 +168,7 @@
                                                                     <i class="<?php echo $cuatro; ?> fa fa-star"></i>
                                                                     <i class="<?php echo $cinco; ?> fa fa-star"></i>
                                                                 </ul>
-                                                                <a href="#" tabindex="0">
+                                                                <a href="javascript:;" tabindex="0">
                                                                     <p><?php echo $producto['nombre']; ?></p>
                                                                 </a>
                                                                 <h6><?php echo MONEDA . $producto['precio_venta']; ?></h6>
@@ -278,14 +278,16 @@
                                 <div class="product-right">
                                     <input type="hidden" id="idSize" value="">
                                     <input type="hidden" id="idColor" value="">
-                                    
+
                                     <!-- Nombre del Producto -->
                                     <h2 style="font-size: 22px; margin-bottom: 8px;">
-                                        <?php echo $data['producto']['nombre']; ?></h2>
+                                        <?php echo $data['producto']['nombre']; ?>
+                                    </h2>
 
                                     <!-- Precio -->
                                     <div class="dtl-price">
-                                        <?php echo MONEDA . ' ' . $data['producto']['precio_venta']; ?></div>
+                                        <?php echo MONEDA . ' ' . $data['producto']['precio_venta']; ?>
+                                    </div>
 
                                     <!-- Reviews -->
                                     <div class="revieu-box">
@@ -303,81 +305,94 @@
                                             <li><i class="<?php echo $cuatro; ?> fa fa-star"></i></li>
                                             <li><i class="<?php echo $cinco; ?> fa fa-star"></i></li>
                                         </ul>
-                                        <a href="#"><span>(<?php echo $data['reviews']; ?> reviews)</span></a>
+                                        <a href="javascript:;"><span>(<?php echo $data['reviews']; ?> reviews)</span></a>
                                     </div>
 
                                     <!-- Descripción -->
                                     <p class="dtl-description"><?php echo $data['producto']['descripcion']; ?></p>
-
                                     <!-- Tamaño -->
                                     <h6 class="dtl-section-title"><i class="fa fa-ruler-combined"></i> Tamaño</h6>
                                     <div class="dtl-size-container" id="sizesContainerDetail">
-                                        <?php 
-                                        if (!$data['tiene_stock']) { ?>
-                                            <div class="dtl-alert-warning">
-                                                <div class="dtl-alert-icon">
-                                                    <i class="fa fa-exclamation-triangle"></i>
+                                        <?php
+                                        if (!$data['tiene_stock']) {
+                                            $whatsappNumber = preg_replace('/[^0-9]/', '', $data['whatsapp']);
+
+                                            $mensaje = urlencode("Hola! Me interesa el producto: " . $data['producto']['nombre'] . ". ¿Tienen disponibilidad?");
+                                            $whatsappLink = "https://wa.me/{$whatsappNumber}?text={$mensaje}";
+                                            ?>
+                                            <div class="dtl-alert-whatsapp">
+                                                <div class="dtl-whatsapp-icon">
+                                                    <i class="fa fa-whatsapp"></i>
                                                 </div>
-                                                <div class="dtl-alert-content">
-                                                    <strong>Sin Stock</strong>
-                                                    <p>Este producto no está disponible.</p>
+                                                <div class="dtl-whatsapp-content">
+                                                    <strong>¿No encuentras tu talla?</strong>
+                                                    <p>Consúltanos por WhatsApp y te ayudamos</p>
+                                                    <a href="<?php echo $whatsappLink; ?>" target="_blank"
+                                                        class="dtl-whatsapp-btn">
+                                                        <i class="fa fa-whatsapp"></i>
+                                                        Consultar disponibilidad
+                                                    </a>
                                                 </div>
                                             </div>
                                         <?php } else {
-                                            foreach ($data['sizes'] as $size) { 
+                                            foreach ($data['sizes'] as $size) {
                                                 if ($size['stock_disponible'] > 0) { ?>
                                                     <label class="dtl-size-btn-detail dtl-size-available-detail">
-                                                        <input type="radio" name="sizeDetail" data-id="<?php echo $size['id']; ?>" 
+                                                        <input type="radio" name="sizeDetail" data-id="<?php echo $size['id']; ?>"
                                                             onclick="coloresDisponibleDetail(<?php echo $data['producto']['id']; ?>, <?php echo $size['id']; ?>)">
-                                                        <span class="dtl-size-label-detail"><?php echo $size['nombre_corto']; ?></span>
-                                                        <span class="dtl-stock-badge-detail"><?php echo $size['stock_disponible']; ?> unid.</span>
+                                                        <span
+                                                            class="dtl-size-label-detail"><?php echo $size['nombre_corto']; ?></span>
+                                                        <span
+                                                            class="dtl-stock-badge-detail"><?php echo $size['stock_disponible']; ?>
+                                                            unid.</span>
                                                     </label>
                                                 <?php } else { ?>
                                                     <label class="dtl-size-btn-detail dtl-size-disabled-detail">
                                                         <input type="radio" name="sizeDetail" disabled>
-                                                        <span class="dtl-size-label-detail"><?php echo $size['nombre_corto']; ?></span>
+                                                        <span
+                                                            class="dtl-size-label-detail"><?php echo $size['nombre_corto']; ?></span>
                                                         <span class="dtl-size-cross-detail">✕</span>
                                                     </label>
-                                                <?php } 
-                                            } 
+                                                <?php }
+                                            }
                                         } ?>
                                     </div>
 
                                     <?php if ($data['tiene_stock']) { ?>
-                                    <!-- Color -->
-                                    <h6 class="dtl-section-title"><i class="fa fa-palette"></i> Color</h6>
-                                    <div id="content-color-detail">
-                                        <div class="dtl-select-size-msg">
-                                            <i class="fa fa-hand-point-up"></i> Selecciona una talla primero
+                                        <!-- Color -->
+                                        <h6 class="dtl-section-title"><i class="fa fa-palette"></i> Color</h6>
+                                        <div id="content-color-detail">
+                                            <div class="dtl-select-size-msg">
+                                                <i class="fa fa-hand-point-up"></i> Selecciona una talla primero
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <!-- Cantidad -->
-                                    <h6 class="dtl-section-title"><i class="fa fa-sort-numeric-up"></i> Cantidad</h6>
-                                    <div class="dtl-quantity-box">
-                                        <button class="dtl-qty-btn" onclick="modificarStockQuick(0, 'quantitydetail')">
-                                            <i class="fa fa-minus"></i>
-                                        </button>
-                                        <input class="dtl-qty-input" type="number" min="1" value="1"
-                                            id="quantitydetail">
-                                        <button class="dtl-qty-btn" onclick="modificarStockQuick(1, 'quantitydetail')">
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                    </div>
+                                        <!-- Cantidad -->
+                                        <h6 class="dtl-section-title"><i class="fa fa-sort-numeric-up"></i> Cantidad</h6>
+                                        <div class="dtl-quantity-box">
+                                            <button class="dtl-qty-btn" onclick="modificarStockQuick(0, 'quantitydetail')">
+                                                <i class="fa fa-minus"></i>
+                                            </button>
+                                            <input class="dtl-qty-input" type="number" min="1" value="1"
+                                                id="quantitydetail">
+                                            <button class="dtl-qty-btn" onclick="modificarStockQuick(1, 'quantitydetail')">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
 
-                                    <!-- Botones de Acción -->
-                                    <div class="dtl-action-buttons">
-                                        <a href="javascript:void(0)"
-                                            onclick="addCart(<?php echo $data['producto']['id']; ?>, 'quantitydetail')"
-                                            class="dtl-btn dtl-btn-cart">
-                                            <i class="fa fa-shopping-cart"></i> Añadir
-                                        </a>
-                                        <a href="javascript:void(0)"
-                                            onclick="addDeseo(<?php echo $data['producto']['id']; ?>)"
-                                            class="dtl-btn dtl-btn-wishlist">
-                                            <i class="fa fa-heart"></i> Deseos
-                                        </a>
-                                    </div>
+                                        <!-- Botones de Acción -->
+                                        <div class="dtl-action-buttons">
+                                            <a href="javascript:void(0)"
+                                                onclick="addCart(<?php echo $data['producto']['id']; ?>, 'quantitydetail')"
+                                                class="dtl-btn dtl-btn-cart">
+                                                <i class="fa fa-shopping-cart"></i> Añadir
+                                            </a>
+                                            <a href="javascript:void(0)"
+                                                onclick="addDeseo(<?php echo $data['producto']['id']; ?>)"
+                                                class="dtl-btn dtl-btn-wishlist">
+                                                <i class="fa fa-heart"></i> Deseos
+                                            </a>
+                                        </div>
                                     <?php } ?>
                                 </div>
                             </div>
@@ -401,17 +416,23 @@
         <div class="row">
             <div class="col-12 product">
                 <div class="product-slide-6 product-m no-arrow">
-                    <?php foreach ($data['relacionados'] as $producto) { ?>
+                    <?php foreach ($data['relacionados'] as $producto) {
+                        $imagenProducto = !empty($producto['imagen']) ? BASE_URL . $producto['imagen'] : BASE_URL . 'assets/images/productos/product.png';
+                        ?>
                         <div>
                             <div class="product-box">
                                 <div class="product-imgbox">
                                     <div class="product-front">
-                                        <a href="#"> <img src="<?php echo BASE_URL . $producto['imagen']; ?>"
-                                                class="img-fluid  " alt="product"> </a>
+                                        <a href="javascript:;"> <img src="<?php echo $imagenProducto; ?>" class="img-fluid  "
+                                                alt="product"
+                                                onerror="this.src='<?php echo BASE_URL; ?>assets/images/productos/product.png'">
+                                        </a>
                                     </div>
                                     <div class="product-back">
-                                        <a href="#"> <img src="<?php echo BASE_URL . $producto['imagen']; ?>"
-                                                class="img-fluid  " alt="product"> </a>
+                                        <a href="javascript:;"> <img src="<?php echo $imagenProducto; ?>" class="img-fluid  "
+                                                alt="product"
+                                                onerror="this.src='<?php echo BASE_URL; ?>assets/images/productos/product.png'">
+                                        </a>
                                     </div>
                                     <div class="on-sale3"> on sale </div>
                                 </div>
@@ -467,146 +488,146 @@
 <?php include_once 'Views/template/footer-principal.php'; ?>
 
 <script>
-// 🔍 ZOOM INTERACTIVO PARA LA PÁGINA DE DETALLE
-document.addEventListener('DOMContentLoaded', function () {
-    inicializarZoomPagina();
-});
-
-function inicializarZoomPagina() {
-    const container = document.getElementById('zoomContainerPage');
-    if (!container) return;
-
-    container.addEventListener('mousemove', function (e) {
-        const activeSlide = container.querySelector('.dtl-slide-page.active');
-        const img = activeSlide.querySelector('.dtl-zoom-image-page');
-        if (!img) return;
-
-        const rect = container.getBoundingClientRect();
-        const x = ((e.clientX - rect.left) / rect.width) * 100;
-        const y = ((e.clientY - rect.top) / rect.height) * 100;
-
-        img.style.transformOrigin = `${x}% ${y}%`;
-        img.style.transform = 'scale(2.5)';
+    // 🔍 ZOOM INTERACTIVO PARA LA PÁGINA DE DETALLE
+    document.addEventListener('DOMContentLoaded', function () {
+        inicializarZoomPagina();
     });
 
-    container.addEventListener('mouseleave', function () {
-        const activeSlide = container.querySelector('.dtl-slide-page.active');
-        const img = activeSlide.querySelector('.dtl-zoom-image-page');
-        if (!img) return;
+    function inicializarZoomPagina() {
+        const container = document.getElementById('zoomContainerPage');
+        if (!container) return;
 
-        img.style.transform = 'scale(1)';
-    });
-}
+        container.addEventListener('mousemove', function (e) {
+            const activeSlide = container.querySelector('.dtl-slide-page.active');
+            const img = activeSlide.querySelector('.dtl-zoom-image-page');
+            if (!img) return;
 
-// 🖼️ CAMBIAR IMAGEN AL HACER CLIC EN MINIATURA
-function cambiarImagenPagina(index) {
-    const slides = document.querySelectorAll('.dtl-slide-page');
-    const thumbnails = document.querySelectorAll('.dtl-thumbnail-page');
+            const rect = container.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.height) * 100;
 
-    slides.forEach((slide, i) => {
-        slide.classList.toggle('active', i === index);
-    });
+            img.style.transformOrigin = `${x}% ${y}%`;
+            img.style.transform = 'scale(2.5)';
+        });
 
-    thumbnails.forEach((thumb, i) => {
-        thumb.classList.toggle('active', i === index);
-    });
+        container.addEventListener('mouseleave', function () {
+            const activeSlide = container.querySelector('.dtl-slide-page.active');
+            const img = activeSlide.querySelector('.dtl-zoom-image-page');
+            if (!img) return;
 
-    centrarMiniaturaActivaPagina();
-}
+            img.style.transform = 'scale(1)';
+        });
+    }
 
-// 🎠 NAVEGAR EN EL CARRUSEL DE MINIATURAS
-let thumbnailScrollPositionPage = 0;
+    // 🖼️ CAMBIAR IMAGEN AL HACER CLIC EN MINIATURA
+    function cambiarImagenPagina(index) {
+        const slides = document.querySelectorAll('.dtl-slide-page');
+        const thumbnails = document.querySelectorAll('.dtl-thumbnail-page');
 
-function navegarMiniaturasPagina(direction) {
-    const container = document.getElementById('thumbnailsContainerPage');
-    if (!container) return;
+        slides.forEach((slide, i) => {
+            slide.classList.toggle('active', i === index);
+        });
 
-    const scrollAmount = 100;
-    thumbnailScrollPositionPage += direction * scrollAmount;
+        thumbnails.forEach((thumb, i) => {
+            thumb.classList.toggle('active', i === index);
+        });
 
-    const maxScroll = container.scrollWidth - container.clientWidth;
-    thumbnailScrollPositionPage = Math.max(0, Math.min(thumbnailScrollPositionPage, maxScroll));
+        centrarMiniaturaActivaPagina();
+    }
 
-    container.scrollTo({
-        left: thumbnailScrollPositionPage,
-        behavior: 'smooth'
-    });
-}
+    // 🎠 NAVEGAR EN EL CARRUSEL DE MINIATURAS
+    let thumbnailScrollPositionPage = 0;
 
-// 📍 CENTRAR LA MINIATURA ACTIVA
-function centrarMiniaturaActivaPagina() {
-    const container = document.getElementById('thumbnailsContainerPage');
-    const activeThumb = document.querySelector('.dtl-thumbnail-page.active');
+    function navegarMiniaturasPagina(direction) {
+        const container = document.getElementById('thumbnailsContainerPage');
+        if (!container) return;
 
-    if (!container || !activeThumb) return;
+        const scrollAmount = 100;
+        thumbnailScrollPositionPage += direction * scrollAmount;
 
-    const containerWidth = container.clientWidth;
-    const thumbLeft = activeThumb.offsetLeft;
-    const thumbWidth = activeThumb.offsetWidth;
+        const maxScroll = container.scrollWidth - container.clientWidth;
+        thumbnailScrollPositionPage = Math.max(0, Math.min(thumbnailScrollPositionPage, maxScroll));
 
-    const scrollPosition = thumbLeft - (containerWidth / 2) + (thumbWidth / 2);
+        container.scrollTo({
+            left: thumbnailScrollPositionPage,
+            behavior: 'smooth'
+        });
+    }
 
-    container.scrollTo({
-        left: scrollPosition,
-        behavior: 'smooth'
-    });
+    // 📍 CENTRAR LA MINIATURA ACTIVA
+    function centrarMiniaturaActivaPagina() {
+        const container = document.getElementById('thumbnailsContainerPage');
+        const activeThumb = document.querySelector('.dtl-thumbnail-page.active');
 
-    thumbnailScrollPositionPage = scrollPosition;
-}
+        if (!container || !activeThumb) return;
 
-// 🎨 CARGAR COLORES DISPONIBLES PARA LA TALLA SELECCIONADA
-function coloresDisponibleDetail(idProducto, idSize) {
-    const url = base_url + "principal/getColores/" + idProducto + "/" + idSize;
-    const http = new XMLHttpRequest();
-    http.open("GET", url, true);
-    http.send();
-    http.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-            const res = JSON.parse(this.responseText);
-            let html = "";
+        const containerWidth = container.clientWidth;
+        const thumbLeft = activeThumb.offsetLeft;
+        const thumbWidth = activeThumb.offsetWidth;
 
-            if (res.colores.length > 0) {
-                res.colores.forEach((color) => {
-                    if (color.stock > 0) {
-                        html += `<label class="btn text-white" style="background-color: ${color.color};">
+        const scrollPosition = thumbLeft - (containerWidth / 2) + (thumbWidth / 2);
+
+        container.scrollTo({
+            left: scrollPosition,
+            behavior: 'smooth'
+        });
+
+        thumbnailScrollPositionPage = scrollPosition;
+    }
+
+    // 🎨 CARGAR COLORES DISPONIBLES PARA LA TALLA SELECCIONADA
+    function coloresDisponibleDetail(idProducto, idSize) {
+        const url = base_url + "principal/getColores/" + idProducto + "/" + idSize;
+        const http = new XMLHttpRequest();
+        http.open("GET", url, true);
+        http.send();
+        http.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                const res = JSON.parse(this.responseText);
+                let html = "";
+
+                if (res.colores.length > 0) {
+                    res.colores.forEach((color) => {
+                        if (color.stock > 0) {
+                            html += `<label class="btn text-white" style="background-color: ${color.color};">
                             <input type="radio" name="colorDetail" onclick="verificarStockDetail(${idSize}, ${color.id}, ${idProducto})"> ${color.nombre}
                         </label>`;
-                    } else {
-                        html += `<label class="btn text-white disabled" style="background-color: ${color.color}; opacity: 0.5; text-decoration: line-through;">
+                        } else {
+                            html += `<label class="btn text-white disabled" style="background-color: ${color.color}; opacity: 0.5; text-decoration: line-through;">
                             <input type="radio" name="colorDetail" disabled> ${color.nombre} ❌
                         </label>`;
-                    }
-                });
-            } else {
-                html = '<div class="dtl-select-size-msg"><i class="fa fa-exclamation-circle"></i> No hay colores disponibles</div>';
+                        }
+                    });
+                } else {
+                    html = '<div class="dtl-select-size-msg"><i class="fa fa-exclamation-circle"></i> No hay colores disponibles</div>';
+                }
+
+                document.querySelector("#idSize").value = idSize;
+                document.querySelector("#content-color-detail").innerHTML = html;
             }
+        };
+    }
 
-            document.querySelector("#idSize").value = idSize;
-            document.querySelector("#content-color-detail").innerHTML = html;
-        }
-    };
-}
+    // ✅ VERIFICAR STOCK DEL COLOR SELECCIONADO
+    function verificarStockDetail(idSize, idColor, idProducto) {
+        const url = base_url + "principal/getStock/" + idSize + "/" + idColor + "/" + idProducto;
+        const http = new XMLHttpRequest();
+        http.open("GET", url, true);
+        http.send();
+        http.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                const res = JSON.parse(this.responseText);
 
-// ✅ VERIFICAR STOCK DEL COLOR SELECCIONADO
-function verificarStockDetail(idSize, idColor, idProducto) {
-    const url = base_url + "principal/getStock/" + idSize + "/" + idColor + "/" + idProducto;
-    const http = new XMLHttpRequest();
-    http.open("GET", url, true);
-    http.send();
-    http.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-            const res = JSON.parse(this.responseText);
-
-            if (res && res.stock > 0) {
-                document.querySelector("#idColor").value = idColor;
-                document.querySelector("#quantitydetail").value = 1;
-                document.querySelector("#quantitydetail").setAttribute("max", res.stock);
-            } else {
-                alertaPerzanalizada("Este color no tiene stock disponible", "warning");
+                if (res && res.stock > 0) {
+                    document.querySelector("#idColor").value = idColor;
+                    document.querySelector("#quantitydetail").value = 1;
+                    document.querySelector("#quantitydetail").setAttribute("max", res.stock);
+                } else {
+                    alertaPerzanalizada("Este color no tiene stock disponible", "warning");
+                }
             }
-        }
-    };
-}
+        };
+    }
 </script>
 
 </body>

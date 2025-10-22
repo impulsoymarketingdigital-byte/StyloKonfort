@@ -1,5 +1,4 @@
 let tblPendientes, tblFinalizados, tblProceso;
-
 const myModal = new bootstrap.Modal(document.getElementById("modalPedidos"));
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -20,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function() {
             { data: "direccion" },
             { data: "accion" },
         ],
-        responsive: true,
+        responsive: false,
         language,
         dom,
         buttons,
@@ -43,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function() {
             { data: "direccion" },
             { data: "accion" },
         ],
-        responsive: true,
+        responsive: false,
         language,
         dom,
         buttons,
@@ -66,14 +65,14 @@ document.addEventListener("DOMContentLoaded", function() {
             { data: "direccion" },
             { data: "accion" },
         ],
-        responsive: true,
+        responsive: false,
         language,
         dom,
         buttons,
     });
-
+    
     $.datetimepicker.setLocale('es');
-
+    
     // Filtro rango de fechas
     desde.addEventListener('blur', function () {
         tblPendientes.draw();
@@ -86,7 +85,7 @@ document.addEventListener("DOMContentLoaded", function() {
         tblProceso.draw();
         tblFinalizados.draw();
     })
-
+    
     // Agregar filtro personalizado solo UNA VEZ
     $.fn.dataTable.ext.search.push(
         function (settings, data, dataIndex) {
@@ -108,14 +107,28 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 function cambiarProceso(idPedido, proceso) {
+    let mensaje = '';
+    
+    switch(proceso) {
+        case 2:
+            mensaje = '¿Pasar este pedido a "En Proceso"?';
+            break;
+        case 3:
+            mensaje = '¿Marcar como "Entregado"? (Se descontará el stock)';
+            break;
+        default:
+            mensaje = '¿Está seguro de cambiar el estado?';
+    }
+    
     Swal.fire({
-        title: "Aviso?",
-        text: "Esta seguro de cambiar el estado!",
+        title: "¿Confirmar acción?",
+        text: mensaje,
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
-        confirmButtonText: "Si, cambiar!",
+        confirmButtonText: "Sí, cambiar",
+        cancelButtonText: "Cancelar"
     }).then((result) => {
         if (result.isConfirmed) {
             const url = base_url + "pedidos/update/" + idPedido + "/" + proceso;
@@ -138,14 +151,12 @@ function cambiarProceso(idPedido, proceso) {
 }
 
 function verPedido(idPedido) {
-    // CAMBIO IMPORTANTE: Llamar al controlador correcto (pedidos en lugar de clientes)
     const url = base_url + "pedidos/verPedido/" + idPedido;
     const http = new XMLHttpRequest();
     http.open('GET', url, true);
     http.send();
     http.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-            console.log(this.responseText);
             const res = JSON.parse(this.responseText);
             let html = '';
             res.productos.forEach(row => {
@@ -162,4 +173,9 @@ function verPedido(idPedido) {
             myModal.show();
         }
     }
+}
+
+function verReportePedido(idPedido) {
+    const ruta = base_url + "pedidos/reporte/ticked/" + idPedido;
+    window.open(ruta, "_blank");
 }

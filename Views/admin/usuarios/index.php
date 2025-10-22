@@ -9,13 +9,14 @@
 <div class="card">
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table  table-striped table-hover" style="width: 100%;" id="tblUsuarios">
+            <table class="table table-striped table-hover" style="width: 100%;" id="tblUsuarios">
                 <thead>
                     <tr>
                         <th>Nombres</th>
                         <th>Apellidos</th>
                         <th>Correo</th>
                         <th>Sucursal</th>
+                        <th>Rol</th>
                         <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
@@ -51,17 +52,29 @@
                         <input id="correo" class="form-control" type="email" name="correo" placeholder="Correo Electrónico">
                     </div>
                     <div class="form-group mb-2">
-                            <label for="">Sucursal <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-tag"></i></span>
-                                <select id="id_sucursal" class="form-control" name="id_sucursal">
-                                    <option value="">Seleccionar</option>
-                                    <?php foreach ($data['sucursales'] as $sucursal) { ?>
-                                        <option value="<?php echo $sucursal['id']; ?>"><?php echo $sucursal['nombre']; ?></option>
-                                    <?php } ?>
-                                </select>
-                            </div>
+                        <label for="">Sucursal <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-building"></i></span>
+                            <select id="id_sucursal" class="form-control" name="id_sucursal">
+                                <option value="">Seleccionar</option>
+                                <?php foreach ($data['sucursales'] as $sucursal) { ?>
+                                    <option value="<?php echo $sucursal['id']; ?>"><?php echo $sucursal['nombre']; ?></option>
+                                <?php } ?>
+                            </select>
                         </div>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="">Rol <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-user-tag"></i></span>
+                            <select id="id_rol" class="form-control" name="id_rol">
+                                <option value="">Seleccionar</option>
+                                <?php foreach ($data['roles'] as $rol) { ?>
+                                    <option value="<?php echo $rol['id']; ?>"><?php echo $rol['nombre']; ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                    </div>
                     <div class="form-group mb-2">
                         <label for="clave">Contraseña</label>
                         <input id="clave" class="form-control" type="password" name="clave" placeholder="Contraseña">

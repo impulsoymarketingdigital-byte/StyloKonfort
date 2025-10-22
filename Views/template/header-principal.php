@@ -29,6 +29,7 @@
   <!-- Theme css -->
   <link rel="stylesheet" type="text/css" href="<?php echo BASE_URL; ?>assets/css/color4.css" media="screen" id="color">
   <link rel="stylesheet" type="text/css" href="<?php echo BASE_URL; ?>assets/css/header.css" media="screen" id="color">
+  <link rel="stylesheet" type="text/css" href="<?php echo BASE_URL; ?>assets/css/carrito.css" media="screen" id="color">
   <link rel="stylesheet" type="text/css" href="<?php echo BASE_URL; ?>assets/css/home.css" media="screen" id="color">
   <link rel="stylesheet" type="text/css" href="<?php echo BASE_URL; ?>assets/css/app.css" media="screen" id="color">
   <link rel="stylesheet" type="text/css" href="<?php echo BASE_URL . 'assets/DataTables/datatables.min.css'; ?>">
@@ -110,7 +111,7 @@
                 </div>
 
                 <div class="hed-user-menu">
-                  <a href="#" class="hed-user-menu-item" data-bs-toggle="modal" data-bs-target="#modalPerfil">
+                  <a href="javascript:;" class="hed-user-menu-item" data-bs-toggle="modal" data-bs-target="#modalPerfil">
                     <i class="fa fa-user"></i>
                     <span>Mi Perfil</span>
                   </a>

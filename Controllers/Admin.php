@@ -19,26 +19,37 @@ class Admin extends Controller
     {
         if (isset($_POST['email']) && isset($_POST['clave'])) {
             if (empty($_POST['email']) || empty($_POST['clave'])) {
-                $respuesta = array('msg' => 'todo los campos son requeridos', 'icono' => 'warning');
+                $respuesta = array('msg' => 'TODO LOS CAMPOS SON REQUERIDOS', 'icono' => 'warning');
             } else {
                 $data = $this->model->getUsuario($_POST['email']);
                 if (empty($data)) {
-                    $respuesta = array('msg' => 'el correo no existe', 'icono' => 'warning');
+                    $respuesta = array('msg' => 'EL CORREO NO EXISTE', 'icono' => 'warning');
                 } else {
                     if (password_verify($_POST['clave'], $data['clave'])) {
+                        // ✅ GUARDAR DATOS EN SESIÓN
                         $_SESSION['id_usuario'] = $data['id'];
                         $_SESSION['email'] = $data['correo'];
                         $_SESSION['nombre_usuario'] = $data['nombres'];
                         $_SESSION['perfil_usuario'] = $data['perfil'];
                         $_SESSION['id_sucursal'] = $data['id_sucursal'];
-                        $respuesta = array('msg' => 'datos correcto', 'icono' => 'success');
+                        $_SESSION['id_rol'] = $data['id_rol'];
+                        $_SESSION['nombre_rol'] = $data['nombre_rol'];
+
+                        // ✅ GUARDAR PERMISOS COMO ARRAY
+                        if (!empty($data['permisos'])) {
+                            $_SESSION['permisos'] = json_decode($data['permisos'], true);
+                        } else {
+                            $_SESSION['permisos'] = []; // Sin permisos si no tiene rol
+                        }
+
+                        $respuesta = array('msg' => 'DATOS CORRECTO', 'icono' => 'success');
                     } else {
-                        $respuesta = array('msg' => 'contraseña incorrecta', 'icono' => 'warning');
+                        $respuesta = array('msg' => 'CONTRASEÑA INCORRECTA', 'icono' => 'warning');
                     }
                 }
             }
         } else {
-            $respuesta = array('msg' => 'error desconocido', 'icono' => 'error');
+            $respuesta = array('msg' => 'ERROR DESCONOCIDO', 'icono' => 'error');
         }
         echo json_encode($respuesta, JSON_UNESCAPED_UNICODE);
         die();
@@ -125,7 +136,19 @@ class Admin extends Controller
             if (empty($nombre) || empty($ruc) || empty($telefono) || empty($direccion) || empty($id)) {
                 $res = array('msg' => 'Todo los campos con * son requeridos', 'type' => 'warning');
             } else {
-                $data = $this->model->actualizar($ruc,$nombre,$telefono,$correo,$direccion,$whatsapp,$facebook, $twitter, $instagram, $ubicacion, $mensaje,$id
+                $data = $this->model->actualizar(
+                    $ruc,
+                    $nombre,
+                    $telefono,
+                    $correo,
+                    $direccion,
+                    $whatsapp,
+                    $facebook,
+                    $twitter,
+                    $instagram,
+                    $ubicacion,
+                    $mensaje,
+                    $id
                 );
                 if ($data > 0) {
                     $res = array('msg' => 'DATOS MODIFICADO', 'type' => 'success');

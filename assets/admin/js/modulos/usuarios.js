@@ -4,6 +4,7 @@ const titleModal = document.querySelector("#titleModal");
 const btnAccion = document.querySelector("#btnAccion");
 const myModal = new bootstrap.Modal(document.getElementById("nuevoModal"));
 let tblUsuario;
+
 document.addEventListener("DOMContentLoaded", function () {
   tblUsuario = $("#tblUsuarios").DataTable({
     ajax: {
@@ -15,15 +16,16 @@ document.addEventListener("DOMContentLoaded", function () {
       { data: "apellidos" },
       { data: "correo" },
       { data: "sucursal" },
+      { data: "rol" },
       { data: "estado" },
       { data: "accion" },
       { data: "created_at", visible: false },
     ],
-    order: [[6, "desc"]],
+    order: [[7, "desc"]],
     language,
-    dom,
-    buttons,
+    
   });
+  
   //levantar modal
   nuevo.addEventListener("click", function () {
     document.querySelector("#id").value = "";
@@ -33,6 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelector("#clave").removeAttribute("readonly");
     myModal.show();
   });
+  
   //submit usuarios
   frm.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -82,6 +85,7 @@ function eliminar(id) {
     }
   });
 }
+
 function restaurar(id) {
   Swal.fire({
     title: "Aviso?",
@@ -109,6 +113,7 @@ function restaurar(id) {
     }
   });
 }
+
 function editUser(id) {
   const url = base_url + "usuarios/edit/" + id;
   const http = new XMLHttpRequest();
@@ -122,11 +127,11 @@ function editUser(id) {
       document.querySelector("#apellido").value = res.apellidos;
       document.querySelector("#correo").value = res.correo;
       document.querySelector("#id_sucursal").value = res.id_sucursal;
+      document.querySelector("#id_rol").value = res.id_rol;
       document.querySelector("#clave").setAttribute("readonly", "readonly");
       btnAccion.textContent = "Actualizar";
       titleModal.textContent = "MODIFICAR USUARIO";
       myModal.show();
-      //$('#nuevoModal').modal('show');
     }
   };
 }

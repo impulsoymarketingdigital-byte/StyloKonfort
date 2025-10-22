@@ -103,6 +103,8 @@ class Principal extends Controller
             echo 'Pagina no encontrada';
             exit;
         }
+        $empresa = $this->model->getEmpresa();
+        $data['whatsapp'] = !empty($empresa) ? $empresa['whatsapp'] : '573003665138';
 
         //CALIFICACION PRODUCTO
         $calific = $this->model->getCalificacion('SUM', $data['producto']['id']);
@@ -120,25 +122,20 @@ class Principal extends Controller
             $total = ($calificacion['total'] != null) ? $calificacion['total'] / $totalCantidad : $totalCantidad;
             $productos[$i]['calificacion'] = round($total);
 
-            // Agregar primera imagen
             $primeraImagen = $this->model->getPrimeraImagen($productos[$i]['id']);
             $productos[$i]['imagen'] = $primeraImagen;
         }
         $data['nuevosProductos'] = $productos;
 
-        // ⭐ OBTENER TALLAS CON STOCK (CORREGIDO)
         $tallasBase = $this->model->getTalla($data['producto']['id']);
         $data['sizes'] = [];
 
         foreach ($tallasBase as $talla) {
-            // Calcular stock total de esta talla (suma de todos los colores)
             $stockTotal = 0;
 
-            // 🔧 CORRECCIÓN: El orden correcto es getColores($idTalla, $idProducto)
             $colores = $this->model->getColores($talla['id'], $data['producto']['id']);
 
             foreach ($colores as $color) {
-                // Sumar el stock de cada color
                 if (isset($color['stock']) && $color['stock'] > 0) {
                     $stockTotal += $color['stock'];
                 }
@@ -266,78 +263,58 @@ class Principal extends Controller
         if (!empty($json)) {
             foreach ($json as $producto) {
                 $result = $this->model->getProducto($producto['idProducto']);
-                $atributo = '';
+                $nombreTalla = '';
+                $nombreColor = '';
+                $colorHexa = '#000';
+                $colorSecundario = null; 
                 $atributoMP = '';
                 $precio = $result['precio_venta'] ?? 0;
                 $stock = 'Ilimitado';
 
-                // Verificar si tiene talla y color
+                // Obtener talla y color
                 if (!empty($producto['size']) && !empty($producto['color'])) {
                     $detalle = $this->model->getAtributos($producto['size'], $producto['color'], $producto['idProducto']);
 
                     if (!empty($detalle)) {
-                        $talla = $detalle['size'] ?? '';
-                        $colorNombre = $detalle['nombre'] ?? '';
+                        $nombreTalla = $detalle['size'] ?? '';
+                        $nombreColor = $detalle['nombre'] ?? '';
                         $colorHexa = $detalle['color'] ?? '#000';
-
-                        $atributoMP = $talla . ' - ' . $colorNombre;
-                        $atributo = 'T: ' . $talla . ' | <span class="badge" style="background: ' . $colorHexa . ';">C: ' . $colorNombre . '</span>';
+                        $colorSecundario = $detalle['color_secundario'] ?? null;
+                        $atributoMP = $nombreTalla . ' - ' . $nombreColor;
                         $precio = $detalle['precio_venta'] ?? $precio;
                         $stock = $detalle['stock'] ?? 'Ilimitado';
                     } else {
                         $color = $this->model->getColorSize('colores', $producto['color']);
                         $talla = $this->model->getColorSize('tallas', $producto['size']);
-                        $atributo = ($talla['nombre'] ?? '') . ' - <span class="badge" style="background: ' . ($color['color'] ?? '#000') . ';">' . ($color['nombre'] ?? '') . '</span>';
-                        $atributoMP = ($talla['nombre'] ?? '') . ' - ' . ($color['nombre'] ?? '');
+                        $nombreTalla = $talla['nombre'] ?? '';
+                        $nombreColor = $color['nombre'] ?? '';
+                        $colorHexa = $color['color'] ?? '#000';
+                        $colorSecundario = $color['color_secundario'] ?? null;
+                        $atributoMP = $nombreTalla . ' - ' . $nombreColor;
                     }
                 }
 
                 $cantidad = $producto['cantidad'] ?? 1;
+                $subTotal = $precio * $cantidad;
 
-                if (isset($producto['precio_compra'])) {
-                    // ES UNA COMPRA
-                    $precio_compra = floatval($producto['precio_compra']);
-                    $descuento = isset($producto['descuento']) ? floatval($producto['descuento']) : 0;
-                    $subTotal = ($precio_compra * $cantidad) - $descuento;
+                $data = [
+                    'id' => $result['id'] ?? 0,
+                    'nombre' => $result['nombre'] ?? '',
+                    'nombreTalla' => $nombreTalla,
+                    'nombreColor' => $nombreColor,
+                    'colorHexa' => $colorHexa,
+                    'colorSecundario' => $colorSecundario,
+                    'atributoMP' => $atributoMP,
+                    'precio' => $precio,
+                    'cantidad' => $cantidad,
+                    'size' => $producto['size'] ?? 0,
+                    'color' => $producto['color'] ?? 0,
+                    'stock' => $stock,
+                    'imagen' => $result['imagen'] ?? 'assets/images/productos/product.png',
+                    'subTotal' => number_format($subTotal, 2)
+                ];
 
-                    $data = [
-                        'id' => $result['id'] ?? 0,
-                        'nombre' => $result['nombre'] ?? '',
-                        'atributo' => $atributo,
-                        'atributoMP' => $atributoMP,
-                        'precio' => $precio_compra,
-                        'precio_compra' => $precio_compra,
-                        'descuento' => $descuento,
-                        'cantidad' => $cantidad,
-                        'size' => $producto['size'] ?? 0,
-                        'color' => $producto['color'] ?? 0,
-                        'stock' => $stock,
-                        'imagen' => $result['imagen'] ?? 'assets/images/productos/product.png',
-                        'subTotal' => number_format($subTotal, 2)
-                    ];
-
-                    $total += $subTotal;
-                } else {
-                    // ES UNA VENTA
-                    $subTotal = $precio * $cantidad;
-
-                    $data = [
-                        'id' => $result['id'] ?? 0,
-                        'nombre' => $result['nombre'] ?? '',
-                        'atributo' => $atributo,
-                        'atributoMP' => $atributoMP,
-                        'precio' => $precio,
-                        'cantidad' => $cantidad,
-                        'size' => $producto['size'] ?? 0,
-                        'color' => $producto['color'] ?? 0,
-                        'stock' => $stock,
-                        'imagen' => $result['imagen'] ?? 'assets/images/productos/product.png',
-                        'subTotal' => number_format($subTotal, 2)
-                    ];
-
-                    $total += $subTotal;
-                }
-
+                $total += $subTotal;
                 $array['productos'][] = $data;
             }
 
@@ -353,6 +330,14 @@ class Principal extends Controller
         echo json_encode($array, JSON_UNESCAPED_UNICODE);
         die();
     }
+
+    public function getPromocionesActivas()
+    {
+        $data = $this->model->getPromocionesActivas();
+        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        die();
+    }
+
     public function busqueda($valor)
     {
         $data = [];
@@ -400,6 +385,10 @@ class Principal extends Controller
             $data['moneda'] = MONEDA;
             $data['sizes'] = [];
             $data['producto'] = $this->model->getProducto($idProducto);
+
+            $empresa = $this->model->getEmpresa();
+            $data['whatsapp'] = !empty($empresa) ? $empresa['whatsapp'] : '573003665138';
+
 
             if (!empty($data['producto'])) {
                 $result = array();

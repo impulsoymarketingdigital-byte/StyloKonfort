@@ -44,6 +44,15 @@ class PrincipalModel extends Query
         $sql = "SELECT * FROM productos WHERE estado = 1 ORDER BY id DESC LIMIT $desde, $hasta";
         return $this->selectAll($sql);
     }
+    public function getPromocionesActivas()
+    {
+        $sql = "SELECT * FROM promociones 
+            WHERE estado = 1 
+            AND CURDATE() >= fecha_inicio 
+            AND CURDATE() <= fecha_fin 
+            ORDER BY id DESC";
+        return $this->selectAll($sql);
+    }
 
     public function getTotalProductos()
     {
@@ -128,18 +137,17 @@ class PrincipalModel extends Query
 
     public function getAtributos($size, $color, $id_producto)
     {
-        $sql = "SELECT tc.id, tc.stock, p.precio_venta, t.nombre AS size, c.nombre, c.color 
-            FROM tallas_colores tc
-            INNER JOIN productos p ON tc.id_producto = p.id
-            INNER JOIN tallas t ON tc.id_talla = t.id 
-            INNER JOIN colores c ON tc.id_color = c.id 
-            WHERE tc.id_talla = $size 
-            AND tc.id_color = $color 
-            AND tc.id_producto = $id_producto
-            AND tc.id_almacen = 1";
+        $sql = "SELECT tc.id, tc.stock, p.precio_venta, t.nombre AS size, c.nombre, c.color, c.color_secundario 
+        FROM tallas_colores tc
+        INNER JOIN productos p ON tc.id_producto = p.id
+        INNER JOIN tallas t ON tc.id_talla = t.id 
+        INNER JOIN colores c ON tc.id_color = c.id 
+        WHERE tc.id_talla = $size 
+        AND tc.id_color = $color 
+        AND tc.id_producto = $id_producto
+        AND tc.id_almacen = 1";
         return $this->select($sql);
     }
-
 
     public function getColorSize($table, $id)
     {
@@ -241,6 +249,11 @@ class PrincipalModel extends Query
             }
         }
         return null;
+    }
+    public function getEmpresa()
+    {
+        $sql = "SELECT * FROM configuracion";
+        return $this->select($sql);
     }
     public function getFiltroProductoss($busqueda, $categorias, $desde, $hasta, $color, $sizes)
     {

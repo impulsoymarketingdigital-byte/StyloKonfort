@@ -55,138 +55,184 @@
             <ul class="metismenu" id="menu">
                 <li>
                     <a href="<?php echo BASE_URL . 'admin/home'; ?>">
-                        <div class="parent-icon"><i class='fas fa-home'></i>
-                        </div>
+                        <div class="parent-icon"><i class='fas fa-home'></i></div>
                         <div class="menu-title">Dashboard</div>
                     </a>
                 </li>
 
+                <?php if (verificar('configuracion') || verificar('usuarios') || verificar('roles') || verificar('almacenes') || verificar('sucursales') || verificar('sliders') || verificar('promociones')) { ?>
                 <li>
                     <a href="javascript:;" class="has-arrow">
-                        <div class="parent-icon"><i class='fas fa-tools'></i>
-                        </div>
+                        <div class="parent-icon"><i class='fas fa-tools'></i></div>
                         <div class="menu-title">Administración</div>
                     </a>
                     <ul>
-                        <li> <a href="<?php echo BASE_URL . 'admin/empresa'; ?>"><i
-                                    class="bx bx-right-arrow-alt"></i>Configuración</a>
-                        </li>
-                        <li> <a href="<?php echo BASE_URL . 'usuarios'; ?>"><i
-                                    class="bx bx-right-arrow-alt"></i>Usuarios</a>
-                        </li>
-                        <li> <a href="<?php echo BASE_URL . 'sucursales'; ?>"><i
-                                    class="bx bx-right-arrow-alt"></i>Sucursales</a>
-                        </li>
-                        <li> <a href="<?php echo BASE_URL . 'sliders'; ?>"><i
-                                    class="bx bx-right-arrow-alt"></i>Sliders</a>
-                        </li>
+                        <?php if (verificar('configuracion')) { ?>
+                        <li><a href="<?php echo BASE_URL . 'admin/empresa'; ?>"><i class="bx bx-right-arrow-alt"></i>Configuración</a></li>
+                        <?php } ?>
+                        
+                        <?php if (verificar('usuarios')) { ?>
+                        <li><a href="<?php echo BASE_URL . 'usuarios'; ?>"><i class="bx bx-right-arrow-alt"></i>Usuarios</a></li>
+                        <?php } ?>
+                        
+                        <?php if (verificar('roles')) { ?>
+                        <li><a href="<?php echo BASE_URL . 'roles'; ?>"><i class="bx bx-right-arrow-alt"></i>Roles y Permisos</a></li>
+                        <?php } ?>
+                        
+                        <?php if (verificar('almacenes')) { ?>
+                        <li><a href="<?php echo BASE_URL . 'almacenes'; ?>"><i class="bx bx-right-arrow-alt"></i>Almacenes</a></li>
+                        <?php } ?>
+                        
+                        <?php if (verificar('sucursales')) { ?>
+                        <li><a href="<?php echo BASE_URL . 'sucursales'; ?>"><i class="bx bx-right-arrow-alt"></i>Sucursales</a></li>
+                        <?php } ?>
+                        
+                        <?php if (verificar('sliders')) { ?>
+                        <li><a href="<?php echo BASE_URL . 'sliders'; ?>"><i class="bx bx-right-arrow-alt"></i>Sliders</a></li>
+                        <?php } ?>
+                        
+                        <?php if (verificar('promociones')) { ?>
+                        <li><a href="<?php echo BASE_URL . 'promociones'; ?>"><i class="bx bx-right-arrow-alt"></i>Promociones</a></li>
+                        <?php } ?>
                     </ul>
                 </li>
+                <?php } ?>
 
+                <?php if (verificar('productos') || verificar('marcas') || verificar('categorias') || verificar('sizes') || verificar('colores')) { ?>
                 <li>
                     <a href="javascript:;" class="has-arrow">
-                        <div class="parent-icon"><i class='fas fa-list'></i>
-                        </div>
+                        <div class="parent-icon"><i class='fas fa-list'></i></div>
                         <div class="menu-title">Inventario</div>
                     </a>
                     <ul>
-                        <li> <a href="<?php echo BASE_URL . 'productos'; ?>"><i
-                                    class="bx bx-right-arrow-alt"></i>Productos</a>
-                        </li>
-                        <li> <a href="<?php echo BASE_URL . 'marcas'; ?>"><i
-                                    class="bx bx-right-arrow-alt"></i>Marcas</a>
-                        </li>
-                        <li> <a href="<?php echo BASE_URL . 'categorias'; ?>"><i
-                                    class="bx bx-right-arrow-alt"></i>Categorias</a>
-                        </li>
-                        <li> <a href="<?php echo BASE_URL . 'sizes'; ?>"><i
-                                    class="bx bx-right-arrow-alt"></i>Tamaños</a>
-                        </li>
-                        <li> <a href="<?php echo BASE_URL . 'colores'; ?>"><i
-                                    class="bx bx-right-arrow-alt"></i>Colores</a>
-                        </li>
+                        <?php if (verificar('productos')) { ?>
+                        <li><a href="<?php echo BASE_URL . 'productos'; ?>"><i class="bx bx-right-arrow-alt"></i>Productos</a></li>
+                        <?php } ?>
+
+                         <?php if (verificar('stock')) { ?>
+                        <li><a href="<?php echo BASE_URL . 'productos/stock'; ?>"><i class="bx bx-right-arrow-alt"></i>Stock</a></li>
+                        <?php } ?>
+                        
+                        <?php if (verificar('marcas')) { ?>
+                        <li><a href="<?php echo BASE_URL . 'marcas'; ?>"><i class="bx bx-right-arrow-alt"></i>Marcas</a></li>
+                        <?php } ?>
+                        
+                        <?php if (verificar('categorias')) { ?>
+                        <li><a href="<?php echo BASE_URL . 'categorias'; ?>"><i class="bx bx-right-arrow-alt"></i>Categorias</a></li>
+                        <?php } ?>
+                        
+                        <?php if (verificar('sizes')) { ?>
+                        <li><a href="<?php echo BASE_URL . 'sizes'; ?>"><i class="bx bx-right-arrow-alt"></i>Tamaños</a></li>
+                        <?php } ?>
+                        
+                        <?php if (verificar('colores')) { ?>
+                        <li><a href="<?php echo BASE_URL . 'colores'; ?>"><i class="bx bx-right-arrow-alt"></i>Colores</a></li>
+                        <?php } ?>
                     </ul>
                 </li>
+                <?php } ?>
 
+                <?php if (verificar('clientes')) { ?>
                 <li>
                     <a href="<?php echo BASE_URL . 'clientes/admin'; ?>">
-                        <div class="parent-icon"><i class='fas fa-users'></i>
-                        </div>
+                        <div class="parent-icon"><i class='fas fa-users'></i></div>
                         <div class="menu-title">Clientes</div>
                     </a>
                 </li>
+                <?php } ?>
 
-
+                <?php if (verificar('pedidos')) { ?>
                 <li>
                     <a href="<?php echo BASE_URL . 'pedidos'; ?>">
-                        <div class="parent-icon"><i class='fas fa-bell'></i></div>
+                        <div class="parent-icon"><i class='fas fa-receipt'></i></div>
                         <div class="menu-title">Pedidos</div>
                     </a>
                 </li>
+                <?php } ?>
 
-                 <li>
+                <!-- ✅ PROVEEDORES -->
+                <?php if (verificar('proveedores')) { ?>
+                <li>
+                    <a href="<?php echo BASE_URL . 'proveedores'; ?>">
+                        <div class="parent-icon"><i class='fas fa-truck-loading'></i></div>
+                        <div class="menu-title">Proveedores</div>
+                    </a>
+                </li>
+                <?php } ?>
+
+                <!-- ✅ COMPRAS -->
+                <?php if (verificar('compras') || verificar('listar_compras')) { ?>
+                <li>
                     <a href="javascript:;" class="has-arrow">
-                        <div class="parent-icon"><i class="bx bx-cart"></i></div>
+                        <div class="parent-icon"><i class="fas fa-shopping-basket"></i></div>
                         <div class="menu-title">Compras</div>
                     </a>
                     <ul>
-
-                        <li>
-                            <a href="<?php echo BASE_URL . 'compras'; ?>">
-                                <i class="bx bx-radio-circle"></i>Nueva Compra
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="<?php echo BASE_URL . 'compras/listar_compras'; ?>">
-                                <i class="bx bx-radio-circle"></i>Listar Compras
-                            </a>
-                        </li>
+                        <?php if (verificar('compras')) { ?>
+                        <li><a href="<?php echo BASE_URL . 'compras'; ?>"><i class="bx bx-radio-circle"></i>Nueva Compra</a></li>
+                        <?php } ?>
+                        
+                        <?php if (verificar('listar_compras')) { ?>
+                        <li><a href="<?php echo BASE_URL . 'compras/listar_compras'; ?>"><i class="bx bx-radio-circle"></i>Listar Compras</a></li>
+                        <?php } ?>
                     </ul>
                 </li>
+                <?php } ?>
 
-
+                <!-- ✅ VENTAS -->
+                <?php if (verificar('ventas') || verificar('listar_ventas')) { ?>
                 <li>
                     <a href="javascript:;" class="has-arrow">
-                        <div class="parent-icon"><i class="bx bx-cart"></i></div>
+                        <div class="parent-icon"><i class="fas fa-cash-register"></i></div>
                         <div class="menu-title">Ventas</div>
                     </a>
                     <ul>
-
-                        <li>
-                            <a href="<?php echo BASE_URL . 'ventas'; ?>">
-                                <i class="bx bx-radio-circle"></i>Nueva Venta
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="<?php echo BASE_URL . 'ventas/listar_ventas'; ?>">
-                                <i class="bx bx-radio-circle"></i>Listar Ventas
-                            </a>
-                        </li>
+                        <?php if (verificar('ventas')) { ?>
+                        <li><a href="<?php echo BASE_URL . 'ventas'; ?>"><i class="bx bx-radio-circle"></i>Nueva Venta</a></li>
+                        <?php } ?>
+                        
+                        <?php if (verificar('listar_ventas')) { ?>
+                        <li><a href="<?php echo BASE_URL . 'ventas/listar_ventas'; ?>"><i class="bx bx-radio-circle"></i>Listar Ventas</a></li>
+                        <?php } ?>
                     </ul>
                 </li>
+                <?php } ?>
 
-                   <li>
+                <?php if (verificar('traspasos') || verificar('listar_traspasos')) { ?>
+                <li>
                     <a href="javascript:;" class="has-arrow">
-                        <div class="parent-icon"><i class="bx bx-cart"></i></div>
+                        <div class="parent-icon"><i class="fas fa-exchange-alt"></i></div>
                         <div class="menu-title">Traspasos</div>
                     </a>
                     <ul>
-
-                        <li>
-                            <a href="<?php echo BASE_URL . 'traspasos'; ?>">
-                                <i class="bx bx-radio-circle"></i>Nuevo Traspaso
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="<?php echo BASE_URL . 'traspasos/listar_traspasos'; ?>">
-                                <i class="bx bx-radio-circle"></i>Listar Traspasos
-                            </a>
-                        </li>
+                        <?php if (verificar('traspasos')) { ?>
+                        <li><a href="<?php echo BASE_URL . 'traspasos'; ?>"><i class="bx bx-radio-circle"></i>Nuevo Traspaso</a></li>
+                        <?php } ?>
+                        
+                        <?php if (verificar('listar_traspasos')) { ?>
+                        <li><a href="<?php echo BASE_URL . 'traspasos/listar_traspasos'; ?>"><i class="bx bx-radio-circle"></i>Listar Traspasos</a></li>
+                        <?php } ?>
                     </ul>
                 </li>
+                <?php } ?>
+
+                <?php if (verificar('reporte_ventas') || verificar('reporte_compras')) { ?>
+                <li>
+                    <a href="javascript:;" class="has-arrow">
+                        <div class="parent-icon"><i class="fas fa-chart-bar"></i></div>
+                        <div class="menu-title">Reportes</div>
+                    </a>
+                    <ul>
+                        <?php if (verificar('reporte_ventas')) { ?>
+                        <li><a href="<?php echo BASE_URL . 'reportes/reporte_ventas'; ?>"><i class="bx bx-radio-circle"></i>Reporte de Ventas</a></li>
+                        <?php } ?>
+                        
+                        <?php if (verificar('reporte_compras')) { ?>
+                        <li><a href="<?php echo BASE_URL . 'reportes/reporte_compras'; ?>"><i class="bx bx-radio-circle"></i>Reporte de Compras</a></li>
+                        <?php } ?>
+                    </ul>
+                </li>
+                <?php } ?>
 
             </ul>
             <!--end navigation-->
@@ -202,7 +248,7 @@
 
                     </div>
                     <div class="user-box dropdown">
-                        <a class="d-flex align-items-center nav-link dropdown-toggle dropdown-toggle-nocaret" href="#"
+                        <a class="d-flex align-items-center nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:;"
                             role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <?php if ($_SESSION['perfil_usuario'] == null) {
                                 $perfil = BASE_URL . 'assets/images/logo.png';

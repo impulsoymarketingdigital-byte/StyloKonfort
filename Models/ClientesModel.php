@@ -6,10 +6,10 @@ class ClientesModel extends Query
     {
         parent::__construct();
     }
-    public function registroDirecto($nombre, $apellido, $correo, $clave, $token)
+    public function registroDirecto($nombre, $apellido, $correo, $clave, $token, $telefono, $direccion, $documento, $tipo_cliente)
     {
-        $sql = "INSERT INTO clientes (nombre, apellido, correo, clave, token) VALUES (?,?,?,?,?)";
-        $datos = array($nombre, $apellido, $correo, $clave, $token);
+        $sql = "INSERT INTO clientes (nombre, apellido, correo, clave, token, telefono, direccion, documento, tipo_cliente) VALUES (?,?,?,?,?,?,?,?,?)";
+        $datos = array($nombre, $apellido, $correo, $clave, $token, $telefono, $direccion, $documento, $tipo_cliente);
         $data = $this->insertar($sql, $datos);
         if ($data > 0) {
             $res = $data;
@@ -17,6 +17,11 @@ class ClientesModel extends Query
             $res = 0;
         }
         return $res;
+    }
+    public function getVerificarDocumento($documento)
+    {
+        $sql = "SELECT * FROM clientes WHERE documento = '$documento'";
+        return $this->select($sql);
     }
     public function getToken($token)
     {
@@ -223,15 +228,17 @@ class ClientesModel extends Query
     }
 
     ##### ADMIN CLIENTES ######
-    public function getClientes($estado)
+    public function getClientes()
     {
-        $sql = "SELECT * FROM clientes WHERE estado = $estado";
+        $sql = "SELECT * FROM clientes";
         return $this->selectAll($sql);
     }
-    public function registrar($nombre, $apellido, $telefono, $correo, $direccion, $accion)
+
+    public function registrar($nombre, $apellido, $telefono, $correo, $direccion, $tipo_cliente, $accion)
     {
-        $sql = "INSERT INTO clientes (nombre, apellido, telefono, correo, direccion, accion) VALUES (?,?,?,?,?,?)";
-        $array = array($nombre, $apellido, $telefono, $correo, $direccion, $accion);
+        $sql = "INSERT INTO clientes (nombre, apellido, telefono, correo, direccion, tipo_cliente, accion) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $array = array($nombre, $apellido, $telefono, $correo, $direccion, $tipo_cliente, $accion);
         return $this->insertar($sql, $array);
     }
 
@@ -251,23 +258,19 @@ class ClientesModel extends Query
         $array = array($estado, $idCliente);
         return $this->save($sql, $array);
     }
+
     public function editar($idCliente)
     {
         $sql = "SELECT * FROM clientes WHERE id = $idCliente";
         return $this->select($sql);
     }
 
-    public function actualizar(
-        $nombre,
-        $apellido,
-        $telefono,
-        $correo,
-        $direccion,
-        $perfil,
-        $id
-    ) {
-        $sql = "UPDATE clientes SET nombre=?, apellido=?, telefono=?, correo=?, direccion=?, perfil=? WHERE id=?";
-        $array = array($nombre, $apellido, $telefono, $correo, $direccion, $perfil, $id);
+    public function actualizar($nombre, $apellido, $telefono, $correo, $direccion, $tipo_cliente, $perfil, $id)
+    {
+        $sql = "UPDATE clientes 
+                SET nombre=?, apellido=?, telefono=?, correo=?, direccion=?, tipo_cliente=?, perfil=? 
+                WHERE id=?";
+        $array = array($nombre, $apellido, $telefono, $correo, $direccion, $tipo_cliente, $perfil, $id);
         return $this->save($sql, $array);
     }
 

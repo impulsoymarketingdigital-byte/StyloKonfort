@@ -29,8 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
     order: [[4, "desc"]],
 
     language,
-    dom,
-    buttons,
+    
   });
 
   //levantar modal

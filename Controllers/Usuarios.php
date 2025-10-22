@@ -16,8 +16,11 @@ class Usuarios extends Controller
     {
         $data['title'] = 'usuarios';
         $data['sucursales'] = $this->model->getDatos('sucursales');
+        $data['roles'] = $this->model->getDatos('roles');
+
         $this->views->getView('admin/usuarios', "index", $data);
     }
+
     public function listar()
     {
         $data = $this->model->getUsuarios();
@@ -40,6 +43,7 @@ class Usuarios extends Controller
         echo json_encode($data);
         die();
     }
+
     public function registrar()
     {
         if (isset($_POST['nombre'])) {
@@ -48,15 +52,17 @@ class Usuarios extends Controller
             $apellido = $_POST['apellido'];
             $correo = $_POST['correo'];
             $id_sucursal = $_POST['id_sucursal'];
+            $id_rol = $_POST['id_rol'];
             $clave = $_POST['clave'];
             $hash = password_hash($clave, PASSWORD_DEFAULT);
-            if (empty($_POST['nombre']) || empty($_POST['apellido']) || empty($_POST['id_sucursal'])) {
+
+            if (empty($_POST['nombre']) || empty($_POST['apellido']) || empty($_POST['id_sucursal']) || empty($_POST['id_rol'])) {
                 $respuesta = array('msg' => 'todo los campos son requeridos', 'icono' => 'warning');
             } else {
                 if (empty($id)) {
                     $result = $this->model->verificarCorreo($correo);
                     if (empty($result)) {
-                        $data = $this->model->registrar($nombre, $apellido, $correo, $hash, $id_sucursal);
+                        $data = $this->model->registrar($nombre, $apellido, $correo, $hash, $id_sucursal, $id_rol);
                         if ($data > 0) {
                             $respuesta = array('msg' => 'usuario registrado', 'icono' => 'success');
                         } else {
@@ -66,7 +72,7 @@ class Usuarios extends Controller
                         $respuesta = array('msg' => 'correo ya existe', 'icono' => 'warning');
                     }
                 } else {
-                    $data = $this->model->modificar($nombre, $apellido, $correo, $id_sucursal, $id);
+                    $data = $this->model->modificar($nombre, $apellido, $correo, $id_sucursal, $id_rol, $id);
                     if ($data == 1) {
                         $respuesta = array('msg' => 'usuario modificado', 'icono' => 'success');
                     } else {
@@ -78,6 +84,7 @@ class Usuarios extends Controller
         }
         die();
     }
+
     //eliminar user
     public function delete($idUser)
     {
@@ -95,7 +102,7 @@ class Usuarios extends Controller
         die();
     }
 
-     public function restaurar($id)
+    public function restaurar($id)
     {
         if (is_numeric($id)) {
             $data = $this->model->eliminar(1, $id);

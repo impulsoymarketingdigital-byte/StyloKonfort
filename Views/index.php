@@ -16,9 +16,7 @@
                 <div class="hero-text-inner">
                   <h3 class="hero-subtitle"><?php echo $slider['titulo']; ?></h3>
                   <h2 class="hero-title"><?php echo $slider['subtitulo']; ?></h2>
-                  <a href="<?php echo $slider['link']; ?>" class="hero-btn">
-                    Más Información
-                  </a>
+                
                 </div>
               </div>
             </div>
@@ -68,7 +66,7 @@
                         <i data-feather="eye"></i>
                       </button>
                       <a href="<?php echo BASE_URL . 'principal/detail/' . $producto['slug']; ?>" class="hm-action-btn" title="Ver Detalle">
-                        <i data-feather="shopping-cart"></i>
+                        <i data-feather="external-link"></i>
                       </a>
                     </div>
                   </div>

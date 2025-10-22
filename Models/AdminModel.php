@@ -1,13 +1,17 @@
 <?php
-class AdminModel extends Query{
- 
+class AdminModel extends Query
+{
+
     public function __construct()
     {
         parent::__construct();
     }
     public function getUsuario($correo)
     {
-        $sql = "SELECT * FROM usuarios WHERE correo = '$correo'";
+        $sql = "SELECT u.*, r.nombre as nombre_rol, r.permisos 
+            FROM usuarios u 
+            LEFT JOIN roles r ON u.id_rol = r.id 
+            WHERE u.correo = '$correo' AND u.estado = 1";
         return $this->select($sql);
     }
     public function getTotales($estado)
@@ -29,13 +33,31 @@ class AdminModel extends Query{
 
     public function productosMinimos()
     {
-        $sql = "SELECT * FROM productos WHERE cantidad < 15 AND estado = 1 ORDER BY cantidad DESC LIMIT 5";
+        $sql = "SELECT 
+                p.id,
+                p.nombre,
+                SUM(tc.stock) as cantidad
+            FROM productos p
+            INNER JOIN tallas_colores tc ON p.id = tc.id_producto
+            WHERE p.estado = 1
+            GROUP BY p.id, p.nombre
+            ORDER BY cantidad ASC
+            LIMIT 5";
         return $this->selectAll($sql);
     }
 
     public function topProductos()
     {
-        $sql = "SELECT * FROM productos ORDER BY ventas DESC LIMIT 5";
+        $sql = "SELECT 
+                p.id,
+                p.nombre,
+                COUNT(tc.id) as ventas
+            FROM productos p
+            LEFT JOIN tallas_colores tc ON p.id = tc.id_producto
+            WHERE p.estado = 1
+            GROUP BY p.id, p.nombre
+            ORDER BY p.created_at DESC
+            LIMIT 5";
         return $this->selectAll($sql);
     }
 
@@ -45,12 +67,12 @@ class AdminModel extends Query{
         return $this->select($sql);
     }
 
-    public function actualizar($ruc,$nombre,$telefono,$correo,$direccion,$whatsapp,$facebook, $twitter, $instagram, $ubicacion, $mensaje,$id)
+    public function actualizar($ruc, $nombre, $telefono, $correo, $direccion, $whatsapp, $facebook, $twitter, $instagram, $ubicacion, $mensaje, $id)
     {
         $sql = "UPDATE configuracion SET ruc=?,nombre=?,telefono=?,correo=?,direccion=?,whatsapp=?,facebook=?, twitter=?, instagram=?, ubicacion=?, mensaje=? WHERE id=?";
-        $array = array($ruc,$nombre,$telefono,$correo,$direccion,$whatsapp,$facebook, $twitter, $instagram, $ubicacion, $mensaje,$id);
+        $array = array($ruc, $nombre, $telefono, $correo, $direccion, $whatsapp, $facebook, $twitter, $instagram, $ubicacion, $mensaje, $id);
         return $this->save($sql, $array);
     }
 }
- 
+
 ?>

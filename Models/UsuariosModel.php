@@ -1,29 +1,33 @@
 <?php
 class UsuariosModel extends Query
 {
-
     public function __construct()
     {
         parent::__construct();
     }
+    
     public function getUsuarios()
     {
-        $sql = "SELECT u.*, s.nombre AS sucursal
+        $sql = "SELECT u.*, s.nombre AS sucursal, r.nombre AS rol
             FROM usuarios u
-            LEFT JOIN sucursales s ON u.id_sucursal = s.id";
+            LEFT JOIN sucursales s ON u.id_sucursal = s.id
+            LEFT JOIN roles r ON u.id_rol = r.id";
         return $this->selectAll($sql);
     }
+    
     public function getDatos($table)
     {
         $sql = "SELECT * FROM $table WHERE estado = 1";
         return $this->selectAll($sql);
     }
-    public function registrar($nombre, $apellido, $correo, $clave, $id_sucursal)
+    
+    public function registrar($nombre, $apellido, $correo, $clave, $id_sucursal, $id_rol)
     {
-        $sql = "INSERT INTO usuarios (nombres, apellidos, correo, clave, id_sucursal) VALUES (?,?,?,?,?)";
-        $array = array($nombre, $apellido, $correo, $clave, $id_sucursal);
+        $sql = "INSERT INTO usuarios (nombres, apellidos, correo, clave, id_sucursal, id_rol) VALUES (?,?,?,?,?,?)";
+        $array = array($nombre, $apellido, $correo, $clave, $id_sucursal, $id_rol);
         return $this->insertar($sql, $array);
     }
+    
     public function verificarCorreo($correo)
     {
         $sql = "SELECT correo FROM usuarios WHERE correo = '$correo' AND estado = 1";
@@ -47,26 +51,27 @@ class UsuariosModel extends Query
         return $this->save($sql, $array);
     }
 
-    public function eliminar($idUser)
+    public function eliminar($estado = 0, $idUser)
     {
         $sql = "UPDATE usuarios SET estado = ? WHERE id = ?";
-        $array = array(0, $idUser);
+        $array = array($estado, $idUser);
         return $this->save($sql, $array);
     }
 
     public function getUsuario($idUser)
     {
-        $sql = "SELECT u.id, u.nombres, u.apellidos, u.correo, u.perfil, u.clave, u.id_sucursal, s.nombre AS sucursal
+        $sql = "SELECT u.id, u.nombres, u.apellidos, u.correo, u.perfil, u.clave, u.id_sucursal, u.id_rol, s.nombre AS sucursal, r.nombre AS rol
             FROM usuarios u
             LEFT JOIN sucursales s ON u.id_sucursal = s.id
+            LEFT JOIN roles r ON u.id_rol = r.id
             WHERE u.id = $idUser";
         return $this->select($sql);
     }
 
-    public function modificar($nombre, $apellido, $correo, $id_sucursal, $id)
+    public function modificar($nombre, $apellido, $correo, $id_sucursal, $id_rol, $id)
     {
-        $sql = "UPDATE usuarios SET nombres=?, apellidos=?, correo=?, id_sucursal =? WHERE id = ?";
-        $array = array($nombre, $apellido, $correo, $id_sucursal, $id);
+        $sql = "UPDATE usuarios SET nombres=?, apellidos=?, correo=?, id_sucursal=?, id_rol=? WHERE id = ?";
+        $array = array($nombre, $apellido, $correo, $id_sucursal, $id_rol, $id);
         return $this->save($sql, $array);
     }
 
@@ -77,5 +82,4 @@ class UsuariosModel extends Query
         return $this->save($sql, $array);
     }
 }
-
 ?>

@@ -1,0 +1,552 @@
+/* ============================================
+   CARRITO PERSONALIZADO - ESTILOS MODERNOS
+   Color principal: #057997
+   ============================================ */
+
+:root {
+  --crrt-primary: #057997;
+  --crrt-primary-dark: #045770;
+  --crrt-primary-light: #0a9fc4;
+  --crrt-secondary: #f8f9fa;
+  --crrt-danger: #dc3545;
+  --crrt-success: #28a745;
+  --crrt-warning: #ffc107;
+  --crrt-text: #2c3e50;
+  --crrt-border: #e0e0e0;
+  --crrt-shadow: 0 4px 12px rgba(5, 121, 151, 0.1);
+}
+
+/* CONTAINER PRINCIPAL */
+.crrt-container {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+  padding: 30px 15px;
+  overflow-x: hidden;
+}
+
+/* TABS NAVEGACIÓN */
+.crrt-container .crrt-nav-pills {
+  background: white;
+  padding: 10px 15px;
+  border-radius: 50px;
+  box-shadow: var(--crrt-shadow);
+  display: inline-flex;
+  gap: 8px;
+  border: none;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.crrt-container .crrt-nav-pills .nav-link {
+  padding: 10px 25px;
+  border-radius: 50px;
+  color: var(--crrt-text);
+  font-weight: 600;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  white-space: nowrap;
+}
+
+.crrt-container .crrt-nav-pills .nav-link:hover {
+  background: rgba(5, 121, 151, 0.1);
+  color: var(--crrt-primary);
+  transform: translateY(-2px);
+}
+
+.crrt-container .crrt-nav-pills .nav-link.active {
+  background: linear-gradient(135deg, var(--crrt-primary), var(--crrt-primary-light));
+  color: white !important;
+  border-color: var(--crrt-primary-dark);
+  box-shadow: 0 4px 15px rgba(5, 121, 151, 0.3);
+}
+
+.crrt-container .crrt-nav-pills .nav-link i {
+  font-size: 16px;
+}
+
+/* CARD PRINCIPAL */
+.crrt-card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: var(--crrt-shadow);
+  overflow: hidden;
+  border: none !important;
+  animation: crrt-fadeInUp 0.5s ease;
+  margin-bottom: 20px;
+}
+
+@keyframes crrt-fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* CARD HEADER */
+.crrt-card-header {
+  background: linear-gradient(135deg, var(--crrt-primary), var(--crrt-primary-light));
+  color: white;
+  padding: 18px 20px;
+  border: none;
+}
+
+.crrt-card-header h4 {
+  font-weight: 700;
+  font-size: 20px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: white;
+}
+
+.crrt-card-header i {
+  font-size: 24px;
+}
+
+/* TABLA CARRITO */
+.crrt-table {
+  margin: 0;
+  width: 100%;
+}
+
+.crrt-table thead {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+}
+
+.crrt-table thead th {
+  border: none;
+  padding: 15px 12px;
+  font-weight: 700;
+  color: var(--crrt-text);
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+.crrt-table tbody tr {
+  border-bottom: 1px solid var(--crrt-border);
+  transition: all 0.3s ease;
+}
+
+.crrt-table tbody tr:hover {
+  background: rgba(5, 121, 151, 0.05);
+}
+
+.crrt-table tbody td {
+  padding: 15px 12px;
+  vertical-align: middle;
+  border: none;
+}
+
+/* TABLA RESPONSIVE - Sin scroll horizontal */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0;
+  padding: 0;
+}
+
+.table-responsive::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background: var(--crrt-primary);
+  border-radius: 10px;
+}
+
+/* IMAGEN PRODUCTO */
+.crrt-product-img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.crrt-product-img:hover {
+  transform: scale(1.1);
+}
+
+/* NOMBRE PRODUCTO */
+.crrt-product-name {
+  font-weight: 700;
+  color: var(--crrt-text);
+  font-size: 14px;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* ATRIBUTOS (TALLA Y COLOR) */
+.crrt-attributes {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.crrt-size-badge {
+  background: var(--crrt-primary);
+  color: white;
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-weight: 600;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 2px 6px rgba(5, 121, 151, 0.3);
+  white-space: nowrap;
+}
+
+.crrt-color-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  display: inline-block;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.crrt-color-circle:hover {
+  transform: scale(1.2);
+}
+
+/* Para colores combinados */
+.crrt-color-circle-split {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  display: inline-block;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.crrt-color-circle-split:hover {
+  transform: scale(1.2);
+}
+
+.crrt-color-name {
+  font-size: 12px;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+/* BADGES DE PRECIO Y CANTIDAD */
+.crrt-price-badge {
+  background: linear-gradient(135deg, #ffc107, #ff9800);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 15px;
+  font-weight: 700;
+  font-size: 14px;
+  display: inline-block;
+  box-shadow: 0 2px 6px rgba(255, 152, 0, 0.3);
+  white-space: nowrap;
+}
+
+.crrt-quantity-badge {
+  background: linear-gradient(135deg, var(--crrt-primary), var(--crrt-primary-light));
+  color: white;
+  padding: 6px 14px;
+  border-radius: 15px;
+  font-weight: 700;
+  font-size: 14px;
+  min-width: 45px;
+  display: inline-block;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(5, 121, 151, 0.3);
+}
+
+.crrt-subtotal {
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--crrt-primary);
+  white-space: nowrap;
+}
+
+/* BOTÓN ELIMINAR */
+.crrt-btn-delete {
+  background: linear-gradient(135deg, #dc3545, #c82333);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(220, 53, 69, 0.3);
+}
+
+.crrt-btn-delete:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.5);
+  background: linear-gradient(135deg, #c82333, #bd2130);
+}
+
+.crrt-btn-delete i {
+  font-size: 14px;
+}
+
+/* CARD FOOTER */
+.crrt-card-footer {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  padding: 20px;
+  border: none;
+}
+
+.crrt-total-text {
+  font-weight: 800;
+  font-size: 22px;
+  color: var(--crrt-primary);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.crrt-total-text i {
+  font-size: 22px;
+}
+
+/* BOTÓN FINALIZAR PEDIDO */
+.crrt-btn-finalizar {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  border: none;
+  padding: 12px 35px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.crrt-btn-finalizar:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.5);
+  background: linear-gradient(135deg, #20c997, #17a2b8);
+}
+
+.crrt-btn-finalizar i {
+  font-size: 18px;
+}
+
+/* CARRITO VACÍO */
+.crrt-empty-cart {
+  text-align: center;
+  padding: 50px 20px;
+  color: #6c757d;
+}
+
+.crrt-empty-cart i {
+  font-size: 70px;
+  color: #dee2e6;
+  margin-bottom: 15px;
+  animation: crrt-bounce 2s infinite;
+}
+
+@keyframes crrt-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+.crrt-empty-cart-text {
+  font-size: 18px;
+  font-weight: 600;
+  color: #495057;
+  margin-top: 10px;
+}
+
+/* ALERT VERIFICACIÓN */
+.crrt-alert-verify {
+  background: linear-gradient(135deg, #dc3545, #c82333);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 40px 20px;
+  box-shadow: 0 6px 20px rgba(220, 53, 69, 0.3);
+  text-align: center;
+}
+
+.crrt-alert-verify i {
+  font-size: 50px;
+  margin-bottom: 15px;
+  animation: crrt-shake 1s infinite;
+}
+
+@keyframes crrt-shake {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-10deg);
+  }
+  75% {
+    transform: rotate(10deg);
+  }
+}
+
+.crrt-alert-verify h3 {
+  font-weight: 800;
+  margin-bottom: 15px;
+  font-size: 22px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .crrt-container {
+    padding: 20px 10px;
+  }
+
+  .crrt-container .crrt-nav-pills {
+    flex-direction: column;
+    border-radius: 15px;
+    padding: 8px;
+    gap: 5px;
+  }
+
+  .crrt-container .crrt-nav-pills .nav-link {
+    width: 100%;
+    justify-content: center;
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+
+  .crrt-card-header {
+    padding: 15px;
+  }
+
+  .crrt-card-header h4 {
+    font-size: 18px;
+  }
+
+  .crrt-card-header i {
+    font-size: 20px;
+  }
+
+  .crrt-table thead th {
+    font-size: 11px;
+    padding: 12px 8px;
+  }
+
+  .crrt-table tbody td {
+    padding: 12px 8px;
+  }
+
+  .crrt-product-img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .crrt-product-name {
+    font-size: 13px;
+  }
+
+  .crrt-attributes {
+    gap: 6px;
+    justify-content: center;
+  }
+
+  .crrt-size-badge {
+    font-size: 11px;
+    padding: 4px 10px;
+  }
+
+  .crrt-color-circle,
+  .crrt-color-circle-split {
+    width: 24px;
+    height: 24px;
+    border-width: 2px;
+  }
+
+  .crrt-color-name {
+    font-size: 11px;
+  }
+
+  .crrt-price-badge,
+  .crrt-quantity-badge {
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+
+  .crrt-subtotal {
+    font-size: 14px;
+  }
+
+  .crrt-btn-delete {
+    padding: 6px 10px;
+  }
+
+  .crrt-card-footer {
+    padding: 15px;
+  }
+
+  .crrt-total-text {
+    font-size: 18px;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .crrt-btn-finalizar {
+    width: 100%;
+    margin-top: 15px;
+    justify-content: center;
+    font-size: 15px;
+    padding: 12px 25px;
+  }
+}
+
+@media (max-width: 480px) {
+  .crrt-container .crrt-nav-pills .nav-link {
+    font-size: 13px;
+    padding: 8px 15px;
+  }
+
+  .crrt-card-header h4 {
+    font-size: 16px;
+  }
+
+  .crrt-table thead th {
+    font-size: 10px;
+    padding: 10px 6px;
+  }
+
+  .crrt-table tbody td {
+    padding: 10px 6px;
+  }
+
+  .crrt-total-text {
+    font-size: 16px;
+  }
+}

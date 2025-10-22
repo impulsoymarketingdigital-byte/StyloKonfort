@@ -126,6 +126,79 @@ class ProductosModel extends Query
         $array = array($id);
         return $this->save($sql, $array);
     }
+
+    public function getStock()
+    {
+        $sql = "SELECT 
+                p.codigo,
+                p.nombre as producto,
+                c.categoria,
+                m.marca,
+                t.nombre as talla,
+                col.nombre as color,
+                col.color as codigo_color,
+                col.color_secundario,
+                a.nombre as almacen,
+                tc.stock,
+                p.precio_compra,
+                p.precio_venta,
+                (tc.stock * p.precio_compra) as valor_stock
+            FROM tallas_colores tc
+            INNER JOIN productos p ON tc.id_producto = p.id
+            INNER JOIN tallas t ON tc.id_talla = t.id
+            INNER JOIN colores col ON tc.id_color = col.id
+            INNER JOIN almacenes a ON tc.id_almacen = a.id
+            LEFT JOIN categorias c ON p.id_categoria = c.id
+            LEFT JOIN marcas m ON p.id_marca = m.id
+            WHERE p.estado = 1 AND a.estado = 1
+            ORDER BY a.nombre, p.nombre, t.nombre, col.nombre";
+        return $this->selectAll($sql);
+    }
+
+    public function getStockPdf($id_almacen = null)
+    {
+        $sql = "SELECT 
+                p.codigo,
+                p.nombre as producto,
+                c.categoria,
+                m.marca,
+                t.nombre as talla,
+                col.nombre as color,
+                a.nombre as almacen,
+                tc.stock,
+                p.precio_compra,
+                p.precio_venta,
+                (tc.stock * p.precio_compra) as valor_stock
+            FROM tallas_colores tc
+            INNER JOIN productos p ON tc.id_producto = p.id
+            INNER JOIN tallas t ON tc.id_talla = t.id
+            INNER JOIN colores col ON tc.id_color = col.id
+            INNER JOIN almacenes a ON tc.id_almacen = a.id
+            LEFT JOIN categorias c ON p.id_categoria = c.id
+            LEFT JOIN marcas m ON p.id_marca = m.id
+            WHERE p.estado = 1 AND a.estado = 1";
+
+        if ($id_almacen && $id_almacen != '') {
+            $sql .= " AND tc.id_almacen = $id_almacen";
+        }
+
+        $sql .= " ORDER BY a.nombre, p.nombre, t.nombre, col.nombre";
+        return $this->selectAll($sql);
+    }
+
+    public function getAlmacenNombre($id)
+    {
+        $sql = "SELECT nombre FROM almacenes WHERE id = $id";
+        $result = $this->select($sql);
+        return $result ? $result['nombre'] : 'TODOS';
+    }
+
+    public function getEmpresa()
+    {
+        $sql = "SELECT * FROM configuracion LIMIT 1";
+        return $this->select($sql);
+    }
+
 }
 
 ?>

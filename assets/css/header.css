@@ -1,7 +1,7 @@
 /* ========================================
    HEADER E-COMMERCE - Clases Personalizadas
    Prefijo: hed-
-   Color Base: #f85357
+   Color Base: #057997
 ======================================== */
 
 /* Header Principal */
@@ -16,7 +16,7 @@
 
 /* Top Bar */
 .hed-topbar {
-  background: linear-gradient(135deg, #f85357 0%, #ff0008 100%);
+background: linear-gradient(135deg, #0690aa 0%, #057997 100%);
   position: relative;
   overflow: hidden;
 }
@@ -189,7 +189,7 @@
 }
 
 .hed-categories-btn {
-  background: linear-gradient(135deg, #f85357 0%, #ff0008 100%);
+background: linear-gradient(135deg, #0690aa 0%, #057997 100%);
   padding: 16px 24px;
   border-radius: 12px;
   border: none;
@@ -197,7 +197,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  box-shadow: 0 6px 20px rgba(248, 83, 87, 0.3);
+box-shadow: 0 6px 20px rgba(5, 121, 151, 0.3);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -233,7 +233,7 @@
   width: 22px;
   height: 22px;
   background: #ffffff;
-  color: #f85357;
+  color: #057997;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -245,7 +245,7 @@
 
 .hed-categories-btn[aria-expanded="true"] .hed-categories-icon {
   transform: rotate(180deg);
-  background: #f85357;
+  background: #057997;
   color: #ffffff;
 }
 
@@ -303,7 +303,7 @@
 }
 
 .hed-mega-menu::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #f85357 0%, #ff0008 100%);
+background: linear-gradient(135deg, #0690aa 0%, #057997 100%);
   border-radius: 10px;
 }
 
@@ -323,7 +323,7 @@
 .hed-category-card:hover {
   transform: translateY(-8px) scale(1.02);
   box-shadow: 0 15px 35px rgba(248, 83, 87, 0.25);
-  border-color: #f85357;
+  border-color: #057997;
 }
 
 .hed-category-card a {
@@ -336,7 +336,7 @@
   position: relative;
   height: 140px;
   overflow: hidden;
-  background: linear-gradient(135deg, #f85357 0%, #ff0008 100%);
+background: linear-gradient(135deg, #0690aa 0%, #057997 100%);
 }
 
 .hed-category-img::before {
@@ -406,7 +406,7 @@
 }
 
 .hed-category-card:hover .hed-category-name {
-  color: #f85357;
+  color: #057997;
 }
 
 .hed-category-arrow {
@@ -449,7 +449,7 @@
   left: 50%;
   width: 0;
   height: 3px;
-  background: linear-gradient(90deg, #f85357 0%, #ff6b6f 100%);
+  background: linear-gradient(90deg, #057997 0%, #ff6b6f 100%);
   transform: translateX(-50%);
   transition: width 0.3s ease;
   border-radius: 3px 3px 0 0;
@@ -457,7 +457,7 @@
 
 .hed-menu-item:hover a,
 .hed-menu-item.active a {
-  color: #f85357;
+  color: #057997;
 }
 
 .hed-menu-item:hover a::before,
@@ -493,7 +493,7 @@
   left: 20px;
   top: 50%;
   transform: translateY(-50%);
-  color: #f85357;
+  color: #057997;
   font-size: 18px;
   z-index: 1;
 }
@@ -551,7 +551,7 @@
 }
 
 .hed-action-item:hover svg {
-  fill: #f85357;
+  fill: #057997;
   filter: drop-shadow(0 3px 6px rgba(248, 83, 87, 0.3));
 }
 
@@ -559,7 +559,7 @@
   position: absolute;
   top: -8px;
   right: -8px;
-  background: linear-gradient(135deg, #f85357 0%, #ff0008 100%);
+background: linear-gradient(135deg, #0690aa 0%, #057997 100%);
   color: #ffffff;
   font-size: 11px;
   font-weight: 700;
@@ -579,7 +579,7 @@
 .hed-mobile-toggle {
   display: none;
   cursor: pointer;
-  background: #f85357;
+  background: #057997;
   border: none;
   padding: 8px 12px;
   border-radius: 8px;
@@ -587,7 +587,7 @@
 }
 
 .hed-mobile-toggle:hover {
-  background: #ff0008;
+  background: #057997;
   transform: scale(1.05);
 }
 
@@ -633,11 +633,11 @@
   align-items: center;
   margin-bottom: 30px;
   padding-bottom: 20px;
-  border-bottom: 2px solid #f85357;
+  border-bottom: 2px solid #057997;
 }
 
 .hed-mobile-nav-close {
-  background: #f85357;
+  background: #057997;
   color: #ffffff;
   border: none;
   width: 35px;
@@ -652,7 +652,7 @@
 }
 
 .hed-mobile-nav-close:hover {
-  background: #ff0008;
+  background: #057997;
   transform: rotate(90deg);
 }
 
@@ -679,7 +679,7 @@
 
 .hed-mobile-menu-item a:hover,
 .hed-mobile-menu-item.active a {
-  background: #f85357;
+  background: #057997;
   color: #ffffff;
 }
 
@@ -809,7 +809,7 @@
 
 .hed-user-menu-item:hover {
   background: #f5f5f5;
-  color: #f85357;
+  color: #057997;
 }
 
 .hed-user-menu-item i {
@@ -1024,5 +1024,282 @@
     display: flex !important;
     align-items: center;
     justify-content: center;
+  }
+}
+
+
+/* Archivo: assets/css/promociones-cliente.css */
+
+/* 🎨 MODAL MODERNO Y COMPACTO */
+#modal-promociones .modal-dialog {
+  max-width: 600px;
+  margin: 1.75rem auto;
+}
+
+#modal-promociones .modal-content {
+  border-radius: 20px;
+  overflow: hidden;
+  border: none;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: zoomIn 0.4s ease;
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 🖼️ IMÁGENES UNIFORMES Y COMPACTAS */
+#carouselPromociones .carousel-item img {
+  width: 100%;
+  height: 350px;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* 🎠 CARRUSEL MEJORADO */
+#carouselPromociones {
+  position: relative;
+  background: #000;
+}
+
+#carouselPromociones .carousel-inner {
+  border-radius: 20px 20px 0 0;
+}
+
+#carouselPromociones .carousel-item {
+  position: relative;
+}
+
+#carouselPromociones .carousel-indicators {
+  bottom: 15px;
+  margin-bottom: 0;
+  z-index: 15;
+}
+
+#carouselPromociones .carousel-indicators button {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid white;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+#carouselPromociones .carousel-indicators button.active {
+  background: white;
+  transform: scale(1.2);
+}
+
+#carouselPromociones .carousel-control-prev,
+#carouselPromociones .carousel-control-next {
+  width: 45px;
+  height: 45px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 15;
+}
+
+#carouselPromociones:hover .carousel-control-prev,
+#carouselPromociones:hover .carousel-control-next {
+  opacity: 0.8;
+}
+
+#carouselPromociones .carousel-control-prev {
+  left: 15px;
+}
+
+#carouselPromociones .carousel-control-next {
+  right: 15px;
+}
+
+#carouselPromociones .carousel-control-prev:hover,
+#carouselPromociones .carousel-control-next:hover {
+  opacity: 1;
+  transform: translateY(-50%) scale(1.1);
+}
+
+#carouselPromociones .carousel-control-prev-icon,
+#carouselPromociones .carousel-control-next-icon {
+  width: 20px;
+  height: 20px;
+  filter: invert(1);
+}
+
+#carouselPromociones .carousel-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.4) 70%, transparent 100%);
+  padding: 50px 20px 25px;
+  text-align: center;
+}
+
+#carouselPromociones .carousel-caption h5 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+  color: white;
+}
+
+#carouselPromociones .carousel-caption p {
+  font-size: 0.95rem;
+  margin-bottom: 15px;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.95);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#carouselPromociones .carousel-caption .btn {
+  padding: 10px 24px;
+  font-size: 0.85rem;
+  border-radius: 50px;
+  min-width: 140px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* 🔴 BOTONES ROJOS */
+#carouselPromociones .carousel-caption .btn-solid,
+.carousel-footer .btn-solid {
+  background: #057997;
+  border: none;
+  color: white;
+  box-shadow: 0 4px 15px rgba(255, 0, 8, 0.4);
+  transition: all 0.3s ease;
+}
+
+#carouselPromociones .carousel-caption .btn-solid:hover,
+.carousel-footer .btn-solid:hover {
+  background: #cc0006;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 0, 8, 0.6);
+}
+
+/* 🎯 BOTÓN ENTENDIDO DEL CARRUSEL */
+.carousel-footer {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 20px !important;
+  text-align: center;
+  border-top: 1px solid #dee2e6;
+}
+
+.carousel-footer .btn {
+  min-width: 180px;
+  padding: 12px 30px;
+  font-weight: 700;
+  border-radius: 50px;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+}
+
+/* ❌ BOTÓN CERRAR MEJORADO */
+#modal-promociones .btn-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 9999;
+  background: white;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  opacity: 1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+#modal-promociones .btn-close:hover {
+  transform: scale(1.15) rotate(90deg);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* 🖱️ HOVER EN IMÁGENES */
+#carouselPromociones .carousel-item a {
+  display: block;
+  overflow: hidden;
+}
+
+#carouselPromociones .carousel-item a img {
+  transition: transform 0.5s ease;
+}
+
+#carouselPromociones .carousel-item a:hover img {
+  transform: scale(1.05);
+}
+
+/* 📱 RESPONSIVE OPTIMIZADO */
+@media (max-width: 768px) {
+  #modal-promociones .modal-dialog {
+    margin: 0.5rem;
+    max-width: calc(100% - 1rem);
+  }
+
+  #carouselPromociones .carousel-item img {
+    height: 250px;
+  }
+
+  #carouselPromociones .carousel-control-prev,
+  #carouselPromociones .carousel-control-next {
+    width: 35px;
+    height: 35px;
+  }
+
+  #carouselPromociones .carousel-control-prev {
+    left: 10px;
+  }
+
+  #carouselPromociones .carousel-control-next {
+    right: 10px;
+  }
+
+  #carouselPromociones .carousel-caption h5 {
+    font-size: 1.1rem;
+  }
+
+  #carouselPromociones .carousel-caption p {
+    font-size: 0.8rem;
+    display: none;
+  }
+
+  .carousel-footer {
+    padding: 15px !important;
+  }
+
+  .carousel-footer .btn {
+    min-width: 150px;
+    padding: 10px 24px;
+    font-size: 0.85rem;
+  }
+
+  #modal-promociones .btn-close {
+    width: 35px;
+    height: 35px;
+    top: 10px;
+    right: 10px;
+  }
+}
+
+@media (max-width: 576px) {
+  #carouselPromociones .carousel-item img {
+    height: 220px;
   }
 }

@@ -2,46 +2,46 @@
 include_once 'Views/template/header-principal.php'; ?>
 
 <!-- Start Content -->
-<div class="container-fluid py-5">
+<div class="container-fluid py-5 crrt-container">
     <?php if ($data['verificar']['verify'] == 1) { ?>
 
-
         <!-- Tabs de navegación -->
-        <ul class="nav nav-pills mb-4 justify-content-center" id="myTab" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active px-4" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane"
-                    type="button" role="tab">
-                    <i class="fa fa-shopping-cart"></i> Mi Carrito
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link px-4" id="pendientes-tab" data-bs-toggle="tab" data-bs-target="#pendientes-tab-pane"
-                    type="button" role="tab">
-                    <i class="fa fa-clipboard-list"></i> Mis Pedidos
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link px-4" id="productos-tab" data-bs-toggle="tab" data-bs-target="#productos-tab-pane"
-                    type="button" role="tab">
-                    <i class="fa fa-star"></i> Calificaciones
-                </button>
-            </li>
-        </ul>
+        <div class="text-center mb-4">
+            <ul class="nav nav-pills crrt-nav-pills justify-content-center" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane"
+                        type="button" role="tab">
+                        <i class="fa fa-shopping-cart"></i> Mi Carrito
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pendientes-tab" data-bs-toggle="tab" data-bs-target="#pendientes-tab-pane"
+                        type="button" role="tab">
+                        <i class="fa fa-clipboard-list"></i> Mis Pedidos
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="productos-tab" data-bs-toggle="tab" data-bs-target="#productos-tab-pane"
+                        type="button" role="tab">
+                        <i class="fa fa-star"></i> Calificaciones
+                    </button>
+                </li>
+            </ul>
+        </div>
 
         <!-- Contenido de las tabs -->
         <div class="tab-content" id="myTabContent">
             <!-- TAB CARRITO -->
-            <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab"
-                tabindex="0">
+            <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel">
                 <div class="row justify-content-center">
                     <div class="col-12 col-lg-10">
-                        <div class="card shadow-lg border-0">
-                            <div class="card-header">
-                                <h4 class="mb-0"><i class="fa fa-shopping-cart"></i> Carrito de Compras</h4>
+                        <div class="card crrt-card">
+                            <div class="crrt-card-header">
+                                <h4><i class="fa fa-shopping-cart"></i> Carrito de Compras</h4>
                             </div>
                             <div class="card-body p-0">
                                 <div class="table-responsive">
-                                    <table class="table table-hover align-middle mb-0" id="tableListaProductos">
+                                    <table class="table crrt-table align-middle mb-0" id="tableListaProductos">
                                         <thead>
                                             <tr>
                                                 <th class="text-center" width="100">Imagen</th>
@@ -50,6 +50,7 @@ include_once 'Views/template/header-principal.php'; ?>
                                                 <th class="text-end">Precio</th>
                                                 <th class="text-center">Cantidad</th>
                                                 <th class="text-end">SubTotal</th>
+                                                <th class="text-center" width="100">Acciones</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -57,13 +58,15 @@ include_once 'Views/template/header-principal.php'; ?>
                                     </table>
                                 </div>
                             </div>
-                            <div class="card-footer bg-light">
+                            <div class="crrt-card-footer">
                                 <div class="row align-items-center">
                                     <div class="col-md-6">
-                                        <h3 class="mb-0 text-primary" id="totalProducto"></h3>
+                                        <h3 class="crrt-total-text" id="totalProducto">
+                                            <i class="fa fa-shopping-bag"></i> TOTAL A PAGAR: Bs. 0.00
+                                        </h3>
                                     </div>
                                     <div class="col-md-6 text-end">
-                                        <button class="btn btn-success btn-lg px-5" type="button" id="btnFinalizarPedido">
+                                        <button class="crrt-btn-finalizar" type="button" id="btnFinalizarPedido">
                                             <i class="fa fa-check-circle"></i> Finalizar Pedido
                                         </button>
                                     </div>
@@ -75,15 +78,14 @@ include_once 'Views/template/header-principal.php'; ?>
             </div>
 
             <!-- TAB PEDIDOS -->
-            <div class="tab-pane fade" id="pendientes-tab-pane" role="tabpanel" aria-labelledby="pendientes-tab"
-                tabindex="0">
+            <div class="tab-pane fade" id="pendientes-tab-pane" role="tabpanel">
                 <div class="row justify-content-center">
                     <div class="col-12 col-lg-10">
-                        <div class="card shadow-lg border-0">
-                            <div class="card-header">
-                                <h4 class="mb-0"><i class="fa fa-clipboard-list"></i> Mis Pedidos</h4>
+                        <div class="card crrt-card">
+                            <div class="crrt-card-header">
+                                <h4><i class="fa fa-clipboard-list"></i> Mis Pedidos</h4>
                             </div>
-                            <div class="card-body">
+                            <div class="card-body p-4">
                                 <div class="table-responsive">
                                     <table class="table table-hover" id="tblPendientes" style="width: 100%;">
                                         <thead class="table-dark">
@@ -107,14 +109,14 @@ include_once 'Views/template/header-principal.php'; ?>
             </div>
 
             <!-- TAB CALIFICACIONES -->
-            <div class="tab-pane fade" id="productos-tab-pane" role="tabpanel" aria-labelledby="productos-tab" tabindex="0">
+            <div class="tab-pane fade" id="productos-tab-pane" role="tabpanel">
                 <div class="row justify-content-center">
                     <div class="col-12 col-lg-10">
-                        <div class="card shadow-lg border-0">
-                            <div class="card-header">
-                                <h4 class="mb-0"><i class="fa fa-star"></i> Calificaciones de Productos</h4>
+                        <div class="card crrt-card">
+                            <div class="crrt-card-header">
+                                <h4><i class="fa fa-star"></i> Calificaciones de Productos</h4>
                             </div>
-                            <div class="card-body">
+                            <div class="card-body p-4">
                                 <div class="table-responsive">
                                     <table class="table table-hover" id="tblProductos" style="width: 100%;">
                                         <thead class="table-dark">
@@ -131,14 +133,14 @@ include_once 'Views/template/header-principal.php'; ?>
                                     </table>
                                 </div>
                             </div>
-                            <div class="card-footer bg-light">
+                            <div class="crrt-card-footer">
                                 <h5 class="mb-3"><i class="fa fa-comments"></i> Déjanos tu Testimonio</h5>
                                 <div class="form-group mb-3">
                                     <textarea id="comentario" class="form-control" name="comentario" rows="4"
                                         placeholder="Cuéntanos tu experiencia..."><?php echo (empty($data['testimonio'])) ? '' : $data['testimonio']['mensaje']; ?></textarea>
                                 </div>
                                 <div class="text-end">
-                                    <button class="btn btn-primary px-4" type="button" id="btnTestimonio">
+                                    <button class="crrt-btn-finalizar" type="button" id="btnTestimonio">
                                         <i class="fa fa-save"></i> Guardar Testimonio
                                     </button>
                                 </div>
@@ -152,9 +154,9 @@ include_once 'Views/template/header-principal.php'; ?>
     <?php } else { ?>
         <div class="row justify-content-center">
             <div class="col-md-6">
-                <div class="alert alert-danger text-center py-5 shadow" role="alert">
-                    <i class="fa fa-exclamation-triangle fa-3x mb-3"></i>
-                    <h3 class="mb-3">VERIFICA TU CORREO ELECTRÓNICO</h3>
+                <div class="crrt-alert-verify">
+                    <i class="fa fa-exclamation-triangle"></i>
+                    <h3>VERIFICA TU CORREO ELECTRÓNICO</h3>
                     <p>Por favor revisa tu bandeja de entrada y confirma tu cuenta para continuar.</p>
                 </div>
             </div>
@@ -304,7 +306,7 @@ include_once 'Views/template/header-principal.php'; ?>
 
                 <div class="table-responsive">
                     <table class="table table-hover align-middle" id="tablePedidos" style="width: 100%;">
-                        <thead >
+                        <thead>
                             <tr>
                                 <th>Producto</th>
                                 <th>Atributo</th>
@@ -348,37 +350,6 @@ include_once 'Views/template/header-principal.php'; ?>
 
 <script src="<?php echo BASE_URL . 'assets/js/clientes.js'; ?>"></script>
 
-<style>
-    .nav-pills .nav-link {
-        border: none;
-        border-radius: 50px;
-        transition: all 0.3s ease;
-    }
-
-    .nav-pills .nav-link:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .nav-pills .nav-link.active {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    }
-
-    .card {
-        transition: all 0.3s ease;
-    }
-
-    .card:hover {
-        transform: translateY(-5px);
-    }
-
-    #estadoEnviado.border-success,
-    #estadoProceso.border-success,
-    #estadoCompletado.border-success {
-        border-color: #28a745 !important;
-        background-color: #d4edda;
-    }
-</style>
 </body>
 
 </html>

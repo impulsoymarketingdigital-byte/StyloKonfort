@@ -1,4 +1,6 @@
 <?php
+require 'vendor/autoload.php';
+
 class Productos extends Controller
 {
     public function __construct()
@@ -53,6 +55,47 @@ class Productos extends Controller
         echo json_encode($data);
         die();
     }
+
+    public function stock()
+    {
+        $data['title'] = 'Stock de Productos';
+        $data['script'] = 'stock.js';
+        $data['almacenes'] = $this->model->getDatos('almacenes');
+        $this->views->getView('admin/productos', 'stock', $data);
+    }
+
+    public function listar_stock()
+    {
+        $data = $this->model->getStock();
+        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        die();
+    }
+
+
+    public function reporte_stock_pdf()
+    {
+
+        $id_almacen = $_GET['almacen'] ?? null;
+
+        ob_start();
+        $data['title'] = 'REPORTE DE STOCK';
+        $data['empresa'] = $this->model->getEmpresa();
+        $data['stock'] = $this->model->getStockPdf($id_almacen);
+        $data['almacen_nombre'] = $id_almacen ? $this->model->getAlmacenNombre($id_almacen) : 'TODOS LOS ALMACENES';
+        $this->views->getView('admin/rooms', 'reporte_stock_pdf', $data);
+        $html = ob_get_clean();
+
+        $dompdf = new \Dompdf\Dompdf();
+        $options = $dompdf->getOptions();
+        $options->set('isRemoteEnabled', true);
+        $dompdf->setOptions($options);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'landscape');
+        $dompdf->render();
+        $dompdf->stream('Reporte_Stock.pdf', array('Attachment' => false));
+    }
+
+
     public function registrar()
     {
         if (isset($_POST['nombre']) && isset($_POST['codigo'])) {
@@ -93,7 +136,7 @@ class Productos extends Controller
                             $precio_venta,
                             $categoria,
                             $marca
-                        ); 
+                        );
                         if ($data > 0) {
                             $respuesta = array('msg' => 'PRODUCTO REGISTRADO', 'icono' => 'success');
                         } else {
@@ -102,8 +145,7 @@ class Productos extends Controller
                     } else {
                         $respuesta = array('msg' => 'EL CÓDIGO YA EXISTE', 'icono' => 'warning');
                     }
-                }
-                else {
+                } else {
                     $verificar = $this->model->getValidar('codigo', $codigo, 'actualizar', $id);
                     if (empty($verificar)) {
                         $data = $this->model->modificar(
@@ -117,7 +159,7 @@ class Productos extends Controller
                             $categoria,
                             $marca,
                             $id
-                        ); 
+                        );
                         if ($data > 0) {
                             $respuesta = array('msg' => 'PRODUCTO MODIFICADO', 'icono' => 'success');
                         } else {

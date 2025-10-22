@@ -56,8 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
     ],
     responsive: true,
     language,
-    dom,
-    buttons,
+    
     order: [[5, "desc"]],
   });
 

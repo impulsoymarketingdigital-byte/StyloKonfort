@@ -2,7 +2,7 @@
 Template Name: MASTEC DIGITAL
 Author: LSM
 Email: luissantander2002@gmail.com
-Color Base:: #fc0038 -> minimalista | #fe082f -> elegante
+Color Base:: #057997 -> minimalista | #fe082f -> elegante
 */
 /*    font-family: Roboto, sans-serif;
 */
@@ -58,10 +58,10 @@ a {
     bottom: 0;
     padding: 0 15px;
     z-index: 5;
-    background: #fc0038;
+    background: #057997;
     background-clip: padding-box;
     border-bottom: 1px solid #e4e4e4;
-    box-shadow: 0 5px 10px rgba(252, 0, 56, 0.25) !important;
+  box-shadow: 0 5px 10px rgba(5, 121, 151, 0.3) !important;
 }
 
 .logo-icon {
@@ -88,10 +88,10 @@ a {
     left: 250px;
     right: 0;
     height: 60px;
-    background: #fc0038;
+    background: #057997;
     border-bottom: 1px solid rgb(228 228 228 / 0%);
     z-index: 10;
-    box-shadow: 0 5px 10px rgba(252, 0, 56, 0.25) !important;
+  box-shadow: 0 5px 10px rgba(5, 121, 151, 0.3) !important;
 }
 
 .topbar .navbar {
@@ -244,7 +244,7 @@ a {
 .sidebar-wrapper .metismenu a:active,
 .sidebar-wrapper .metismenu a:focus,
 .sidebar-wrapper .metismenu a:hover {
-    color: #fc0038;
+    color: #057997;
     text-decoration: none;
     border-radius: 10px;
     background: white;
@@ -257,7 +257,7 @@ a {
 .sidebar-wrapper .metismenu .mm-active > a .parent-icon,
 .sidebar-wrapper .metismenu li:hover a .parent-icon {
     color: white;
-    background: #fc0038;
+    background: #057997;
 }
 
 .menu-label {
@@ -363,9 +363,9 @@ a {
     background: linear-gradient(to right, #0ed600, #17a00e);
 }
 .product-stock-danger {
-    background: #fc0038;
-    background: -webkit-linear-gradient(to right, #ff2740, #fc0038);
-    background: linear-gradient(to right, #ff2740, #fc0038);
+    background: #057997;
+    background: -webkit-linear-gradient(to right, #ff2740, #057997);
+    background: linear-gradient(to right, #ff2740, #057997);
 }
 .product-stock-info {
     background: #0153a5;
@@ -392,7 +392,7 @@ a {
     max-height: 550px;
     overflow-y: auto;
     scrollbar-width: thin;
-    scrollbar-color: #fc0038 transparent;
+    scrollbar-color: #057997 transparent;
 }
 
 .product-grid::-webkit-scrollbar {
@@ -400,7 +400,7 @@ a {
 }
 
 .product-grid::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #fc0038, #ff2740);
+    background: linear-gradient(135deg, #057997, #ff2740);
     border-radius: 10px;
 }
 
@@ -473,8 +473,8 @@ CATEGORIA PRODUCTOS
 }
 
 .category-nav-btn:hover {
-    background-color: #fc0038;
-    border-color: #fc0038;
+    background-color: #057997;
+    border-color: #057997;
     color: white;
     transform: scale(1.1);
     box-shadow: 0 4px 4px rgba(252, 0, 56, 0.3);
@@ -520,13 +520,13 @@ CATEGORIA PRODUCTOS
 .category-item:hover {
     transform: translateY(-2px);
     box-shadow: 0 3px 8px rgba(252, 0, 56, 0.4);
-    border-color: #fc0038;
-    color: #fc0038;
+    border-color: #057997;
+    color: #057997;
 }
 
 .category-item.active {
-    background: linear-gradient(135deg, #fc0038 0%, #e60032 100%);
-    border-color: #fc0038;
+    background: linear-gradient(135deg, #057997 0%, #e60032 100%);
+    border-color: #057997;
     color: white;
     transform: translateY(-1px);
     box-shadow: 0 3px 8px rgba(252, 0, 56, 0.4);
@@ -589,7 +589,7 @@ CATEGORIA PRODUCTOS
     border-radius: 20px;
     bottom: 20px;
     right: 12px;
-    background-color: #fc0038;
+    background-color: #057997;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: background-color 0.3s ease, transform 0.3s ease;
     cursor: pointer;
@@ -1841,8 +1841,8 @@ form select.error:focus {
 }
 
 .bg-light-danger {
-    background-color: rgb(244 17 39 / 0.11) !important;
-    box-shadow: 0 4px 8px rgba(244, 17, 39, 0.25);
+  background-color: rgb(244 17 39 / 0.11) !important;
+  box-shadow: 0 4px 8px rgba(244, 17, 39, 0.25);
 }
 
 .bg-light-warning {
@@ -2174,14 +2174,14 @@ form select.error:focus {
 }
 
 .btn-action-danger {
-    color: #fc0038;
-    border: 1px solid #fc0038;
-    box-shadow: 0 5px 10px rgba(252, 0, 56, 0.25) !important;
+    color: #057997;
+    border: 1px solid #057997;
+  box-shadow: 0 5px 10px rgba(5, 121, 151, 0.3) !important;
 }
 
 .btn-action-danger:hover {
     color: white;
-    background-color: #fc0038;
+    background-color: #057997;
 }
 
 .btn-action-warning {
@@ -2277,7 +2277,7 @@ form select.error:focus {
     border-bottom: 1px solid rgba(0, 0, 0, 0.125);
     border-top-left-radius: 15px !important;
     border-top-right-radius: 15px !important;
-    background-color: #fc0038 !important;
+    background-color: #057997 !important;
     color: white;
     font-size: 18px !important;
     font-weight: 550;
@@ -2285,7 +2285,7 @@ form select.error:focus {
 */
 
 .card-header {
-    color: #fc0038;
+    color: #057997;
     font-size: 18px !important;
     font-weight: 550;
 }
@@ -2348,7 +2348,7 @@ input::placeholder {
 }
 .form-control:focus {
     background-color: #fff;
-    border: 2px solid #fc0038;
+    border: 2px solid #057997;
     outline: none;
     box-shadow: 0 0 0 4px rgba(252, 0, 56, 0.15);
 }
@@ -2378,7 +2378,7 @@ input::placeholder {
 }
 .custom-input:focus {
     background-color: #fff;
-    border: 2px solid #fc0038;
+    border: 2px solid #057997;
     outline: none;
     box-shadow: 0 0 0 4px rgba(252, 0, 56, 0.15);
 }
@@ -3024,13 +3024,13 @@ input::placeholder {
 }
 
 .payment-method:hover {
-    border-color: #fc0038;
+    border-color: #057997;
     box-shadow: 0 8px 25px rgba(252, 0, 56, 0.15);
     transform: translateY(-2px);
 }
 
 input[type="radio"]:checked ~ .payment-method {
-    border-color: #fc0038;
+    border-color: #057997;
     box-shadow: 0 5px 10px rgba(252, 0, 56, 0.25);
     transform: translateY(-2px);
 }
@@ -3050,7 +3050,7 @@ input[type="radio"]:checked ~ .payment-method .check {
     right: 1px;
     width: 24px;
     height: 24px;
-    background: #fc0038;
+    background: #057997;
     border-radius: 50%;
     justify-content: center;
     align-items: center;
@@ -3112,7 +3112,7 @@ input[type="radio"]:checked ~ .payment-method .imgName img {
 }
 
 input[type="radio"]:checked ~ .payment-method .imgName .name {
-    color: #fc0038;
+    color: #057997;
 }
 
 /* RESPONSIVE DESIGN */
@@ -3644,7 +3644,7 @@ input[type="radio"]:checked ~ .payment-method .imgName .name {
 }
 
 .branch-option.active .branch-option-content i {
-    color: #fc0038;
+    color: #057997;
 }
 
 .branch-option-name {
@@ -3655,7 +3655,7 @@ input[type="radio"]:checked ~ .payment-method .imgName .name {
 }
 
 .badge-current {
-    background: #fc0038;
+    background: #057997;
     color: #ffffff;
     font-size: 9px;
     font-weight: 600;
@@ -3793,7 +3793,7 @@ input[type="radio"]:checked ~ .payment-method .imgName .name {
 
 /* Dropzone mejorado con color rojo */
 .dropzone {
-    border: 3px dashed #fc0038 !important;
+    border: 3px dashed #057997 !important;
     border-radius: 12px !important;
     background: #fff5f7 !important;
     transition: all 0.3s ease;
@@ -3812,7 +3812,7 @@ input[type="radio"]:checked ~ .payment-method .imgName .name {
 }
 
 .dropzone .dz-message i {
-    color: #fc0038;
+    color: #057997;
 }
 
 /* Cards mejorados */
@@ -3898,7 +3898,7 @@ input[type="radio"]:checked ~ .payment-method .imgName .name {
 
 /* Botón eliminar con color rojo */
 .gallery-item .btnEliminarImagen {
-    background: linear-gradient(135deg, #fc0038 0%, #d4003d 100%);
+    background: linear-gradient(135deg, #057997 0%, #d4003d 100%);
     border: none;
     color: white;
     padding: 0.5rem 1rem;
@@ -3934,7 +3934,7 @@ input[type="radio"]:checked ~ .payment-method .imgName .name {
 
 /* Botón subir imágenes con color rojo */
 #btnProcesar {
-    background: linear-gradient(135deg, #fc0038 0%, #d4003d 100%);
+    background: linear-gradient(135deg, #057997 0%, #d4003d 100%);
     border: none;
     padding: 0.75rem 2rem;
     border-radius: 25px;
@@ -3957,7 +3957,7 @@ input[type="radio"]:checked ~ .payment-method .imgName .name {
 }
 
 #modalGaleria .modal-footer .btn-danger {
-    background: linear-gradient(135deg, #fc0038 0%, #d4003d 100%);
+    background: linear-gradient(135deg, #057997 0%, #d4003d 100%);
     border: none;
     padding: 0.625rem 1.75rem;
     border-radius: 25px;

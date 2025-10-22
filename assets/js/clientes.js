@@ -174,31 +174,39 @@ function getListaProductos() {
             producto.color,
             producto.nombreTalla,
             producto.nombreColor,
-            producto.colorHexa
+            producto.colorHexa,
+            producto.colorSecundario || null
           );
 
           html += `<tr>
             <td class="text-center">
-              <img class="img-thumbnail rounded" src="${producto.imagen}" alt="" width="80" height="80" style="object-fit: cover;">
+              <img class="crrt-product-img" src="${base_url}${producto.imagen}" alt="">
             </td>
-            <td><strong>${producto.nombre}</strong></td>
+            <td><h5 class="crrt-product-name">${producto.nombre}</h5></td>
             <td>${atributoHTML}</td>
-            <td class="text-end"><span class="badge bg-warning text-dark">${res.moneda} ${producto.precio}</span></td>
-            <td class="text-center"><span class="badge bg-primary">${producto.cantidad}</span></td>
-            <td class="text-end"><strong>${producto.subTotal}</strong></td>
+            <td class="text-end"><span class="crrt-price-badge">${res.moneda} ${producto.precio}</span></td>
+            <td class="text-center"><span class="crrt-quantity-badge">${producto.cantidad}</span></td>
+            <td class="text-end"><strong class="crrt-subtotal">${res.moneda} ${producto.subTotal}</strong></td>
+            <td class="text-center">
+              <button class="crrt-btn-delete" onclick="eliminarProductoCarrito(${producto.id}, ${producto.size}, ${producto.color})" title="Eliminar">
+                <i class="fa fa-trash"></i>
+              </button>
+            </td>
           </tr>`;
         });
         tableLista.innerHTML = html;
-        document.querySelector("#totalProducto").textContent =
-          "TOTAL A PAGAR: " + res.moneda + " " + res.total;
+        document.querySelector("#totalProducto").innerHTML =
+          '<i class="fa fa-shopping-bag"></i> TOTAL A PAGAR: ' + res.moneda + " " + res.total;
       } else {
-        document.querySelector("#totalProducto").textContent =
-          res.moneda + " 0.00";
+        document.querySelector("#totalProducto").innerHTML =
+          '<i class="fa fa-shopping-bag"></i> TOTAL: ' + res.moneda + " 0.00";
         tableLista.innerHTML = `
           <tr>
-            <td colspan="6" class="text-center text-muted py-4">
-              <i class="fa fa-shopping-cart fa-2x mb-2"></i><br>
-              CARRITO VACÍO
+            <td colspan="7">
+              <div class="crrt-empty-cart">
+                <i class="fa fa-shopping-cart"></i>
+                <div class="crrt-empty-cart-text">CARRITO VACÍO</div>
+              </div>
             </td>
           </tr>`;
       }
@@ -206,18 +214,82 @@ function getListaProductos() {
   };
 }
 
-function generarAtributo(size, color, nombreTalla, nombreColor, colorHexa) {
+function generarAtributo(size, color, nombreTalla, nombreColor, colorHexa, colorSecundario) {
   if (!nombreTalla || !nombreColor) {
     return '<span class="badge bg-secondary">Sin atributos</span>';
   }
+  
+  let colorHTML = '';
+  if (colorSecundario && colorSecundario.trim() !== '') {
+    // Color combinado (gradiente)
+    colorHTML = `<span class="crrt-color-circle-split" style="background: linear-gradient(90deg, ${colorHexa} 50%, ${colorSecundario} 50%);" title="${nombreColor}"></span>`;
+  } else {
+    // Color sólido
+    colorHTML = `<span class="crrt-color-circle" style="background-color: ${colorHexa};" title="${nombreColor}"></span>`;
+  }
+  
   return `
-    <div class="d-flex align-items-center gap-2 flex-wrap">
-      <span class="badge bg-light text-dark border border-secondary">${nombreTalla}</span>
-      <span class="badge rounded-circle" style="background-color: ${
-        colorHexa || "#ccc"
-      }; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; border: 2px solid #ddd;" title="${nombreColor}"></span>
-      <small class="text-muted">${nombreColor}</small>
+    <div class="crrt-attributes">
+      <span class="crrt-size-badge"><i class="fa fa-ruler-combined"></i> ${nombreTalla}</span>
+      ${colorHTML}
+      <span class="crrt-color-name">${nombreColor}</span>
     </div>`;
+}
+
+function eliminarProductoCarrito(idProducto, size, color) {
+  Swal.fire({
+    title: "¿Eliminar producto?",
+    text: "Se quitará del carrito",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Sí, eliminar",
+    cancelButtonText: "Cancelar",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      listaCarrito = listaCarrito.filter(
+        (item) =>
+          !(
+            item.idProducto == idProducto &&
+            item.size == size &&
+            item.color == color
+          )
+      );
+      localStorage.setItem("listaCarrito", JSON.stringify(listaCarrito));
+      alertaPerzanalizada("PRODUCTO ELIMINADO", "success");
+      cantidadCarrito();
+      getListaProductos();
+    }
+  });
+}
+
+function eliminarProductoCarrito(idProducto, size, color) {
+  Swal.fire({
+    title: "¿Eliminar producto?",
+    text: "Se quitará del carrito",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Sí, eliminar",
+    cancelButtonText: "Cancelar",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      listaCarrito = listaCarrito.filter(
+        (item) =>
+          !(
+            item.idProducto == idProducto &&
+            item.size == size &&
+            item.color == color
+          )
+      );
+      localStorage.setItem("listaCarrito", JSON.stringify(listaCarrito));
+      alertaPerzanalizada("PRODUCTO ELIMINADO", "success");
+      cantidadCarrito();
+      getListaProductos();
+    }
+  });
 }
 
 function registrarPedido() {
@@ -232,7 +304,8 @@ function registrarPedido() {
       if (res.icono == "success") {
         localStorage.removeItem("listaCarrito");
         enviarTicketCorreo(res.idPedido);
-        window.location.reload();
+
+        enviarTicketWhatsApp(res.idPedido);
       }
     }
   };
@@ -254,6 +327,30 @@ function enviarTicketCorreo(idPedido) {
     }
   };
 }
+
+function enviarTicketWhatsApp(idPedido) {
+  const formData = new FormData();
+  formData.append("idPedido", idPedido);
+  const url = base_url + "clientes/enviarTicketWhatsApp";
+  const http = new XMLHttpRequest();
+  http.open("POST", url, true);
+  http.send(formData);
+  http.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      const res = JSON.parse(this.responseText);
+      if (res.icono == "success" && res.whatsappLink) {
+        window.open(res.whatsappLink, "_blank");
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      } else {
+        window.location.reload();
+      }
+    }
+  };
+}
+
 function verPedido(idPedido) {
   estadoEnviado.classList.remove("border-success");
   estadoProceso.classList.remove("border-success");
