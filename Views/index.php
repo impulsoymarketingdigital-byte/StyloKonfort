@@ -16,7 +16,7 @@
                 <div class="hero-text-inner">
                   <h3 class="hero-subtitle"><?php echo $slider['titulo']; ?></h3>
                   <h2 class="hero-title"><?php echo $slider['subtitulo']; ?></h2>
-                
+
                 </div>
               </div>
             </div>
@@ -52,20 +52,22 @@
         <div id="hm-tab-nuevos" class="hm-tab-panel active">
           <?php if (!empty($data['nuevoProductos'])) { ?>
             <div class="hm-products-grid">
-              <?php foreach ($data['nuevoProductos'] as $producto) { 
-                $imagenProducto = (!empty($producto['imagen']) && file_exists($producto['imagen'])) 
-                    ? BASE_URL . $producto['imagen'] 
-                    : BASE_URL . 'assets/images/productos/product.png';
-              ?>
+              <?php foreach ($data['nuevoProductos'] as $producto) {
+                $imagenProducto = (!empty($producto['imagen']) && file_exists($producto['imagen']))
+                  ? BASE_URL . $producto['imagen']
+                  : BASE_URL . 'assets/images/productos/product.png';
+                ?>
                 <div class="hm-product-card">
                   <div class="hm-product-image">
                     <img src="<?php echo $imagenProducto; ?>" alt="<?php echo $producto['nombre']; ?>">
                     <div class="hm-product-badge">Nuevo</div>
                     <div class="hm-product-actions">
-                      <button onclick="verDetalle(<?php echo $producto['id']; ?>)" class="hm-action-btn" title="Vista previa">
+                      <button onclick="verDetalle(<?php echo $producto['id']; ?>)" class="hm-action-btn"
+                        title="Vista previa">
                         <i data-feather="eye"></i>
                       </button>
-                      <a href="<?php echo BASE_URL . 'principal/detail/' . $producto['slug']; ?>" class="hm-action-btn" title="Ver Detalle">
+                      <a href="<?php echo BASE_URL . 'principal/detail/' . $producto['slug']; ?>" class="hm-action-btn"
+                        title="Ver Detalle">
                         <i data-feather="external-link"></i>
                       </a>
                     </div>
@@ -74,8 +76,8 @@
                     <div class="hm-product-rating">
                       <?php
                       for ($i = 1; $i <= 5; $i++) {
-                        echo ($producto['calificacion'] >= $i) 
-                          ? '<i class="hm-star-filled" data-feather="star"></i>' 
+                        echo ($producto['calificacion'] >= $i)
+                          ? '<i class="hm-star-filled" data-feather="star"></i>'
                           : '<i class="hm-star-empty" data-feather="star"></i>';
                       }
                       ?>
@@ -103,20 +105,22 @@
         <div id="hm-tab-destacados" class="hm-tab-panel">
           <?php if (!empty($data['destacados'])) { ?>
             <div class="hm-products-grid">
-              <?php foreach ($data['destacados'] as $producto) { 
-                $imagenProducto = (!empty($producto['prod']['imagen']) && file_exists($producto['prod']['imagen'])) 
-                    ? BASE_URL . $producto['prod']['imagen'] 
-                    : BASE_URL . 'assets/images/productos/product.png';
-              ?>
+              <?php foreach ($data['destacados'] as $producto) {
+                $imagenProducto = (!empty($producto['prod']['imagen']) && file_exists($producto['prod']['imagen']))
+                  ? BASE_URL . $producto['prod']['imagen']
+                  : BASE_URL . 'assets/images/productos/product.png';
+                ?>
                 <div class="hm-product-card">
                   <div class="hm-product-image">
                     <img src="<?php echo $imagenProducto; ?>" alt="<?php echo $producto['prod']['nombre']; ?>">
                     <div class="hm-product-badge hm-badge-featured">Destacado</div>
                     <div class="hm-product-actions">
-                      <button onclick="verDetalle(<?php echo $producto['id_producto']; ?>)" class="hm-action-btn" title="Vista previa">
+                      <button onclick="verDetalle(<?php echo $producto['id_producto']; ?>)" class="hm-action-btn"
+                        title="Vista previa">
                         <i data-feather="eye"></i>
                       </button>
-                      <a href="<?php echo BASE_URL . 'principal/detail/' . $producto['prod']['slug']; ?>" class="hm-action-btn" title="Ver Detalle">
+                      <a href="<?php echo BASE_URL . 'principal/detail/' . $producto['prod']['slug']; ?>"
+                        class="hm-action-btn" title="Ver Detalle">
                         <i data-feather="shopping-cart"></i>
                       </a>
                     </div>
@@ -124,9 +128,11 @@
                   <div class="hm-product-info">
                     <div class="hm-product-rating">
                       <?php
+                      // ⭐ AGREGAR VALIDACIÓN AQUÍ
+                      $calificacion = isset($producto['calificacion']) ? $producto['calificacion'] : 5;
                       for ($i = 1; $i <= 5; $i++) {
-                        echo ($producto['calificacion'] >= $i) 
-                          ? '<i class="hm-star-filled" data-feather="star"></i>' 
+                        echo ($calificacion >= $i)
+                          ? '<i class="hm-star-filled" data-feather="star"></i>'
                           : '<i class="hm-star-empty" data-feather="star"></i>';
                       }
                       ?>
@@ -154,20 +160,22 @@
         <div id="hm-tab-vendidos" class="hm-tab-panel">
           <?php if (!empty($data['especiales'])) { ?>
             <div class="hm-products-grid">
-              <?php foreach ($data['especiales'] as $producto) { 
-                $imagenProducto = (!empty($producto['prod']['imagen']) && file_exists($producto['prod']['imagen'])) 
-                    ? BASE_URL . $producto['prod']['imagen'] 
-                    : BASE_URL . 'assets/images/productos/product.png';
-              ?>
+              <?php foreach ($data['especiales'] as $producto) {
+                $imagenProducto = (!empty($producto['prod']['imagen']) && file_exists($producto['prod']['imagen']))
+                  ? BASE_URL . $producto['prod']['imagen']
+                  : BASE_URL . 'assets/images/productos/product.png';
+                ?>
                 <div class="hm-product-card">
                   <div class="hm-product-image">
                     <img src="<?php echo $imagenProducto; ?>" alt="<?php echo $producto['prod']['nombre']; ?>">
                     <div class="hm-product-badge hm-badge-hot">Top Ventas</div>
                     <div class="hm-product-actions">
-                      <button onclick="verDetalle(<?php echo $producto['id_producto']; ?>)" class="hm-action-btn" title="Vista previa">
+                      <button onclick="verDetalle(<?php echo $producto['id_producto']; ?>)" class="hm-action-btn"
+                        title="Vista previa">
                         <i data-feather="eye"></i>
                       </button>
-                      <a href="<?php echo BASE_URL . 'principal/detail/' . $producto['prod']['slug']; ?>" class="hm-action-btn" title="Ver Detalle">
+                      <a href="<?php echo BASE_URL . 'principal/detail/' . $producto['prod']['slug']; ?>"
+                        class="hm-action-btn" title="Ver Detalle">
                         <i data-feather="shopping-cart"></i>
                       </a>
                     </div>
@@ -175,9 +183,11 @@
                   <div class="hm-product-info">
                     <div class="hm-product-rating">
                       <?php
+                      // ⭐ AGREGAR VALIDACIÓN AQUÍ
+                      $calificacion = isset($producto['calificacion']) ? $producto['calificacion'] : 5;
                       for ($i = 1; $i <= 5; $i++) {
-                        echo ($producto['calificacion'] >= $i) 
-                          ? '<i class="hm-star-filled" data-feather="star"></i>' 
+                        echo ($calificacion >= $i)
+                          ? '<i class="hm-star-filled" data-feather="star"></i>'
                           : '<i class="hm-star-empty" data-feather="star"></i>';
                       }
                       ?>
@@ -213,7 +223,7 @@
       <h2 class="hm-section-title">Lo que dicen nuestros clientes</h2>
       <p class="hm-section-subtitle">Experiencias reales de quienes confían en nosotros</p>
     </div>
-    
+
     <?php if (!empty($data['testimonios'])) { ?>
       <div class="hm-testimonials-slider">
         <?php foreach ($data['testimonios'] as $testimonio) { ?>
@@ -221,7 +231,8 @@
             <div class="hm-testimonial-quote">"</div>
             <p class="hm-testimonial-message"><?php echo $testimonio['mensaje']; ?></p>
             <div class="hm-testimonial-author">
-              <img src="<?php echo BASE_URL . 'assets/images/clientes/' . $testimonio['perfil']; ?>" alt="<?php echo $testimonio['nombre']; ?>" class="hm-author-avatar">
+              <img src="<?php echo BASE_URL . 'assets/images/clientes/' . $testimonio['perfil']; ?>"
+                alt="<?php echo $testimonio['nombre']; ?>" class="hm-author-avatar">
               <div class="hm-author-info">
                 <h4 class="hm-author-name"><?php echo $testimonio['nombre']; ?></h4>
                 <div class="hm-author-rating">
@@ -250,96 +261,97 @@
 <?php include_once 'Views/template/footer-principal.php'; ?>
 
 <script>
-// Slider principal (mantener como está)
-$(document).ready(function(){
-  $('.hero-slides').slick({
-    dots: true,
-    infinite: true,
-    speed: 800,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 3000,
-    fade: true,
-    cssEase: 'cubic-bezier(0.4, 0, 0.2, 1)',
-    pauseOnHover: true,
-    pauseOnFocus: false,
-    arrows: true,
-    draggable: true,
-    swipe: true,
-    touchMove: true,
-    adaptiveHeight: false,
-    prevArrow: '<button type="button" class="slick-prev"></button>',
-    nextArrow: '<button type="button" class="slick-next"></button>',
-    responsive: [
-      {
-        breakpoint: 768,
-        settings: {
-          arrows: false,
-          dots: true
-        }
-      },
-      {
-        breakpoint: 576,
-        settings: {
-          arrows: false,
-          dots: true,
-          autoplaySpeed: 4000
-        }
-      }
-    ]
-  });
-
-  // Tabs de productos
-  $('.hm-tab-btn').on('click', function() {
-    const targetTab = $(this).data('tab');
-    
-    $('.hm-tab-btn').removeClass('active');
-    $(this).addClass('active');
-    
-    $('.hm-tab-panel').removeClass('active');
-    $('#' + targetTab).addClass('active');
-  });
-
-  // Slider de testimonios
-  if ($('.hm-testimonials-slider').length) {
-    $('.hm-testimonials-slider').slick({
+  // Slider principal (mantener como está)
+  $(document).ready(function () {
+    $('.hero-slides').slick({
       dots: true,
       infinite: true,
-      speed: 600,
-      slidesToShow: 3,
+      speed: 800,
+      slidesToShow: 1,
       slidesToScroll: 1,
       autoplay: true,
-      autoplaySpeed: 5000,
+      autoplaySpeed: 3000,
+      fade: true,
+      cssEase: 'cubic-bezier(0.4, 0, 0.2, 1)',
       pauseOnHover: true,
+      pauseOnFocus: false,
       arrows: true,
-      prevArrow: '<button type="button" class="hm-testimonial-prev"><i data-feather="chevron-left"></i></button>',
-      nextArrow: '<button type="button" class="hm-testimonial-next"><i data-feather="chevron-right"></i></button>',
+      draggable: true,
+      swipe: true,
+      touchMove: true,
+      adaptiveHeight: false,
+      prevArrow: '<button type="button" class="slick-prev"></button>',
+      nextArrow: '<button type="button" class="slick-next"></button>',
       responsive: [
-        {
-          breakpoint: 1024,
-          settings: {
-            slidesToShow: 2,
-            slidesToScroll: 1
-          }
-        },
         {
           breakpoint: 768,
           settings: {
-            slidesToShow: 1,
-            slidesToScroll: 1,
-            arrows: false
+            arrows: false,
+            dots: true
+          }
+        },
+        {
+          breakpoint: 576,
+          settings: {
+            arrows: false,
+            dots: true,
+            autoplaySpeed: 4000
           }
         }
       ]
     });
-  }
 
-  // Inicializar iconos de Feather
-  if (typeof feather !== 'undefined') {
-    feather.replace();
-  }
-});
+    // Tabs de productos
+    $('.hm-tab-btn').on('click', function () {
+      const targetTab = $(this).data('tab');
+
+      $('.hm-tab-btn').removeClass('active');
+      $(this).addClass('active');
+
+      $('.hm-tab-panel').removeClass('active');
+      $('#' + targetTab).addClass('active');
+    });
+
+    // Slider de testimonios
+    if ($('.hm-testimonials-slider').length) {
+      $('.hm-testimonials-slider').slick({
+        dots: true,
+        infinite: true,
+        speed: 600,
+        slidesToShow: 3,
+        slidesToScroll: 1,
+        autoplay: true,
+        autoplaySpeed: 5000,
+        pauseOnHover: true,
+        arrows: true,
+        prevArrow: '<button type="button" class="hm-testimonial-prev"><i data-feather="chevron-left"></i></button>',
+        nextArrow: '<button type="button" class="hm-testimonial-next"><i data-feather="chevron-right"></i></button>',
+        responsive: [
+          {
+            breakpoint: 1024,
+            settings: {
+              slidesToShow: 2,
+              slidesToScroll: 1
+            }
+          },
+          {
+            breakpoint: 768,
+            settings: {
+              slidesToShow: 1,
+              slidesToScroll: 1,
+              arrows: false
+            }
+          }
+        ]
+      });
+    }
+
+    // Inicializar iconos de Feather
+    if (typeof feather !== 'undefined') {
+      feather.replace();
+    }
+  });
 </script>
 </body>
+
 </html>

@@ -39,7 +39,7 @@
             <form id="frmRegistro" autocomplete="off">
                 <div class="modal-body">
                     <input type="hidden" id="id" name="id">
-                    
+
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group mb-2">
@@ -50,7 +50,8 @@
                         <div class="col-md-6">
                             <div class="form-group mb-2">
                                 <label for="apellido">Apellido <span class="text-danger">*</span></label>
-                                <input id="apellido" class="form-control" type="text" name="apellido" placeholder="Apellido">
+                                <input id="apellido" class="form-control" type="text" name="apellido"
+                                    placeholder="Apellido">
                             </div>
                         </div>
                     </div>
@@ -59,13 +60,15 @@
                         <div class="col-md-6">
                             <div class="form-group mb-2">
                                 <label for="telefono">Teléfono <span class="text-danger"></span></label>
-                                <input id="telefono" class="form-control" type="text" name="telefono" placeholder="Teléfono">
+                                <input id="telefono" class="form-control" type="text" name="telefono"
+                                    placeholder="Teléfono">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group mb-2">
                                 <label for="correo">Correo</label>
-                                <input id="correo" class="form-control" type="email" name="correo" placeholder="Correo electrónico">
+                                <input id="correo" class="form-control" type="email" name="correo"
+                                    placeholder="Correo electrónico">
                             </div>
                         </div>
                     </div>
@@ -83,9 +86,31 @@
                         </div>
                     </div>
 
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group mb-2">
+                                <label for="ciudad">Ciudad</label>
+                                <input id="ciudad" class="form-control" type="text" name="ciudad" placeholder="Ciudad">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group mb-2">
+                                <label for="departamento">Departamento</label>
+                                <input id="departamento" class="form-control" type="text" name="departamento"
+                                    placeholder="Departamento">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group mb-2">
+                                <label for="barrio">Barrio</label>
+                                <input id="barrio" class="form-control" type="text" name="barrio" placeholder="Barrio">
+                            </div>
+                        </div>
+                    </div>
                     <div class="form-group mb-2">
                         <label for="direccion">Dirección <span class="text-danger"></span></label>
-                        <textarea id="direccion" class="form-control" name="direccion" rows="3" placeholder="Dirección"></textarea>
+                        <textarea id="direccion" class="form-control" name="direccion" rows="3"
+                            placeholder="Dirección"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -102,4 +127,5 @@
 <script src="<?php echo BASE_URL . 'assets/admin/js/modulos/clientes.js'; ?>"></script>
 
 </body>
+
 </html>

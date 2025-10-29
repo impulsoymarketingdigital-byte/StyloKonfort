@@ -62,7 +62,7 @@ include_once 'Views/template/header-principal.php'; ?>
                                 <div class="row align-items-center">
                                     <div class="col-md-6">
                                         <h3 class="crrt-total-text" id="totalProducto">
-                                            <i class="fa fa-shopping-bag"></i> TOTAL A PAGAR: Bs. 0.00
+                                            <i class="fa fa-shopping-bag"></i> TOTAL A PAGAR: COP. 0.00
                                         </h3>
                                     </div>
                                     <div class="col-md-6 text-end">
@@ -88,7 +88,7 @@ include_once 'Views/template/header-principal.php'; ?>
                             <div class="card-body p-4">
                                 <div class="table-responsive">
                                     <table class="table table-hover" id="tblPendientes" style="width: 100%;">
-                                        <thead class="table-dark">
+                                        <thead>
                                             <tr>
                                                 <th>Id</th>
                                                 <th>Transacción</th>
@@ -119,7 +119,7 @@ include_once 'Views/template/header-principal.php'; ?>
                             <div class="card-body p-4">
                                 <div class="table-responsive">
                                     <table class="table table-hover" id="tblProductos" style="width: 100%;">
-                                        <thead class="table-dark">
+                                        <thead>
                                             <tr>
                                                 <th>#</th>
                                                 <th>Producto</th>
@@ -162,97 +162,6 @@ include_once 'Views/template/header-principal.php'; ?>
             </div>
         </div>
     <?php } ?>
-</div>
-
-<!-- Modal Perfil -->
-<div class="modal fade" id="modalPerfil" tabindex="-1" aria-labelledby="modalPerfilLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="modalPerfilLabel">
-                    <i class="fa fa-user-circle"></i> Mi Perfil
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                    aria-label="Close"></button>
-            </div>
-            <form autocomplete="off" id="frmDatos">
-                <div class="modal-body">
-                    <div class="text-center mb-4">
-                        <?php $perfil = (empty($_SESSION['perfilCliente']) || $_SESSION['perfilCliente'] == null) ? 'default.png' : $_SESSION['perfilCliente']; ?>
-                        <img class="img-thumbnail rounded-circle"
-                            src="<?php echo BASE_URL . 'assets/images/clientes/' . $perfil; ?>" alt="" width="150"
-                            height="150" style="object-fit: cover;">
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label for="nomCliente" class="form-label">
-                                    <i class="fa fa-user"></i> Nombres <span class="text-danger">*</span>
-                                </label>
-                                <input id="nomCliente" class="form-control" type="text" name="nombre"
-                                    value="<?php echo $data['verificar']['nombre']; ?>" placeholder="Nombres">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label for="apeCliente" class="form-label">
-                                    <i class="fa fa-user"></i> Apellidos <span class="text-danger">*</span>
-                                </label>
-                                <input id="apeCliente" class="form-control" type="text" name="apellidos"
-                                    value="<?php echo $data['verificar']['apellido']; ?>" placeholder="Apellidos">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label for="corCliente" class="form-label">
-                                    <i class="fa fa-envelope"></i> Correo <span class="text-danger">*</span>
-                                </label>
-                                <input id="corCliente" class="form-control" type="email" name="correo"
-                                    value="<?php echo $data['verificar']['correo']; ?>" placeholder="Correo">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label for="telCliente" class="form-label">
-                                    <i class="fa fa-phone"></i> Teléfono <span class="text-danger">*</span>
-                                </label>
-                                <input id="telCliente" class="form-control" type="text" name="telefono"
-                                    value="<?php echo $data['verificar']['telefono']; ?>" placeholder="Teléfono">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="dirCliente" class="form-label">
-                            <i class="fa fa-map-marker-alt"></i> Dirección <span class="text-danger">*</span>
-                        </label>
-                        <textarea id="dirCliente" class="form-control" name="direccion" rows="3"
-                            placeholder="Dirección completa"><?php echo $data['verificar']['direccion']; ?></textarea>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="fotoCliente" class="form-label">
-                            <i class="fa fa-camera"></i> Cambiar Foto de Perfil
-                        </label>
-                        <input id="fotoCliente" class="form-control" type="file" name="fotoCliente" accept="image/*">
-                        <small class="text-muted">Formatos: JPG, PNG. Tamaño máximo: 2MB</small>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fa fa-times"></i> Cancelar
-                    </button>
-                    <button class="btn btn-primary" type="submit">
-                        <i class="fa fa-save"></i> Guardar Cambios
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
 </div>
 
 <!-- Modal Estado Pedido -->

@@ -162,7 +162,7 @@ class PrincipalModel extends Query
     }
 
 
-    public function getTotalFiltroProductos($categorias, $precioMin, $precioMax, $colores, $sizes, $marcas)
+    public function getTotalFiltroProductos($categorias, $precioMin, $precioMax, $colores, $sizes, $marcas, $generos = '')
     {
         $sql = "SELECT COUNT(DISTINCT p.id) AS total 
     FROM productos p 
@@ -187,10 +187,19 @@ class PrincipalModel extends Query
         if (!empty($marcas)) {
             $sql .= " AND p.id_marca IN ($marcas)";
         }
+        // ← NUEVO: Filtro de género
+        if (!empty($generos)) {
+            $generosArray = explode(',', $generos);
+            $generosEscapados = array_map(function ($g) {
+                return "'" . trim($g) . "'";
+            }, $generosArray);
+            $sql .= " AND p.genero IN (" . implode(',', $generosEscapados) . ")";
+        }
 
         return $this->select($sql);
     }
-    public function getFiltroProductos($categorias, $precioMin, $precioMax, $colores, $sizes, $marcas, $desde, $hasta)
+
+    public function getFiltroProductos($categorias, $precioMin, $precioMax, $colores, $sizes, $marcas, $generos = '', $desde, $hasta)
     {
         $sql = "SELECT p.*, 
         MIN(pf.id) AS id_detalle, 
@@ -226,6 +235,14 @@ class PrincipalModel extends Query
         if (!empty($marcas)) {
             $sql .= " AND p.id_marca IN ($marcas)";
         }
+        // ← NUEVO: Filtro de género
+        if (!empty($generos)) {
+            $generosArray = explode(',', $generos);
+            $generosEscapados = array_map(function ($g) {
+                return "'" . trim($g) . "'";
+            }, $generosArray);
+            $sql .= " AND p.genero IN (" . implode(',', $generosEscapados) . ")";
+        }
 
         $sql .= " GROUP BY p.id";
         $sql .= " ORDER BY p.id DESC";
@@ -249,6 +266,20 @@ class PrincipalModel extends Query
             }
         }
         return null;
+    }
+    public function getTipoCliente()
+    {
+        if (!empty($_SESSION['correoCliente'])) {
+            $sql = "SELECT tipo_cliente FROM clientes WHERE correo = '{$_SESSION['correoCliente']}' AND estado = 1";
+            $cliente = $this->select($sql);
+            return ($cliente) ? $cliente['tipo_cliente'] : 'final';
+        }
+        return 'final';
+    }
+    public function getCliente($correo)
+    {
+        $sql = "SELECT * FROM clientes WHERE correo = '$correo' AND estado = 1";
+        return $this->select($sql);
     }
     public function getEmpresa()
     {
@@ -280,5 +311,33 @@ class PrincipalModel extends Query
         $sql .= " LIMIT 1";
 
         return $this->selectAll($sql);
+    }
+
+
+
+    /**PERFIL */
+    public function getDatosCliente($id)
+    {
+        $sql = "SELECT * FROM clientes WHERE id = $id";
+        return $this->select($sql);
+    }
+
+    public function getValidarCliente($campo, $valor, $accion, $id)
+    {
+        if ($accion == 'registrar' && $id == 0) {
+            $sql = "SELECT id FROM clientes WHERE $campo = '$valor'";
+        } else {
+            $sql = "SELECT id FROM clientes WHERE $campo = '$valor' AND id != $id";
+        }
+        return $this->select($sql);
+    }
+
+    public function actualizarCliente($nombre, $apellido, $telefono, $correo, $direccion, $tipo_cliente, $perfil, $id)
+    {
+        $sql = "UPDATE clientes 
+            SET nombre=?, apellido=?, telefono=?, correo=?, direccion=?, tipo_cliente=?, perfil=? 
+            WHERE id=?";
+        $array = array($nombre, $apellido, $telefono, $correo, $direccion, $tipo_cliente, $perfil, $id);
+        return $this->save($sql, $array);
     }
 }

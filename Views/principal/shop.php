@@ -29,6 +29,30 @@
             </div>
         </div>
 
+
+        <!-- GÉNERO -->
+        <div class="collection-collapse-block open">
+            <h3 class="collapse-block-title">Género</h3>
+            <div class="collection-collapse-block-content">
+                <div class="collection-brand-filter">
+                    <div class="custom-control custom-checkbox form-check collection-filter-checkbox">
+                        <input type="checkbox" class="custom-control-input form-check-input generos"
+                            id="genero_masculino" name="generos[]" value="Masculino">
+                        <label class="custom-control-label form-check-label" for="genero_masculino">
+                            <i class="fa fa-mars"></i> Masculino
+                        </label>
+                    </div>
+                    <div class="custom-control custom-checkbox form-check collection-filter-checkbox">
+                        <input type="checkbox" class="custom-control-input form-check-input generos"
+                            id="genero_femenino" name="generos[]" value="Femenino">
+                        <label class="custom-control-label form-check-label" for="genero_femenino">
+                            <i class="fa fa-venus"></i> Femenino
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Marcas con imágenes -->
         <div class="collection-collapse-block open">
             <h3 class="collapse-block-title">Marcas</h3>
@@ -36,19 +60,16 @@
                 <div class="shop-marcas-grid">
                     <?php foreach ($data['marcas'] as $marca) { ?>
                         <div class="shop-marca-item">
-                            <input type="checkbox" class="shop-marca-checkbox marcas"
-                                id="marca_<?php echo $marca['id']; ?>" 
-                                name="marcas[]" 
-                                value="<?php echo $marca['id']; ?>">
+                            <input type="checkbox" class="shop-marca-checkbox marcas" id="marca_<?php echo $marca['id']; ?>"
+                                name="marcas[]" value="<?php echo $marca['id']; ?>">
                             <label class="shop-marca-label" for="marca_<?php echo $marca['id']; ?>">
                                 <div class="shop-marca-image-container">
-                                    <?php 
+                                    <?php
                                     $imagenMarca = (!empty($marca['imagen'])) ? BASE_URL . $marca['imagen'] : BASE_URL . 'assets/images/productos/product.png';
                                     ?>
-                                    <img src="<?php echo $imagenMarca; ?>" 
-                                         alt="<?php echo $marca['marca']; ?>"
-                                         class="shop-marca-image"
-                                         onerror="this.src='<?php echo BASE_URL; ?>assets/images/productos/product.png'">
+                                    <img src="<?php echo $imagenMarca; ?>" alt="<?php echo $marca['marca']; ?>"
+                                        class="shop-marca-image"
+                                        onerror="this.src='<?php echo BASE_URL; ?>assets/images/productos/product.png'">
                                     <div class="shop-marca-checkmark">
                                         <i class="fa fa-check"></i>
                                     </div>
@@ -67,7 +88,8 @@
             <div class="collection-collapse-block-content">
                 <div class="collection-brand-filter">
                     <?php foreach ($data['colores'] as $color) { ?>
-                        <div class="custom-control custom-checkbox form-check collection-filter-checkbox d-flex align-items-center">
+                        <div
+                            class="custom-control custom-checkbox form-check collection-filter-checkbox d-flex align-items-center">
                             <input type="checkbox" class="custom-control-input form-check-input colores"
                                 id="color_<?php echo $color['id']; ?>" name="colores[]" value="<?php echo $color['id']; ?>">
                             <label class="custom-control-label form-check-label d-flex align-items-center"
@@ -179,21 +201,24 @@
                                                     <div class="product-box shop-product-box">
                                                         <div class="product-imgbox shop-product-imgbox">
                                                             <div class="product-front">
-                                                                <a href="<?php echo BASE_URL . 'principal/detail/' . $producto['slug']; ?>">
+                                                                <a
+                                                                    href="<?php echo BASE_URL . 'principal/detail/' . $producto['slug']; ?>">
                                                                     <img src="<?php echo $imagenProducto; ?>"
                                                                         class="img-fluid" alt="product" loading="lazy"
                                                                         onerror="this.src='<?php echo BASE_URL; ?>assets/images/productos/product.png'">
                                                                 </a>
                                                             </div>
                                                             <div class="product-back">
-                                                                <a href="<?php echo BASE_URL . 'principal/detail/' . $producto['slug']; ?>">
+                                                                <a
+                                                                    href="<?php echo BASE_URL . 'principal/detail/' . $producto['slug']; ?>">
                                                                     <img src="<?php echo $imagenProducto; ?>"
                                                                         class="img-fluid" alt="product" loading="lazy"
                                                                         onerror="this.src='<?php echo BASE_URL; ?>assets/images/productos/product.png'">
                                                                 </a>
                                                             </div>
                                                         </div>
-                                                        <div class="product-detail detail-center detail-inverse shop-product-detail">
+                                                        <div
+                                                            class="product-detail detail-center detail-inverse shop-product-detail">
                                                             <div class="detail-title shop-detail-title">
                                                                 <div class="detail-left shop-detail-left">
                                                                     <div class="rating-star shop-rating-star">
@@ -211,7 +236,8 @@
                                                                         <i class="<?php echo $cinco; ?> fa fa-star"></i>
                                                                     </div>
                                                                     <p><?php echo $producto['descripcion']; ?></p>
-                                                                    <a href="<?php echo BASE_URL . 'principal/detail/' . $producto['slug']; ?>">
+                                                                    <a
+                                                                        href="<?php echo BASE_URL . 'principal/detail/' . $producto['slug']; ?>">
                                                                         <h6 class="price-title shop-price-title">
                                                                             <?php echo $producto['nombre']; ?>
                                                                         </h6>
@@ -219,7 +245,13 @@
                                                                 </div>
                                                                 <div class="detail-right shop-detail-right">
                                                                     <div class="price shop-price">
-                                                                        <div class="price">PRECIO VARIADO</div>
+                                                                        <?php
+                                                                        if ($data['tipo_cliente'] == 'mayorista') {
+                                                                            echo '<div class="price">' . MONEDA . ' ' . $producto['precio_mayorista'] . '</div>';
+                                                                        } else {
+                                                                            echo '<div class="price">' . MONEDA . ' ' . $producto['precio_venta'] . '</div>';
+                                                                        }
+                                                                        ?>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -287,6 +319,7 @@
     const marcasCheckbox = document.querySelectorAll('.marcas');
     const coloresCheckbox = document.querySelectorAll('.colores');
     const sizes = document.querySelectorAll('.sizes');
+    const generosCheckbox = document.querySelectorAll('.generos');
     const my_range = document.querySelector('#my_range');
     const defaultImage = base_url + 'assets/images/productos/product.png';
 
@@ -340,6 +373,11 @@
             checkbox.checked = false;
         });
 
+        const generosCheckbox = document.querySelectorAll('.generos');
+        generosCheckbox.forEach(function (checkbox) {
+            checkbox.checked = false;
+        });
+
         const rangeSlider = $("#my_range").data("ionRangeSlider");
         rangeSlider.update({
             from: 0,
@@ -369,6 +407,7 @@
         const selectedMarcas = [];
         const selectedColors = [];
         const selectedSizes = [];
+        const selectedGeneros = [];
 
         categorias.forEach(function (checkbox) {
             if (checkbox.checked) {
@@ -394,6 +433,14 @@
             }
         });
 
+        const generosCheckbox = document.querySelectorAll('.generos');
+        generosCheckbox.forEach(function (checkbox) {
+            if (checkbox.checked) {
+                selectedGeneros.push(checkbox.value);
+            }
+        });
+
+
         document.getElementById('loading-indicator').style.display = 'block';
         const url = base_url + "principal/filtro";
         let data = new FormData();
@@ -401,6 +448,7 @@
         data.append('marcas', selectedMarcas.join(','));
         data.append('colores', selectedColors.join(','));
         data.append('sizes', selectedSizes.join(','));
+        data.append('generos', selectedGeneros.join(','));
         data.append('precios', precios);
         data.append('page', currentPage);
 
@@ -461,10 +509,10 @@
                                 </a>
                             </div>
                             <div class="detail-right shop-detail-right">
-                                <div class="price shop-price">
-                                    <div class="price">${res.moneda + producto.precio_venta}</div>
-                                </div>
-                            </div>
+    <div class="price shop-price">
+        <div class="price">${res.moneda + (res.tipo_cliente == 'mayorista' ? producto.precio_mayorista : producto.precio_venta)}</div>
+    </div>
+</div>
                         </div>
                         <div class="icon-detail shop-icon-detail">
                             <a href="javascript:void(0)" 

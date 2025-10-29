@@ -87,7 +87,7 @@
                         <td colspan="4" class="text-start fw-bold">
                             <div id="totalProductos">0 (items)</div>
                             <div id="totalStock">0</div>
-                            <div><strong id="valorTotal">Bs. 0.00</strong></div>
+                            <div><strong id="valorTotal">COP. 0.00</strong></div>
                         </td>
                     </tr>
                 </tfoot>
@@ -147,19 +147,19 @@
                 {
                     data: 'precio_compra',
                     render: function (data) {
-                        return 'Bs. ' + parseFloat(data).toFixed(2);
+                        return 'COP. ' + parseFloat(data).toFixed(2);
                     }
                 },
                 {
                     data: 'precio_venta',
                     render: function (data) {
-                        return 'Bs. ' + parseFloat(data).toFixed(2);
+                        return 'COP. ' + parseFloat(data).toFixed(2);
                     }
                 },
                 {
                     data: 'valor_stock',
                     render: function (data) {
-                        return 'Bs. ' + parseFloat(data).toFixed(2);
+                        return 'COP. ' + parseFloat(data).toFixed(2);
                     }
                 }
             ],
@@ -215,7 +215,7 @@
 
         document.getElementById('totalProductos').textContent = totalProductos + ' (items)';
         document.getElementById('totalStock').textContent = totalStock;
-        document.getElementById('valorTotal').textContent = 'Bs. ' + valorTotal.toFixed(2);
+        document.getElementById('valorTotal').textContent = 'COP. ' + valorTotal.toFixed(2);
     }
 </script>
 </body>

@@ -179,3 +179,8 @@ function verReportePedido(idPedido) {
     const ruta = base_url + "pedidos/reporte/ticked/" + idPedido;
     window.open(ruta, "_blank");
 }
+
+function verEtiquetaEnvio(idPedido) {
+    const ruta = base_url + "pedidos/etiqueta/" + idPedido;
+    window.open(ruta, "_blank");
+}

@@ -142,9 +142,9 @@
                     <td><?php echo $compra['almacen']; ?></td>
                     <td><?php echo $compra['producto']; ?></td>
                     <td class="text-center"><?php echo $compra['cantidad']; ?></td>
-                    <td class="text-right">Bs. <?php echo number_format($compra['precio_compra'], 2); ?></td>
-                    <td class="text-right">Bs. <?php echo number_format($compra['descuento'], 2); ?></td>
-                    <td class="text-right">Bs. <?php echo number_format($compra['subtotal'], 2); ?></td>
+                    <td class="text-right">COP. <?php echo number_format($compra['precio_compra'], 2); ?></td>
+                    <td class="text-right">COP. <?php echo number_format($compra['descuento'], 2); ?></td>
+                    <td class="text-right">COP. <?php echo number_format($compra['subtotal'], 2); ?></td>
                     <td><?php echo date('d/m/Y H:i', strtotime($compra['fecha'])); ?></td>
                 </tr>
             <?php 
@@ -167,7 +167,7 @@
             </tr>
             <tr>
                 <td colspan="10" class="text-right">TOTAL COMPRAS:</td>
-                <td><strong>Bs. <?php echo number_format($totalCompras, 2); ?></strong></td>
+                <td><strong>COP. <?php echo number_format($totalCompras, 2); ?></strong></td>
             </tr>
         </tfoot>
     </table>

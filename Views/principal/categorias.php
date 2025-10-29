@@ -1,6 +1,7 @@
 <?php include_once 'Views/template/header-principal.php'; ?>
 
-<div class="breadcrumb-main ">
+<!-- Breadcrumb -->
+<div class="breadcrumb-main">
     <div class="container">
         <div class="row">
             <div class="col">
@@ -10,7 +11,7 @@
                         <ul>
                             <li><a href="<?php echo BASE_URL; ?>">Inicio</a></li>
                             <li><i class="fa fa-angle-double-right"></i></li>
-                            <li><a href="javascript:void(0)">Categorias</a></li>
+                            <li><a href="javascript:void(0)">Categorías</a></li>
                         </ul>
                     </div>
                 </div>
@@ -19,65 +20,138 @@
     </div>
 </div>
 
+<!-- Overlay -->
+<div class="filter-overlay" id="filterOverlay"></div>
+
+<!-- Sidebar de filtros -->
+<div class="filter-sidebar" id="filterSidebar">
+    <div class="filter-header">
+        <h3><i class="fa fa-filter"></i> Filtros</h3>
+        <button class="filter-close" id="closeFilter">&times;</button>
+    </div>
+    <div class="filter-body">
+
+
+        <!-- GÉNERO -->
+        <div class="collection-collapse-block open">
+            <h3 class="collapse-block-title">Género</h3>
+            <div class="collection-collapse-block-content">
+                <div class="collection-brand-filter">
+                    <div class="custom-control custom-checkbox form-check collection-filter-checkbox">
+                        <input type="checkbox" class="custom-control-input form-check-input generos"
+                            id="genero_masculino" name="generos[]" value="Masculino">
+                        <label class="custom-control-label form-check-label" for="genero_masculino">
+                            <i class="fa fa-mars"></i> Masculino
+                        </label>
+                    </div>
+                    <div class="custom-control custom-checkbox form-check collection-filter-checkbox">
+                        <input type="checkbox" class="custom-control-input form-check-input generos"
+                            id="genero_femenino" name="generos[]" value="Femenino">
+                        <label class="custom-control-label form-check-label" for="genero_femenino">
+                            <i class="fa fa-venus"></i> Femenino
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Marcas con imágenes -->
+        <div class="collection-collapse-block open">
+            <h3 class="collapse-block-title">Marcas</h3>
+            <div class="collection-collapse-block-content">
+                <div class="shop-marcas-grid">
+                    <?php foreach ($data['marcas'] as $marca) { ?>
+                        <div class="shop-marca-item">
+                            <input type="checkbox" class="shop-marca-checkbox marcas" id="marca_<?php echo $marca['id']; ?>"
+                                name="marcas[]" value="<?php echo $marca['id']; ?>">
+                            <label class="shop-marca-label" for="marca_<?php echo $marca['id']; ?>">
+                                <div class="shop-marca-image-container">
+                                    <?php
+                                    $imagenMarca = (!empty($marca['imagen'])) ? BASE_URL . $marca['imagen'] : BASE_URL . 'assets/images/productos/product.png';
+                                    ?>
+                                    <img src="<?php echo $imagenMarca; ?>" alt="<?php echo $marca['marca']; ?>"
+                                        class="shop-marca-image"
+                                        onerror="this.src='<?php echo BASE_URL; ?>assets/images/productos/product.png'">
+                                    <div class="shop-marca-checkmark">
+                                        <i class="fa fa-check"></i>
+                                    </div>
+                                </div>
+                                <span class="shop-marca-name"><?php echo $marca['marca']; ?></span>
+                            </label>
+                        </div>
+                    <?php } ?>
+                </div>
+            </div>
+        </div>
+
+        <!-- Colores -->
+        <div class="collection-collapse-block open">
+            <h3 class="collapse-block-title mt-0">Colores</h3>
+            <div class="collection-collapse-block-content">
+                <div class="collection-brand-filter">
+                    <?php foreach ($data['colores'] as $color) { ?>
+                        <div
+                            class="custom-control custom-checkbox form-check collection-filter-checkbox d-flex align-items-center">
+                            <input type="checkbox" class="custom-control-input form-check-input colores"
+                                id="color_<?php echo $color['id']; ?>" name="colores[]" value="<?php echo $color['id']; ?>">
+                            <label class="custom-control-label form-check-label d-flex align-items-center"
+                                for="color_<?php echo $color['id']; ?>">
+                                <?php if (!empty($color['color_secundario'])): ?>
+                                    <span class="color-circle"
+                                        style="background: linear-gradient(90deg, <?php echo $color['color']; ?> 50%, <?php echo $color['color_secundario']; ?> 50%);"></span>
+                                <?php else: ?>
+                                    <span class="color-circle" style="background-color: <?php echo $color['color']; ?>;"></span>
+                                <?php endif; ?>
+                                <?php echo $color['nombre']; ?>
+                            </label>
+                        </div>
+                    <?php } ?>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tallas -->
+        <div class="collection-collapse-block open">
+            <h3 class="collapse-block-title">Tallas</h3>
+            <div class="collection-collapse-block-content">
+                <div class="size-selector">
+                    <div class="collection-brand-filter">
+                        <?php foreach ($data['sizes'] as $size) { ?>
+                            <div class="custom-control custom-checkbox form-check collection-filter-checkbox">
+                                <input type="checkbox" class="custom-control-input form-check-input sizes"
+                                    id="size_<?php echo $size['id']; ?>" name="sizes[]" value="<?php echo $size['id']; ?>">
+                                <label class="custom-control-label form-check-label"
+                                    for="size_<?php echo $size['id']; ?>"><?php echo $size['nombre']; ?></label>
+                            </div>
+                        <?php } ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Precio -->
+        <div class="collection-collapse-block border-0 open">
+            <h3 class="collapse-block-title">Precio</h3>
+            <div class="collection-collapse-block-content">
+                <div class="filter-slide">
+                    <input class="js-range-slider" type="text" id="my_range" value="" data-type="double" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="filter-footer">
+        <button class="btn-clear-filter" onclick="cancelarFiltros()">CANCELAR</button>
+        <button class="btn-apply-filter" onclick="aplicarFiltros()">APLICAR</button>
+    </div>
+</div>
+
+<!-- section start -->
 <section class="section-big-py-space ratio_asos b-g-light">
     <div class="collection-wrapper">
         <div class="custom-container">
             <div class="row">
-                <div class="col-sm-3 collection-filter category-side category-page-side">
-                    <div class="collection-filter-block creative-card creative-inner category-side">
-                        <div class="collection-mobile-back">
-                            <span class="filter-back"><i class="fa fa-angle-left" aria-hidden="true"></i> Atras</span>
-                        </div>
-                        <div class="collection-collapse-block open">
-                            <h3 class="collapse-block-title">colores</h3>
-                            <div class="collection-collapse-block-content">
-                                <div class="color-selector">
-                                    <input type="hidden" id="colors">
-                                    <ul>
-                                        <?php foreach ($data['colores'] as $color) { ?>
-                                            <li>
-                                                <div style="background-color: <?php echo $color['color']; ?>;"
-                                                    data-id="<?php echo $color['id']; ?>"></div>
-                                                <?php echo $color['nombre']; ?>
-                                            </li>
-                                        <?php } ?>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="collection-collapse-block open">
-                            <h3 class="collapse-block-title">size</h3>
-                            <div class="collection-collapse-block-content">
-                                <div class="size-selector">
-                                    <div class="collection-brand-filter">
-                                        <?php foreach ($data['sizes'] as $size) { ?>
-                                            <div
-                                                class="custom-control custom-checkbox form-check collection-filter-checkbox">
-                                                <input type="checkbox" class="custom-control-input form-check-input sizes"
-                                                    id="size_<?php echo $size['id']; ?>" name="sizes[]"
-                                                    value="<?php echo $size['id']; ?>">
-                                                <label class="custom-control-label form-check-label"
-                                                    for="small"><?php echo $size['nombre']; ?></label>
-                                            </div>
-                                        <?php } ?>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="collection-collapse-block border-0 open">
-                            <h3 class="collapse-block-title">price</h3>
-                            <div class="collection-collapse-block-content">
-                                <div class="filter-slide">
-                                    <input class="js-range-slider" type="text" id="my_range" value=""
-                                        data-type="double" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="collection-content col">
+                <div class="collection-content col-12">
                     <div class="page-main-content">
                         <div class="row">
                             <div class="col-sm-12">
@@ -85,8 +159,10 @@
                                     <div class="product-top-filter">
                                         <div class="row">
                                             <div class="col-xl-12">
-                                                <div class="filter-main-btn"><span class="filter-btn btn btn-theme"><i
-                                                            class="fa fa-filter" aria-hidden="true"></i> Filter</span>
+                                                <div class="filter-main-btn">
+                                                    <button class="btn btn-theme" id="openFilterBtn">
+                                                        <i class="fa fa-filter" aria-hidden="true"></i> Filtrar
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -120,28 +196,49 @@
                                             Cargando...
                                         </div>
                                         <div class="row" id="contentProductos">
+                                            <?php if (empty($data['productos'])) { ?>
+                                                <div class="col-12">
+                                                    <div class="no-products-found text-center py-5">
+                                                        <i class="fa fa-shopping-cart"
+                                                            style="font-size: 80px; color: #ccc; margin-bottom: 20px;"></i>
+                                                        <h3>No hay productos disponibles</h3>
+                                                        <p class="text-muted">No se encontraron productos en esta categoría.
+                                                        </p>
+                                                        <a href="<?php echo BASE_URL; ?>principal/shop"
+                                                            class="btn btn-theme mt-3">
+                                                            Ver todos los productos
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            <?php } ?>
                                             <?php foreach ($data['productos'] as $producto) {
-                                                // IMAGEN POR DEFECTO
-                                                $imagenProducto = (!empty($producto['imagen']) && file_exists($producto['imagen']))
-                                                    ? BASE_URL . $producto['imagen']
-                                                    : BASE_URL . 'assets/images/productos/product.png';
+                                                $imagenProducto = (!empty($producto['imagen'])) ? BASE_URL . $producto['imagen'] : BASE_URL . 'assets/images/productos/product.png';
                                                 ?>
-                                                <div class="col-xl-3 col-md-4 col-6 col-grid-box">
-                                                    <div class="product-box">
-                                                        <div class="product-imgbox">
+                                                <div class="col-xl col-lg-3 col-md-4 col-6 col-grid-box">
+                                                    <div class="product-box shop-product-box">
+                                                        <div class="product-imgbox shop-product-imgbox">
                                                             <div class="product-front">
-                                                                <a href="javascript:;"> <img src="<?php echo $imagenProducto; ?>"
-                                                                        class="img-fluid" alt="product" loading="lazy"> </a>
+                                                                <a
+                                                                    href="<?php echo BASE_URL . 'principal/detail/' . $producto['slug']; ?>">
+                                                                    <img src="<?php echo $imagenProducto; ?>"
+                                                                        class="img-fluid" alt="product" loading="lazy"
+                                                                        onerror="this.src='<?php echo BASE_URL; ?>assets/images/productos/product.png'">
+                                                                </a>
                                                             </div>
                                                             <div class="product-back">
-                                                                <a href="javascript:;"> <img src="<?php echo $imagenProducto; ?>"
-                                                                        class="img-fluid" alt="product" loading="lazy"> </a>
+                                                                <a
+                                                                    href="<?php echo BASE_URL . 'principal/detail/' . $producto['slug']; ?>">
+                                                                    <img src="<?php echo $imagenProducto; ?>"
+                                                                        class="img-fluid" alt="product" loading="lazy"
+                                                                        onerror="this.src='<?php echo BASE_URL; ?>assets/images/productos/product.png'">
+                                                                </a>
                                                             </div>
                                                         </div>
-                                                        <div class="product-detail detail-center detail-inverse">
-                                                            <div class="detail-title">
-                                                                <div class="detail-left">
-                                                                    <div class="rating-star">
+                                                        <div
+                                                            class="product-detail detail-center detail-inverse shop-product-detail">
+                                                            <div class="detail-title shop-detail-title">
+                                                                <div class="detail-left shop-detail-left">
+                                                                    <div class="rating-star shop-rating-star">
                                                                         <?php
                                                                         $uno = ($producto['calificacion'] >= 1) ? 'text-warning' : 'text-muted';
                                                                         $dos = ($producto['calificacion'] >= 2) ? 'text-warning' : 'text-muted';
@@ -156,26 +253,31 @@
                                                                         <i class="<?php echo $cinco; ?> fa fa-star"></i>
                                                                     </div>
                                                                     <p><?php echo $producto['descripcion']; ?></p>
-                                                                    <a href="javascript:;">
-                                                                        <h6 class="price-title">
+                                                                    <a
+                                                                        href="<?php echo BASE_URL . 'principal/detail/' . $producto['slug']; ?>">
+                                                                        <h6 class="price-title shop-price-title">
                                                                             <?php echo $producto['nombre']; ?>
                                                                         </h6>
                                                                     </a>
                                                                 </div>
-                                                                <div class="detail-right">
-                                                                    <div class="price">
+                                                                <div class="detail-right shop-detail-right">
+                                                                    <div class="price shop-price">
                                                                         <div class="price">PRECIO VARIADO</div>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="icon-detail">
+                                                            <div class="icon-detail shop-icon-detail">
                                                                 <a href="javascript:void(0)"
                                                                     onclick="verDetalle(<?php echo $producto['id']; ?>)"
-                                                                    class="tooltip-top" data-tippy-content="Quick View"> <i
-                                                                        data-feather="eye"></i> </a>
+                                                                    class="shop-icon-btn shop-icon-btn-view tooltip-top"
+                                                                    data-tippy-content="Ver opciones">
+                                                                    <i data-feather="eye"></i>
+                                                                </a>
                                                                 <a href="<?php echo BASE_URL . 'principal/detail/' . $producto['slug']; ?>"
-                                                                    class="tooltip-top" data-tippy-content="Ver Detalle"><i
-                                                                        data-feather="refresh-cw"></i></a>
+                                                                    class="shop-icon-btn shop-icon-btn-detail tooltip-top"
+                                                                    data-tippy-content="Ver página completa">
+                                                                    <i data-feather="external-link"></i>
+                                                                </a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -188,7 +290,7 @@
                                             <div class="row">
                                                 <div class="col-xl-12 col-md-12 col-sm-12">
                                                     <nav aria-label="Page navigation">
-                                                        <ul class="pagination">
+                                                        <ul class="pagination" id="paginacion">
                                                             <?php
                                                             $anterior = $data['pagina'] - 1;
                                                             $siguiente = $data['pagina'] + 1;
@@ -215,21 +317,41 @@
         </div>
     </div>
 </section>
+<!-- section End -->
 
 <?php include_once 'Views/template/footer-principal.php'; ?>
 
 <script src="<?php echo BASE_URL; ?>assets/js/ion.rangeSlider.js"></script>
-
 <script>
+    let currentPage = 1;
+    const productsPerPage = <?php echo PORPAGINA; ?>;
+    const coloresCheckbox = document.querySelectorAll('.colores');
     const sizes = document.querySelectorAll('.sizes');
+    const generosCheckbox = document.querySelectorAll('.generos');
     const my_range = document.querySelector('#my_range');
-    const colors = document.querySelector('#colors');
+    const defaultImage = base_url + 'assets/images/productos/product.png';
+    const filterOverlay = document.getElementById('filterOverlay');
+    const filterSidebar = document.getElementById('filterSidebar');
+    const openFilterBtn = document.getElementById('openFilterBtn');
+    const closeFilter = document.getElementById('closeFilter');
+    const categoriaId = <?php echo $data['categoria']['id']; ?>;
 
-    $('.color-selector ul li > div').on('click', function (e) {
-        $(".color-selector ul li > div").removeClass("active");
-        $(this).addClass("active");
-        colors.value = $(this).attr('data-id');
-        filtrarProductos(my_range.value);
+    openFilterBtn.addEventListener('click', function () {
+        filterOverlay.classList.add('active');
+        filterSidebar.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    });
+
+    closeFilter.addEventListener('click', function () {
+        filterOverlay.classList.remove('active');
+        filterSidebar.classList.remove('active');
+        document.body.style.overflow = '';
+    });
+
+    filterOverlay.addEventListener('click', function () {
+        filterOverlay.classList.remove('active');
+        filterSidebar.classList.remove('active');
+        document.body.style.overflow = '';
     });
 
     $(".js-range-slider").ionRangeSlider({
@@ -237,24 +359,55 @@
         grid: true,
         min: 0,
         max: <?php echo MAXPRECIO; ?>,
-        from: 3,
+        from: 0,
         to: <?php echo MAXPRECIO; ?>,
-        prefix: "$",
-        onFinish: function (data) {
-            const precios = data.from + ';' + data.to;
-            filtrarProductos(precios);
-        }
+        prefix: "Bs."
     });
 
-    sizes.forEach(function (checkbox) {
-        checkbox.addEventListener("click", function () {
-            filtrarProductos(my_range.value);
+    function cancelarFiltros() {
+        coloresCheckbox.forEach(function (checkbox) {
+            checkbox.checked = false;
         });
-    });
+        sizes.forEach(function (checkbox) {
+            checkbox.checked = false;
+        });
+        const rangeSlider = $("#my_range").data("ionRangeSlider");
+        rangeSlider.update({
+            from: 0,
+            to: <?php echo MAXPRECIO; ?>
+        });
+
+        const generosCheckbox = document.querySelectorAll('.generos');
+        generosCheckbox.forEach(function (checkbox) {
+            checkbox.checked = false;
+        });
+
+        filterOverlay.classList.remove('active');
+        filterSidebar.classList.remove('active');
+        document.body.style.overflow = '';
+        location.reload();
+    }
+
+    function aplicarFiltros() {
+        currentPage = 1;
+        const rangeSlider = $("#my_range").data("ionRangeSlider");
+        const precios = rangeSlider.result.from + ';' + rangeSlider.result.to;
+        filtrarProductos(precios);
+        filterOverlay.classList.remove('active');
+        filterSidebar.classList.remove('active');
+        document.body.style.overflow = '';
+    }
 
     function filtrarProductos(precios) {
-        const selectedCategories = [<?php echo $data['categoria']['id']; ?>];
+        const selectedColors = [];
         const selectedSizes = [];
+        const selectedGeneros = [];
+
+        coloresCheckbox.forEach(function (checkbox) {
+            if (checkbox.checked) {
+                selectedColors.push(checkbox.value);
+            }
+        });
 
         sizes.forEach(function (checkbox) {
             if (checkbox.checked) {
@@ -262,46 +415,64 @@
             }
         });
 
+        const generosCheckbox = document.querySelectorAll('.generos');
+        generosCheckbox.forEach(function (checkbox) {
+            if (checkbox.checked) {
+                selectedGeneros.push(checkbox.value);
+            }
+        });
+
         document.getElementById('loading-indicator').style.display = 'block';
         const url = base_url + "principal/filtro";
         let data = new FormData();
-        data.append('categorias', selectedCategories);
-        data.append('sizes', selectedSizes);
-        data.append('color', colors.value);
+        data.append('categorias', categoriaId);
+        data.append('generos', selectedGeneros.join(','));
+
+        data.append('colores', selectedColors.join(','));
+        data.append('sizes', selectedSizes.join(','));
         data.append('precios', precios);
+        data.append('page', currentPage);
+
         const http = new XMLHttpRequest();
         http.open("POST", url, true);
         http.send(data);
         http.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
                 const res = JSON.parse(this.responseText);
-                html = '';
-                res.productos.forEach(producto => {
-                    // IMAGEN POR DEFECTO EN JAVASCRIPT
-                    const imagenProducto = (producto.imagen && producto.imagen !== '')
-                        ? base_url + producto.imagen
-                        : base_url + 'assets/images/productos/product.png';
+                let html = '';
+                const products = res.productos;
 
+                for (let i = 0; i < products.length; i++) {
+                    const producto = products[i];
                     let uno = (producto.calificacion >= 1) ? 'text-warning' : 'text-muted';
                     let dos = (producto.calificacion >= 2) ? 'text-warning' : 'text-muted';
                     let tres = (producto.calificacion >= 3) ? 'text-warning' : 'text-muted';
                     let cuatro = (producto.calificacion >= 4) ? 'text-warning' : 'text-muted';
                     let cinco = (producto.calificacion == 5) ? 'text-warning' : 'text-muted';
+                    const imagenProducto = (producto.imagen && producto.imagen.trim() !== '') ? base_url + producto.imagen : defaultImage;
 
-                    html += `<div class="col-xl-3 col-md-4 col-6 col-grid-box">
-                        <div class="product-box">
-                            <div class="product-imgbox">
+                    html += `<div class="col-xl col-lg-3 col-md-4 col-6 col-grid-box">
+                        <div class="product-box shop-product-box">
+                            <div class="product-imgbox shop-product-imgbox">
                                 <div class="product-front">
-                                    <a href="javascript:;"> <img src="${imagenProducto}" class="img-fluid" alt="product" loading="lazy"> </a>
+                                    <a href="${base_url}principal/detail/${producto.slug}">
+                                        <img src="${imagenProducto}"
+                                            class="img-fluid" alt="product" loading="lazy"
+                                            onerror="this.onerror=null; this.src='${defaultImage}'">
+                                    </a>
                                 </div>
                                 <div class="product-back">
-                                    <a href="javascript:;"> <img src="${imagenProducto}" class="img-fluid" alt="product" loading="lazy"> </a>
+                                    <a href="${base_url}principal/detail/${producto.slug}">
+                                        <img src="${imagenProducto}"
+                                            class="img-fluid" alt="product" loading="lazy"
+                                            onerror="this.onerror=null; this.src='${defaultImage}'">
+                                    </a>
                                 </div>
                             </div>
-                            <div class="product-detail detail-center detail-inverse">
-                                <div class="detail-title">
-                                    <div class="detail-left">
-                                        <div class="rating-star">
+                            <div class="product-detail detail-center detail-inverse shop-product-detail">
+                                <div class="detail-title shop-detail-title">
+                                    <div class="detail-left shop-detail-left">
+                                        <div class="rating-star shop-rating-star">
                                             <i class="${uno} fa fa-star"></i>
                                             <i class="${dos} fa fa-star"></i>
                                             <i class="${tres} fa fa-star"></i>
@@ -309,34 +480,59 @@
                                             <i class="${cinco} fa fa-star"></i>
                                         </div>
                                         <p>${producto.descripcion}</p>
-                                        <a href="javascript:;">
-                                            <h6 class="price-title">
-                                                ${producto.nombre}
-                                            </h6>
-                                            <span class="badge" style="background-color: ${producto.color};">${producto.colornombre}</span>
-                                            <span class="badge" style="background-color: ${producto.color};">${producto.size}</span>
+                                        <a href="${base_url}principal/detail/${producto.slug}">
+                                            <h6 class="price-title shop-price-title">${producto.nombre}</h6>
                                         </a>
                                     </div>
-                                    <div class="detail-right">
-                                        <div class="price">
+                                    <div class="detail-right shop-detail-right">
+                                        <div class="price shop-price">
                                             <div class="price">${res.moneda + producto.precio_venta}</div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="icon-detail">
-                                    <a href="javascript:void(0)" onclick="agregarCarrito(${producto.id}, 1, ${producto.id_talla}, ${producto.id_color})" class="tooltip-top" data-tippy-content="Quick View"> <i class="fa fa-shopping-cart"></i> </a>
+                                <div class="icon-detail shop-icon-detail">
+                                    <a href="javascript:void(0)"
+                                        onclick="verDetalle(${producto.id})"
+                                        class="shop-icon-btn shop-icon-btn-view tooltip-top"
+                                        data-tippy-content="Ver opciones">
+                                        <i data-feather="eye"></i>
+                                    </a>
+                                    <a href="${base_url}principal/detail/${producto.slug}"
+                                        class="shop-icon-btn shop-icon-btn-detail tooltip-top"
+                                        data-tippy-content="Ver página completa">
+                                        <i data-feather="external-link"></i>
+                                    </a>
                                 </div>
                             </div>
                         </div>
                     </div>`;
-                });
+                }
+
+                // Si no hay productos, mostrar mensaje
+                if (products.length === 0) {
+                    html = `<div class="col-12">
+                        <div class="no-products-found text-center py-5">
+                            <i class="fa fa-shopping-cart" style="font-size: 80px; color: #ccc; margin-bottom: 20px;"></i>
+                            <h3>No hay productos disponibles</h3>
+                            <p class="text-muted">No se encontraron productos con los filtros seleccionados.</p>
+                            <button class="btn btn-theme mt-3" onclick="cancelarFiltros()">
+                                Limpiar filtros
+                            </button>
+                        </div>
+                    </div>`;
+                }
+
                 document.getElementById('loading-indicator').style.display = 'none';
                 document.querySelector('#contentProductos').innerHTML = html;
+                document.querySelector('#paginacion').innerHTML = '';
+
+                if (typeof feather !== 'undefined') {
+                    feather.replace();
+                }
             }
         }
     }
 </script>
-
 </body>
 
 </html>

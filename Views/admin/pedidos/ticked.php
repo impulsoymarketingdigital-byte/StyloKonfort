@@ -332,7 +332,7 @@
             <table>
                 <tr>
                     <td>Subtotal:</td>
-                    <td><?php echo number_format($subtotal, 2); ?> Bs</td>
+                    <td><?php echo number_format($subtotal, 2); ?> COP</td>
                 </tr>
             </table>
         </div>
@@ -341,7 +341,7 @@
             <table>
                 <tr>
                     <td>TOTAL A PAGAR:</td>
-                    <td><?php echo number_format($data['pedido']['monto'], 2); ?> Bs</td>
+                    <td><?php echo number_format($data['pedido']['monto'], 2); ?> COP</td>
                 </tr>
             </table>
         </div>

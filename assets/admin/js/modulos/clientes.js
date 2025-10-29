@@ -1,3 +1,4 @@
+//ADMINISTRADOR CLIENTES
 const nuevo = document.querySelector("#nuevo_registro");
 const frm = document.querySelector("#frmRegistro");
 const titleModal = document.querySelector("#titleModal");
@@ -33,7 +34,6 @@ document.addEventListener("DOMContentLoaded", function () {
     ],
     order: [[0, "desc"]],
     language,
-    
   });
 
   //levantar modal
@@ -130,6 +130,35 @@ function restaurar(id) {
   });
 }
 
+function aprobarMayorista(id) {
+  Swal.fire({
+    title: "Aprobar Cliente Mayorista",
+    text: "¿Está seguro de aprobar este cliente mayorista?",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Sí, Aprobar!",
+    cancelButtonText: "Cancelar",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const url = base_url + "clientes/aprobarMayorista/" + id;
+      const http = new XMLHttpRequest();
+      http.open("GET", url, true);
+      http.send();
+      http.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          const res = JSON.parse(this.responseText);
+          if (res.icono == "success") {
+            tblClientes.ajax.reload();
+          }
+          alertas(res.msg.toUpperCase(), res.icono);
+        }
+      };
+    }
+  });
+}
+
 function editCat(id) {
   const url = base_url + "clientes/edit/" + id;
   const http = new XMLHttpRequest();
@@ -144,6 +173,9 @@ function editCat(id) {
       document.querySelector("#telefono").value = res.telefono;
       document.querySelector("#correo").value = res.correo || "";
       document.querySelector("#direccion").value = res.direccion;
+      document.querySelector("#ciudad").value = res.ciudad || "";
+      document.querySelector("#departamento").value = res.departamento || "";
+      document.querySelector("#barrio").value = res.barrio || "";
       document.querySelector("#tipo_cliente").value = res.tipo_cliente;
       btnAccion.textContent = "Actualizar";
       titleModal.textContent = "MODIFICAR CLIENTE";

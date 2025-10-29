@@ -9,8 +9,7 @@
 <div class="card">
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-striped table-hover align-middle" style="width: 100%;"
-                id="tblProductos">
+            <table class="table table-striped table-hover align-middle" style="width: 100%;" id="tblProductos">
                 <thead>
                     <tr>
                         <th>N°</th>
@@ -18,6 +17,7 @@
                         <th>Nombre</th>
                         <th>P. Compra</th>
                         <th>P. Venta</th>
+                        <th>P. Mayorista</th>
                         <th>Categoria</th>
                         <th>Marca</th>
                         <th>Estado</th>
@@ -63,7 +63,7 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-6 col-sm-6 mb-2">
+                        <div class="col-lg-4 col-sm-6 mb-2">
                             <label class="form-label">Precio Compra <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light"><i class="fas fa-dollar-sign"></i></span>
@@ -72,12 +72,21 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-6 col-sm-6 mb-2">
+                        <div class="col-lg-4 col-sm-6 mb-2">
                             <label class="form-label">Precio Venta <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light"><i class="fas fa-dollar-sign"></i></span>
                                 <input id="precio_venta" name="precio_venta" type="number" step="0.01"
                                     class="form-control" placeholder="Precio Venta">
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-sm-6 mb-2">
+                            <label class="form-label">Precio Mayorista <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="fas fa-dollar-sign"></i></span>
+                                <input id="precio_mayorista" name="precio_mayorista" type="number" step="0.01"
+                                    class="form-control" placeholder="Precio Mayorista">
                             </div>
                         </div>
 

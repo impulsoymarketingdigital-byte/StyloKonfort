@@ -89,7 +89,6 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     };
   });
- 
 });
 
 function mostrarProducto() {
@@ -126,46 +125,54 @@ function mostrarProducto() {
             totalDescuentos += descuento;
             subtotalGeneral += subTotal;
 
+            // ⭐ CORREGIR AQUÍ: Usar atributoMP o construir el atributo
+            let atributoTexto = "Sin atributo";
+            if (producto.nombreTalla && producto.nombreColor) {
+              atributoTexto = `${producto.nombreTalla} - ${producto.nombreColor}`;
+            } else if (producto.atributoMP) {
+              atributoTexto = producto.atributoMP;
+            }
+
             html += `<tr>
-                            <td>${producto.nombre}</td>
-                            <td>${producto.atributo || "Sin atributo"}</td>
-                            <td width="100">
-                                <input type="number" class="form-control inputPrecio" 
-                                    data-id="${producto.id}" 
-                                    size="${producto.size}" 
-                                    color="${producto.color}" 
-                                    value="${precioCompra.toFixed(2)}" 
-                                    min="0" 
-                                    step="0.01">
-                            </td>                            
-                            <td width="100">
-                                <input type="number" class="form-control inputCantidad" 
-                                    data-id="${producto.id}" 
-                                    size="${producto.size}" 
-                                    color="${producto.color}" 
-                                    value="${cantidad}" 
-                                    min="1">
-                            </td>
-                            <td width="100">
-                                <input type="number" class="form-control inputDescuento" 
-                                    data-id="${producto.id}" 
-                                    size="${producto.size}" 
-                                    color="${producto.color}" 
-                                    value="${descuento.toFixed(2)}" 
-                                    min="0" 
-                                    step="0.01">
-                            </td>
-                            <td>${subTotal.toFixed(2)}</td>
-                            <td>
-                                <button class="btn btn-danger btnEliminar" 
-                                    data-id="${producto.id}" 
-                                    size="${producto.size}" 
-                                    color="${producto.color}" 
-                                    type="button">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>`;
+                        <td>${producto.nombre}</td>
+                        <td>${atributoTexto}</td>
+                        <td width="100">
+                            <input type="number" class="form-control inputPrecio" 
+                                data-id="${producto.id}" 
+                                size="${producto.size}" 
+                                color="${producto.color}" 
+                                value="${precioCompra.toFixed(2)}" 
+                                min="0" 
+                                step="0.01">
+                        </td>                            
+                        <td width="100">
+                            <input type="number" class="form-control inputCantidad" 
+                                data-id="${producto.id}" 
+                                size="${producto.size}" 
+                                color="${producto.color}" 
+                                value="${cantidad}" 
+                                min="1">
+                        </td>
+                        <td width="100">
+                            <input type="number" class="form-control inputDescuento" 
+                                data-id="${producto.id}" 
+                                size="${producto.size}" 
+                                color="${producto.color}" 
+                                value="${descuento.toFixed(2)}" 
+                                min="0" 
+                                step="0.01">
+                        </td>
+                        <td>${subTotal.toFixed(2)}</td>
+                        <td>
+                            <button class="btn btn-danger btnEliminar" 
+                                data-id="${producto.id}" 
+                                size="${producto.size}" 
+                                color="${producto.color}" 
+                                type="button">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>`;
           });
 
           tblNuevaCompra.innerHTML = html;

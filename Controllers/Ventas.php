@@ -75,10 +75,20 @@ class Ventas extends Controller
             $idCliente = $datos['idCliente'];
             $metodo = isset($datos['metodo']) ? $datos['metodo'] : 'VENTA DIRECTA';
 
+            $id_usuario = $_SESSION['id_usuario'];
+            $cajaAbierta = $this->model->getCajaAbierta($id_usuario);
+
+            if (empty($cajaAbierta)) {
+                $res = array('msg' => 'DEBES ABRIR UNA CAJA PRIMERO', 'type' => 'warning');
+                echo json_encode($res);
+                die();
+            }
+
+            $cash_box_id = $cajaAbierta['id'];
+
             if (empty($idCliente)) {
                 $res = array('msg' => 'EL CLIENTE ES REQUERIDO', 'type' => 'warning');
             } else {
-                // Calcular total
                 foreach ($datos['productos'] as $producto) {
                     $atributo = $this->model->getAtributos($producto['size'], $producto['color'], $producto['idProducto']);
                     if (empty($atributo)) {
@@ -90,31 +100,40 @@ class Ventas extends Controller
                     $total += $subTotal;
                 }
 
-                // Registrar pedido
                 $id_transaccion = $metodo . '-' . uniqid();
                 $estado = 'COMPLETADO';
-                $venta = $this->model->registrarPedido($id_transaccion, $metodo, $total, $estado, $fecha, $idCliente);
+
+                // ✅ AQUÍ SE AGREGA EL id_usuario
+                $venta = $this->model->registrarPedido($id_transaccion, $metodo, $total, $estado, $fecha, $idCliente, $cash_box_id, $id_usuario);
 
                 if ($venta > 0) {
-                    // Registrar detalles y actualizar stock
                     foreach ($datos['productos'] as $producto) {
                         $result = $this->model->getProducto($producto['idProducto']);
                         $atributo = $this->model->getAtributos($producto['size'], $producto['color'], $producto['idProducto']);
 
-                        // Guardar detalle
                         $this->model->registrarDetallePedido(
                             $venta,
-                            $result['id'],
+                            $producto['idProducto'],
                             $result['nombre'],
                             $atributo['precio_venta'],
                             $producto['cantidad'],
                             $atributo['id']
                         );
 
-                        // Actualizar stock en tallas_colores
                         $nuevoStock = $atributo['stock'] - $producto['cantidad'];
                         $this->model->actualizarStockDetalle($nuevoStock, $atributo['id']);
                     }
+
+                    $this->model->registrarMovimiento(
+                        'INGRESO',
+                        'VENTA',
+                        'NOTA DE VENTA - ' . $id_transaccion,
+                        $total,
+                        $cash_box_id,
+                        $id_usuario,
+                        $venta,
+                        'sales'
+                    );
 
                     $res = array('msg' => 'VENTA GENERADA', 'type' => 'success', 'idVenta' => $venta);
                 } else {

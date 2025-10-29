@@ -107,6 +107,7 @@ class Productos extends Controller
             $genero = strClean($_POST['genero']);
             $precio_compra = strClean($_POST['precio_compra']);
             $precio_venta = strClean($_POST['precio_venta']);
+            $precio_mayorista = strClean($_POST['precio_mayorista']);
             $categoria = strClean($_POST['categoria']);
             $marca = strClean($_POST['marca']);
 
@@ -118,6 +119,8 @@ class Productos extends Controller
                 $respuesta = array('msg' => 'EL PRECIO COMPRA ES REQUERIDO', 'icono' => 'warning');
             } else if (empty($precio_venta)) {
                 $respuesta = array('msg' => 'EL PRECIO VENTA ES REQUERIDO', 'icono' => 'warning');
+            } else if (empty($precio_mayorista)) {
+                $respuesta = array('msg' => 'EL PRECIO MAYORISTA ES REQUERIDO', 'icono' => 'warning');
             } else if (empty($categoria)) {
                 $respuesta = array('msg' => 'LA CATEGORÍA ES REQUERIDA', 'icono' => 'warning');
             } else if (empty($marca)) {
@@ -134,6 +137,7 @@ class Productos extends Controller
                             $genero,
                             $precio_compra,
                             $precio_venta,
+                            $precio_mayorista,
                             $categoria,
                             $marca
                         );
@@ -156,6 +160,7 @@ class Productos extends Controller
                             $genero,
                             $precio_compra,
                             $precio_venta,
+                            $precio_mayorista,
                             $categoria,
                             $marca,
                             $id

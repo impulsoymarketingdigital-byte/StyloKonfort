@@ -10,7 +10,7 @@
   <meta name="description" content="big-deal">
   <meta name="keywords" content="big-deal">
   <meta name="author" content="big-deal">
-  <link rel="icon" href="<?php echo BASE_URL . 'assets/images/favicon.ico'; ?>" type="image/x-icon">
+  <link rel="icon" href="<?php echo BASE_URL; ?>assets/admin/images/favicon.ico" type="image/png" />
   <link rel="shortcut icon" href="<?php echo BASE_URL . 'assets/images/favicon.ico'; ?>" type="image/x-icon">
   <!--Google font-->
   <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700&display=swap" rel="stylesheet">
@@ -256,8 +256,8 @@
       </li>
     </ul>
   </nav>
-  
-  
+
+
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       // MENÚ MÓVIL HAMBURGUESA
@@ -267,7 +267,7 @@
       const mobileNavClose = document.getElementById('mobileNavClose');
 
       if (mobileMenuBtn) {
-        mobileMenuBtn.addEventListener('click', function(e) {
+        mobileMenuBtn.addEventListener('click', function (e) {
           e.stopPropagation();
           mobileNav.classList.add('active');
           mobileOverlay.classList.add('active');
@@ -275,14 +275,14 @@
       }
 
       if (mobileNavClose) {
-        mobileNavClose.addEventListener('click', function() {
+        mobileNavClose.addEventListener('click', function () {
           mobileNav.classList.remove('active');
           mobileOverlay.classList.remove('active');
         });
       }
 
       if (mobileOverlay) {
-        mobileOverlay.addEventListener('click', function() {
+        mobileOverlay.addEventListener('click', function () {
           mobileNav.classList.remove('active');
           mobileOverlay.classList.remove('active');
         });

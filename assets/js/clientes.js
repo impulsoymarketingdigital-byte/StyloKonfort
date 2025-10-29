@@ -121,30 +121,6 @@ document.addEventListener("DOMContentLoaded", function () {
       };
     }
   });
-
-  frmDatos.addEventListener("submit", function (e) {
-    e.preventDefault();
-    if (
-      nomCliente.value == "" ||
-      apeCliente.value == "" ||
-      telCliente.value == "" ||
-      corCliente.value == "" ||
-      dirCliente.value == ""
-    ) {
-      alertaPerzanalizada("TODO LOS CAMPOS CON * SON REQUERIDOS", "warning");
-    } else {
-      const url = base_url + "clientes/modificarDatos";
-      const http = new XMLHttpRequest();
-      http.open("POST", url, true);
-      http.send(new FormData(this));
-      http.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-          const res = JSON.parse(this.responseText);
-          alertaPerzanalizada(res.msg, res.type);
-        }
-      };
-    }
-  });
 });
 
 let productosConPrecio = [];
@@ -196,7 +172,10 @@ function getListaProductos() {
         });
         tableLista.innerHTML = html;
         document.querySelector("#totalProducto").innerHTML =
-          '<i class="fa fa-shopping-bag"></i> TOTAL A PAGAR: ' + res.moneda + " " + res.total;
+          '<i class="fa fa-shopping-bag"></i> TOTAL A PAGAR: ' +
+          res.moneda +
+          " " +
+          res.total;
       } else {
         document.querySelector("#totalProducto").innerHTML =
           '<i class="fa fa-shopping-bag"></i> TOTAL: ' + res.moneda + " 0.00";
@@ -214,20 +193,27 @@ function getListaProductos() {
   };
 }
 
-function generarAtributo(size, color, nombreTalla, nombreColor, colorHexa, colorSecundario) {
+function generarAtributo(
+  size,
+  color,
+  nombreTalla,
+  nombreColor,
+  colorHexa,
+  colorSecundario
+) {
   if (!nombreTalla || !nombreColor) {
     return '<span class="badge bg-secondary">Sin atributos</span>';
   }
-  
-  let colorHTML = '';
-  if (colorSecundario && colorSecundario.trim() !== '') {
+
+  let colorHTML = "";
+  if (colorSecundario && colorSecundario.trim() !== "") {
     // Color combinado (gradiente)
     colorHTML = `<span class="crrt-color-circle-split" style="background: linear-gradient(90deg, ${colorHexa} 50%, ${colorSecundario} 50%);" title="${nombreColor}"></span>`;
   } else {
     // Color sólido
     colorHTML = `<span class="crrt-color-circle" style="background-color: ${colorHexa};" title="${nombreColor}"></span>`;
   }
-  
+
   return `
     <div class="crrt-attributes">
       <span class="crrt-size-badge"><i class="fa fa-ruler-combined"></i> ${nombreTalla}</span>

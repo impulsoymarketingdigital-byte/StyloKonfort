@@ -42,6 +42,9 @@ class Clientes extends Controller
                 empty($_POST['claveRegistro']) ||
                 empty($_POST['telefonoRegistro']) ||
                 empty($_POST['direccionRegistro']) ||
+                empty($_POST['ciudadRegistro']) ||
+                empty($_POST['departamentoRegistro']) ||
+                empty($_POST['barrioRegistro']) ||
                 empty($_POST['documentoRegistro']) ||
                 empty($_POST['tipoClienteRegistro'])
             ) {
@@ -53,26 +56,27 @@ class Clientes extends Controller
                 $clave = strClean($_POST['claveRegistro']);
                 $telefono = strClean($_POST['telefonoRegistro']);
                 $direccion = strClean($_POST['direccionRegistro']);
+                $ciudad = strClean($_POST['ciudadRegistro']);
+                $departamento = strClean($_POST['departamentoRegistro']);
+                $barrio = strClean($_POST['barrioRegistro']);
                 $documento = strClean($_POST['documentoRegistro']);
                 $tipo_cliente = strClean($_POST['tipoClienteRegistro']);
 
                 $verificar = $this->model->getVerificar('clientes', $correo);
                 if (empty($verificar)) {
-                    // Verificar si el documento ya existe
                     $verificarDocumento = $this->model->getVerificarDocumento($documento);
                     if (empty($verificarDocumento)) {
                         $token = md5($correo);
                         $hash = password_hash($clave, PASSWORD_DEFAULT);
-                        $data = $this->model->registroDirecto($nombre, $apellido, $correo, $hash, $token, $telefono, $direccion, $documento, $tipo_cliente);
+                        $data = $this->model->registroDirecto($nombre, $apellido, $correo, $hash, $token, $telefono, $direccion, $ciudad, $departamento, $barrio, $documento, $tipo_cliente);
                         if ($data > 0) {
-                            $cliente = $this->model->editar($data);
-                            $_SESSION['idCliente'] = $cliente['id'];
-                            $_SESSION['correoCliente'] = $cliente['correo'];
-                            $_SESSION['nombreCliente'] = $cliente['nombre'];
-                            $_SESSION['apellidoCliente'] = $cliente['apellido'];
-                            $_SESSION['dirrecionCliente'] = $cliente['direccion'];
-                            $_SESSION['perfilCliente'] = $cliente['perfil'];
-                            $mensaje = array('msg' => 'Registrado con éxito', 'icono' => 'success', 'token' => $token);
+                            // Solo enviar token si es cliente FINAL
+                            if ($tipo_cliente == 'final') {
+                                $mensaje = array('msg' => 'Registrado con éxito', 'icono' => 'success', 'token' => $token, 'tipo' => 'final');
+                            } else {
+                                // Si es MAYORISTA, no enviar token
+                                $mensaje = array('msg' => 'Solicitud recibida', 'icono' => 'success', 'tipo' => 'mayorista');
+                            }
                         } else {
                             $mensaje = array('msg' => 'Error al registrarse', 'icono' => 'error');
                         }
@@ -95,33 +99,77 @@ class Clientes extends Controller
             $token = strClean($_POST['token']);
             $mail = new PHPMailer(true);
             try {
-                //Server settings
-                $mail->SMTPDebug = 0;                      //Enable verbose debug output
-                $mail->isSMTP();                                            //Send using SMTP
-                $mail->Host = HOST_SMTP;                     //Set the SMTP server to send through
-                $mail->SMTPAuth = true;                                   //Enable SMTP authentication
-                $mail->Username = USER_SMTP;                     //SMTP username
-                $mail->Password = PASS_SMTP;                               //SMTP password
-                $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
-                $mail->Port = PUERTO_SMTP;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+                $mail->SMTPDebug = 0;
+                $mail->isSMTP();
+                $mail->Host = HOST_SMTP;
+                $mail->SMTPAuth = true;
+                $mail->Username = USER_SMTP;
+                $mail->Password = PASS_SMTP;
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+                $mail->Port = PUERTO_SMTP;
 
-                //Recipients
                 $mail->setFrom(CORREO, TITLE);
                 $mail->addAddress($correo);
 
-                //Content
-                $mail->isHTML(true);                                  //Set email format to HTML
-                $mail->Subject = 'Mensaje desde la: ' . TITLE;
-                $mail->Body = 'Para verificar tu correo en nuestra tienda <a href="' . BASE_URL . 'clientes/verificarCorreo/' . $token . '">CLIC AQUÍ</a>';
-                $mail->AltBody = 'GRACIAS POR LA PREFERENCIA';
+                $mail->isHTML(true);
+                $mail->CharSet = 'UTF-8';
+                $mail->Subject = '¡Bienvenido a ' . TITLE . '!';
+                $mail->Body = '
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <style>
+                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                    .header { background: linear-gradient(135deg, #057997 0%, #046680 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+                    .content { background: #ffffff; padding: 30px; border: 1px solid #e0e0e0; }
+                    .button { display: inline-block; padding: 15px 30px; background: #057997; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 20px 0; }
+                    .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border-radius: 0 0 10px 10px; }
+                    .link-box { background: #f8f9fa; padding: 15px; border-radius: 5px; word-break: break-all; margin: 10px 0; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>¡Bienvenido a ' . TITLE . '!</h1>
+                    </div>
+                    <div class="content">
+                        <p>Hola,</p>
+                        
+                        <p>Gracias por registrarte en nuestra tienda. Para completar tu registro y activar tu cuenta, por favor verifica tu correo electrónico.</p>
+                        
+                        <div style="text-align: center;">
+                            <a href="' . BASE_URL . 'clientes/verificarCorreo/' . $token . '" class="button">
+                                VERIFICAR MI CUENTA
+                            </a>
+                        </div>
+                        
+                        <p><strong>Importante:</strong> Si no solicitaste esta cuenta, puedes ignorar este correo de manera segura.</p>
+                        
+                        <p>Si el botón no funciona, copia y pega el siguiente enlace en tu navegador:</p>
+                        <div class="link-box">
+                            ' . BASE_URL . 'clientes/verificarCorreo/' . $token . '
+                        </div>
+                        
+                        <p>Gracias por confiar en nosotros</p>
+                    </div>
+                    <div class="footer">
+                        <p>© ' . date('Y') . ' ' . TITLE . '. Todos los derechos reservados.</p>
+                    </div>
+                </div>
+            </body>
+            </html>';
+
+                $mail->AltBody = 'Verifica tu correo en: ' . BASE_URL . 'clientes/verificarCorreo/' . $token;
 
                 $mail->send();
-                $mensaje = array('msg' => 'CORREO ENVIADO, REVISA TU BANDEJA DE ENTRADA - SPAN', 'icono' => 'success');
+                $mensaje = array('msg' => 'CORREO ENVIADO, REVISA TU BANDEJA DE ENTRADA - SPAM', 'icono' => 'success');
             } catch (Exception $e) {
                 $mensaje = array('msg' => 'ERROR AL ENVIAR CORREO: ' . $mail->ErrorInfo, 'icono' => 'error');
             }
         } else {
-            $mensaje = array('msg' => 'ERROR FATAL: ', 'icono' => 'error');
+            $mensaje = array('msg' => 'ERROR FATAL', 'icono' => 'error');
         }
         echo json_encode($mensaje, JSON_UNESCAPED_UNICODE);
         die();
@@ -133,6 +181,95 @@ class Clientes extends Controller
             $this->model->actualizarVerify($verificar['id']);
             header('Location: ' . BASE_URL . 'clientes');
         }
+    }
+
+    public function enviarCorreoPendiente()
+    {
+        if (isset($_POST['correo']) && isset($_POST['nombre'])) {
+            $correo = strClean($_POST['correo']);
+            $nombre = strClean($_POST['nombre']);
+            $mail = new PHPMailer(true);
+            try {
+                //Server settings
+                $mail->SMTPDebug = 0;
+                $mail->isSMTP();
+                $mail->Host = HOST_SMTP;
+                $mail->SMTPAuth = true;
+                $mail->Username = USER_SMTP;
+                $mail->Password = PASS_SMTP;
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+                $mail->Port = PUERTO_SMTP;
+
+                //Recipients
+                $mail->setFrom(CORREO, TITLE);
+                $mail->addAddress($correo);
+
+                //Content
+                $mail->isHTML(true);
+                $mail->CharSet = 'UTF-8';
+                $mail->Subject = 'Solicitud de Registro Mayorista - ' . TITLE;
+                $mail->Body = '
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <style>
+                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                    .header { background: linear-gradient(135deg, #057997 0%, #046680 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+                    .content { background: #ffffff; padding: 30px; border: 1px solid #e0e0e0; }
+                    .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border-radius: 0 0 10px 10px; }
+                    .highlight { background: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 20px 0; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>¡Solicitud Recibida!</h1>
+                    </div>
+                    <div class="content">
+                        <p>Estimado/a <strong>' . $nombre . '</strong>,</p>
+                        
+                        <p>Gracias por tu interés en registrarte como <strong>Cliente Mayorista</strong> en ' . TITLE . '.</p>
+                        
+                        <div class="highlight">
+                            <strong>📋 Estado de tu solicitud:</strong> PENDIENTE DE APROBACIÓN
+                        </div>
+                        
+                        <p>Tu solicitud será revisada por nuestro equipo administrativo. Una vez aprobada, recibirás un correo con un enlace de verificación para activar tu cuenta.</p>
+                        
+                        <p><strong>¿Qué sigue?</strong></p>
+                        <ul>
+                            <li>Nuestro equipo revisará tu solicitud</li>
+                            <li>Si es aprobada, recibirás un correo de confirmación</li>
+                            <li>Deberás hacer clic en el enlace de verificación</li>
+                            <li>¡Listo! Podrás acceder a precios mayoristas</li>
+                        </ul>
+                        
+                        <p>Este proceso generalmente toma entre 24-48 horas hábiles.</p>
+                        
+                        <p>Gracias por tu paciencia y confianza en nosotros.</p>
+                    </div>
+                    <div class="footer">
+                        <p>© ' . date('Y') . ' ' . TITLE . '. Todos los derechos reservados.</p>
+                        <p>Si no solicitaste este registro, puedes ignorar este correo.</p>
+                    </div>
+                </div>
+            </body>
+            </html>';
+
+                $mail->AltBody = 'Estimado/a ' . $nombre . ', tu solicitud de registro como cliente mayorista ha sido recibida y está pendiente de aprobación. Recibirás un correo cuando sea aprobada.';
+
+                $mail->send();
+                $mensaje = array('msg' => 'Correo de notificación enviado', 'icono' => 'success');
+            } catch (Exception $e) {
+                $mensaje = array('msg' => 'Error al enviar correo: ' . $mail->ErrorInfo, 'icono' => 'error');
+            }
+        } else {
+            $mensaje = array('msg' => 'Error en los datos', 'icono' => 'error');
+        }
+        echo json_encode($mensaje, JSON_UNESCAPED_UNICODE);
+        die();
     }
 
     //login directo
@@ -153,7 +290,7 @@ class Clientes extends Controller
                         $_SESSION['apellidoCliente'] = $verificar['apellido'];
                         $_SESSION['dirrecionCliente'] = $verificar['direccion'];
                         $_SESSION['perfilCliente'] = $verificar['perfil'];
-                        $mensaje = array('msg' => 'OK', 'icono' => 'success');
+                        $mensaje = array('msg' => 'USUARIO CORRECTO', 'icono' => 'success');
                     } else {
                         $mensaje = array('msg' => 'CONTRASEÑA INCORRECTA', 'icono' => 'error');
                     }
@@ -177,6 +314,9 @@ class Clientes extends Controller
         $json = json_decode($datos, true);
         $productos = $json['productos'];
 
+        // NUEVO: Obtener tipo de cliente
+        $tipoCliente = $this->model->getTipoCliente();
+
         if (is_array($productos) && count($productos) > 0) {
             $id_transaccion = 'LLEVAR-' . uniqid();
             $metodo = 'LLEVAR';
@@ -192,6 +332,11 @@ class Clientes extends Controller
 
             // Calcular el monto total
             foreach ($productos as $producto) {
+                $temp = $this->model->getProducto($producto['id']);
+
+                // NUEVO: Precio según tipo de cliente
+                $precio = ($tipoCliente == 'mayorista') ? $temp['precio_mayorista'] : $temp['precio_venta'];
+
                 if ($producto['size'] > 0 && $producto['color'] > 0) {
                     $result = $this->model->getAtributos($producto['size'], $producto['color'], $producto['id']);
                     if (empty($result)) {
@@ -199,10 +344,6 @@ class Clientes extends Controller
                         echo json_encode($mensaje);
                         die();
                     }
-                    $precio = $result['precio'];
-                } else {
-                    $temp = $this->model->getProducto($producto['id']);
-                    $precio = $temp['precio'];
                 }
                 $monto += $precio * $producto['cantidad'];
             }
@@ -226,13 +367,15 @@ class Clientes extends Controller
                 foreach ($productos as $producto) {
                     $temp = $this->model->getProducto($producto['id']);
 
+                    // NUEVO: Precio según tipo de cliente
+                    $precio = ($tipoCliente == 'mayorista') ? $temp['precio_mayorista'] : $temp['precio_venta'];
+
                     if ($producto['size'] > 0 && $producto['color'] > 0) {
                         $result = $this->model->getAtributos($producto['size'], $producto['color'], $producto['id']);
                         $tallaColor = $this->model->getIdTallaColor($producto['size'], $producto['color'], $producto['id']);
-                        $precio = $result['precio'];
                         $id_talla_color = $tallaColor['id'];
 
-                        // Registrar detalle con id_talla_color
+                        // Registrar detalle con precio correcto
                         $this->model->registrarDetalle(
                             $temp['nombre'],
                             $precio,
@@ -247,7 +390,6 @@ class Clientes extends Controller
                         $this->model->actualizarStockDetalle($nuevoStock, $id_talla_color);
                     } else {
                         // Producto sin talla/color
-                        $precio = $temp['precio'];
                         $this->model->registrarDetalle(
                             $temp['nombre'],
                             $precio,
@@ -325,12 +467,12 @@ class Clientes extends Controller
                 }
 
                 $mensajeWhatsApp .= "   • Cantidad: " . $producto['cantidad'] . "\n";
-                $mensajeWhatsApp .= "   • Precio: Bs " . number_format($producto['precio'], 2) . "\n";
-                $mensajeWhatsApp .= "   • Subtotal: Bs " . number_format($total_producto, 2) . "\n";
+                $mensajeWhatsApp .= "   • Precio: COP " . number_format($producto['precio'], 2) . "\n";
+                $mensajeWhatsApp .= "   • Subtotal: COP " . number_format($total_producto, 2) . "\n";
             }
 
             $mensajeWhatsApp .= "\n━━━━━━━━━━━━━━━━━━━\n";
-            $mensajeWhatsApp .= "*💰 TOTAL A PAGAR: Bs " . number_format($pedido['monto'], 2) . "*\n";
+            $mensajeWhatsApp .= "*💰 TOTAL A PAGAR: COP " . number_format($pedido['monto'], 2) . "*\n";
             $mensajeWhatsApp .= "━━━━━━━━━━━━━━━━━━━\n\n";
 
             $mensajeWhatsApp .= "📅 Fecha: " . date('d/m/Y H:i:s', strtotime($pedido['fecha'])) . "\n\n";
@@ -418,7 +560,7 @@ class Clientes extends Controller
                 <p>Hola <strong>' . $pedido['nombre'] . '</strong>,</p>
                 <p>Tu pedido ha sido registrado exitosamente.</p>
                 <p><strong>Número de Pedido:</strong> #' . str_pad($idPedido, 6, '0', STR_PAD_LEFT) . '</p>
-                <p><strong>Total:</strong> ' . number_format($pedido['monto'], 2) . ' Bs</p>
+                <p><strong>Total:</strong> ' . number_format($pedido['monto'], 2) . ' COP</p>
                 <p>Adjunto encontrarás el detalle completo de tu pedido.</p>
                 <br>
                 <p>¡Vuelve pronto!</p>
@@ -576,6 +718,7 @@ class Clientes extends Controller
             header('Location: ' . BASE_URL);
             exit;
         }
+
         if (isset($_POST['nombre']) && isset($_POST['apellidos']) && isset($_POST['correo'])) {
             $nombre = strClean($_POST['nombre']);
             $apellidos = strClean($_POST['apellidos']);
@@ -584,6 +727,7 @@ class Clientes extends Controller
             $direccion = strClean($_POST['direccion']);
             $foto = $_FILES['fotoCliente'];
             $id = $_SESSION['idCliente'];
+
             if (
                 empty($nombre) || empty($apellidos) || empty($telefono)
                 || empty($correo) || empty($direccion)
@@ -600,29 +744,41 @@ class Clientes extends Controller
                             die();
                         }
                     }
-                    //recuperar anterior
+
+                    //recuperar datos anteriores
                     $tmp = $this->model->editar($id);
-                    if (file_exists('assets/images/clientes/' . $tmp['perfil'])) {
-                        unlink('assets/images/clientes/' . $tmp['perfil']);
+
+                    // Determinar el destino de la foto
+                    if (!empty($tmp['perfil']) && $tmp['perfil'] != 'default.png' && file_exists('assets/images/clientes/' . $tmp['perfil'])) {
+                        if (!empty($foto['name'])) {
+                            unlink('assets/images/clientes/' . $tmp['perfil']);
+                        }
                         $destino = $tmp['perfil'];
                     } else {
-                        $destino = (empty($foto['name'])) ? 'default.png' : $id . '.jpg';
+                        $destino = (!empty($foto['name'])) ? $id . '.jpg' : 'default.png';
                     }
 
+                    // AQUÍ ESTÁ LA CORRECCIÓN: Agregar $tmp['tipo_cliente']
                     $data = $this->model->actualizar(
                         $nombre,
                         $apellidos,
                         $telefono,
                         $correo,
                         $direccion,
+                        $tmp['tipo_cliente'], // ← PARÁMETRO AGREGADO
                         $destino,
                         $id
                     );
+
                     if ($data > 0) {
                         if (!empty($foto['name'])) {
                             move_uploaded_file($foto['tmp_name'], 'assets/images/clientes/' . $destino);
                         }
-                        $res = array('msg' => 'CLIENTE MODIFICADO', 'type' => 'success');
+
+                        // Actualizar la sesión con el nuevo perfil
+                        $_SESSION['perfilCliente'] = $destino;
+
+                        $res = array('msg' => 'PERFIL ACTUALIZADO CORRECTAMENTE', 'type' => 'success');
                     } else {
                         $res = array('msg' => 'ERROR AL MODIFICAR', 'type' => 'error');
                     }
@@ -633,6 +789,7 @@ class Clientes extends Controller
         } else {
             $res = array('msg' => 'ERROR DESCONOCIDO', 'type' => 'error');
         }
+
         echo json_encode($res);
         die();
     }
@@ -662,14 +819,21 @@ class Clientes extends Controller
         $data = $this->model->getClientes();
         for ($i = 0; $i < count($data); $i++) {
             $estado = $data[$i]['estado'];
+            $verify = $data[$i]['verify'];
+            $tipo = $data[$i]['tipo_cliente'];
+
             $color = $estado == 1 ? 'success' : 'danger';
             $texto = $estado == 1 ? 'ACTIVO' : 'INACTIVO';
             $data[$i]['estado'] = "<div class='badge rounded-pill text-$color bg-light-$color p-2 text-uppercase px-3'>$texto</div>";
 
-            $tipo = $data[$i]['tipo_cliente'];
             $colorTipo = $tipo == 'mayorista' ? 'primary' : 'info';
             $textoTipo = $tipo == 'mayorista' ? 'MAYORISTA' : 'FINAL';
-            $data[$i]['tipo_cliente'] = "<span class='badge bg-$colorTipo'>$textoTipo</span>";
+
+            if ($tipo == 'mayorista' && $verify == 0) {
+                $data[$i]['tipo_cliente'] = "<span class='badge bg-warning'>PENDIENTE</span>";
+            } else {
+                $data[$i]['tipo_cliente'] = "<span class='badge bg-$colorTipo'>$textoTipo</span>";
+            }
 
             if ($estado == 1) {
                 $botonAccion = '<button class="btn btn-danger" type="button" onclick="eliminar(' . $data[$i]['id'] . ')"><i class="fas fa-trash"></i></button>';
@@ -677,14 +841,143 @@ class Clientes extends Controller
                 $botonAccion = '<button class="btn btn-success" type="button" onclick="restaurar(' . $data[$i]['id'] . ')"><i class="fas fa-undo"></i></button>';
             }
 
-            $data[$i]['accion'] = '<div class="d-flex">
-        <button class="btn btn-primary" type="button" onclick="editCat(' . $data[$i]['id'] . ')"><i class="fas fa-edit"></i></button>
-        ' . $botonAccion . '
+            $botonAprobar = '';
+            if ($tipo == 'mayorista' && $verify == 0) {
+                $botonAprobar = '<button class="btn btn-warning" type="button" onclick="aprobarMayorista(' . $data[$i]['id'] . ')" title="Aprobar Mayorista"><i class="fas fa-check"></i></button>';
+            }
+
+            $data[$i]['accion'] = '<div class="d-flex gap-1">
+            <button class="btn btn-primary" type="button" onclick="editCat(' . $data[$i]['id'] . ')"><i class="fas fa-edit"></i></button>
+            ' . $botonAprobar . '
+            ' . $botonAccion . '
         </div>';
         }
         echo json_encode($data, JSON_UNESCAPED_UNICODE);
         die();
     }
+
+    public function aprobarMayorista($id)
+    {
+        if (empty($_SESSION['id_usuario'])) {
+            header('Location: ' . BASE_URL . 'admin');
+            exit;
+        }
+
+        // Obtener datos del cliente
+        $cliente = $this->model->editar($id);
+
+        if (!empty($cliente)) {
+            // Verificar que sea mayorista y no esté verificado
+            if ($cliente['tipo_cliente'] == 'mayorista' && $cliente['verify'] == 0) {
+
+                // Actualizar verify a 1
+                $actualizado = $this->model->aprobarClienteMayorista($id);
+
+                // ✅ VERIFICAR QUE LA ACTUALIZACIÓN FUE EXITOSA
+                if ($actualizado == 1) {
+
+                    // Enviar correo de aprobación
+                    $mail = new PHPMailer(true);
+                    try {
+                        //Server settings
+                        $mail->SMTPDebug = 0;
+                        $mail->isSMTP();
+                        $mail->Host = HOST_SMTP;
+                        $mail->SMTPAuth = true;
+                        $mail->Username = USER_SMTP;
+                        $mail->Password = PASS_SMTP;
+                        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+                        $mail->Port = PUERTO_SMTP;
+
+                        //Recipients
+                        $mail->setFrom(CORREO, TITLE);
+                        $mail->addAddress($cliente['correo']);
+
+                        //Content
+                        $mail->isHTML(true);
+                        $mail->CharSet = 'UTF-8';
+                        $mail->Subject = '¡Cuenta Mayorista Aprobada! - ' . TITLE;
+                        $mail->Body = '
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <meta charset="UTF-8">
+                        <style>
+                            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                            .header { background: linear-gradient(135deg, #057997 0%, #046680 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+                            .content { background: #ffffff; padding: 30px; border: 1px solid #e0e0e0; }
+                            .button { display: inline-block; padding: 15px 30px; background: #057997; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 20px 0; }
+                            .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border-radius: 0 0 10px 10px; }
+                            .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 15px; margin: 20px 0; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="container">
+                            <div class="header">
+                                <h1>✅ ¡Felicidades!</h1>
+                                <p>Tu cuenta mayorista ha sido aprobada</p>
+                            </div>
+                            <div class="content">
+                                <p>Estimado/a <strong>' . htmlspecialchars($cliente['nombre'] . ' ' . $cliente['apellido']) . '</strong>,</p>
+                                
+                                <div class="success-box">
+                                    <strong>🎉 ¡Excelentes noticias!</strong><br>
+                                    Tu solicitud de registro como Cliente Mayorista ha sido <strong>APROBADA</strong>.
+                                </div>
+                                
+                                <p><strong>Tu cuenta ya está activa y puedes realizar tus compras con precios especiales mayoristas.</strong></p>
+                                
+                                <div style="text-align: center;">
+                                    <a href="' . BASE_URL . '" class="button">
+                                        IR A LA TIENDA
+                                    </a>
+                                </div>
+                                
+                                <p><strong>Beneficios de tu cuenta mayorista:</strong></p>
+                                <ul>
+                                    <li>✓ Precios especiales mayoristas</li>
+                                    <li>✓ Descuentos exclusivos</li>
+                                    <li>✓ Atención personalizada</li>
+                                    <li>✓ Pedidos al por mayor</li>
+                                </ul>
+                                
+                                <p>Inicia sesión con tu correo y contraseña para comenzar a comprar.</p>
+                                
+                                <p>¡Gracias por confiar en nosotros!</p>
+                            </div>
+                            <div class="footer">
+                                <p>© ' . date('Y') . ' ' . TITLE . '. Todos los derechos reservados.</p>
+                            </div>
+                        </div>
+                    </body>
+                    </html>';
+
+                        $mail->AltBody = 'Tu cuenta mayorista ha sido aprobada. Ya puedes realizar tus compras en: ' . BASE_URL;
+
+                        $mail->send();
+                        $res = array('msg' => 'Cliente mayorista aprobado y correo enviado exitosamente', 'icono' => 'success');
+
+                    } catch (Exception $e) {
+                        $res = array('msg' => 'Cliente aprobado pero error al enviar correo: ' . $mail->ErrorInfo, 'icono' => 'warning');
+                    }
+
+                } else {
+                    // ✅ SI LA ACTUALIZACIÓN FALLÓ
+                    $res = array('msg' => 'Error al aprobar cliente mayorista en la base de datos', 'icono' => 'error');
+                }
+
+            } else {
+                $res = array('msg' => 'El cliente ya está aprobado o no es mayorista', 'icono' => 'warning');
+            }
+        } else {
+            $res = array('msg' => 'Cliente no encontrado', 'icono' => 'error');
+        }
+
+        echo json_encode($res, JSON_UNESCAPED_UNICODE);
+        die();
+    }
+
     public function registrar()
     {
         if (empty($_SESSION['id_usuario'])) {
@@ -698,6 +991,9 @@ class Clientes extends Controller
             $telefono = strClean($_POST['telefono']);
             $correo = (empty($_POST['correo'])) ? null : strClean($_POST['correo']);
             $direccion = strClean($_POST['direccion']);
+            $ciudad = strClean($_POST['ciudad']);
+            $departamento = strClean($_POST['departamento']);
+            $barrio = strClean($_POST['barrio']);
             $tipo_cliente = strClean($_POST['tipo_cliente']);
 
             if (empty($nombre)) {
@@ -724,6 +1020,9 @@ class Clientes extends Controller
                             $telefono,
                             $correo,
                             $direccion,
+                            $ciudad,
+                            $departamento,
+                            $barrio,
                             $tipo_cliente,
                             'ADMINISTRACION'
                         );
@@ -752,6 +1051,9 @@ class Clientes extends Controller
                             $telefono,
                             $correo,
                             $direccion,
+                            $ciudad,
+                            $departamento,
+                            $barrio,
                             $tipo_cliente,
                             'default.png',
                             $id

@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!--favicon-->
-    <link rel="icon" href="<?php echo BASE_URL; ?>assets/admin/images/favicon-32x32.png" type="image/png" />
+    <link rel="icon" href="<?php echo BASE_URL; ?>assets/admin/images/favicon.ico" type="image/png" />
     <!--plugins-->
     <link href="<?php echo BASE_URL; ?>assets/admin/plugins/simplebar/css/simplebar.css" rel="stylesheet" />
     <link href="<?php echo BASE_URL; ?>assets/admin/plugins/metismenu/css/metisMenu.min.css" rel="stylesheet" />
@@ -36,7 +36,7 @@
                         <div class="lg-logo-container lg-text-center">
                             <img src="<?php echo BASE_URL; ?>assets/admin/images/login.png" width="180" alt="LOGO" />
                         </div>
-                        
+
                         <!-- Card Principal -->
                         <div class="lg-card">
                             <div class="lg-card-body">
@@ -45,52 +45,44 @@
                                     <div class="lg-text-center">
                                         <h3 class="lg-title">Iniciar Sesión</h3>
                                     </div>
-                                    
+
                                     <!-- Separador -->
                                     <div class="lg-separater lg-text-center">
                                         <span>ACCEDE CON TU CORREO</span>
                                         <hr />
                                     </div>
-                                    
+
                                     <!-- Formulario -->
                                     <div class="form-body">
                                         <form class="lg-g-3" id="formulario">
                                             <!-- Campo Email -->
                                             <div class="lg-col-12">
                                                 <label for="email" class="lg-form-label">Correo Electrónico</label>
-                                                <input type="email" 
-                                                       class="lg-form-control" 
-                                                       id="email" 
-                                                       name="email" 
-                                                       value="luissantander2002@gmail.com" 
-                                                       placeholder="ejemplo@correo.com"
-                                                       required>
+                                                <input type="email" class="lg-form-control" id="email" name="email"
+                                                    value="luissantander2002@gmail.com" placeholder="ejemplo@correo.com"
+                                                    required>
                                             </div>
-                                            
+
                                             <!-- Campo Password -->
                                             <div class="lg-col-12">
                                                 <label for="clave" class="lg-form-label">Contraseña</label>
                                                 <div class="lg-input-group" id="show_hide_password">
-                                                    <input type="password" 
-                                                           class="lg-form-control" 
-                                                           id="clave" 
-                                                           name="clave" 
-                                                           value="12345" 
-                                                           placeholder="Ingresa tu contraseña"
-                                                           required>
+                                                    <input type="password" class="lg-form-control" id="clave"
+                                                        name="clave" value="12345" placeholder="Ingresa tu contraseña"
+                                                        required>
                                                     <a href="javascript:;" class="lg-input-group-text">
                                                         <i class='bx bx-hide'></i>
                                                     </a>
                                                 </div>
                                             </div>
-                                            
+
                                             <!-- Link Olvidaste Contraseña -->
                                             <div class="lg-col-12 lg-text-end">
                                                 <a href="authentication-forgot-password.html" class="lg-forgot-link">
                                                     ¿Olvidaste tu contraseña?
                                                 </a>
                                             </div>
-                                            
+
                                             <!-- Botón Submit -->
                                             <div class="lg-col-12">
                                                 <div class="lg-d-grid">
@@ -111,7 +103,7 @@
         </div>
     </div>
     <!--end wrapper-->
-    
+
     <!-- Bootstrap JS -->
     <script src="<?php echo BASE_URL; ?>assets/admin/js/bootstrap.bundle.min.js"></script>
     <!--plugins-->
@@ -119,11 +111,11 @@
     <script src="<?php echo BASE_URL; ?>assets/admin/plugins/simplebar/js/simplebar.min.js"></script>
     <script src="<?php echo BASE_URL; ?>assets/admin/plugins/metismenu/js/metisMenu.min.js"></script>
     <script src="<?php echo BASE_URL; ?>assets/admin/js/sweetalert2.all.min.js"></script>
-    
+
     <!--Password show & hide js -->
     <script>
-        $(document).ready(function() {
-            $("#show_hide_password a").on('click', function(event) {
+        $(document).ready(function () {
+            $("#show_hide_password a").on('click', function (event) {
                 event.preventDefault();
                 if ($('#show_hide_password input').attr("type") == "text") {
                     $('#show_hide_password input').attr('type', 'password');
@@ -148,10 +140,10 @@
                 zIndex: 999999
             })
         }
-        
+
         const base_url = '<?php echo BASE_URL; ?>';
     </script>
-    
+
     <!--app JS-->
     <script src="<?php echo BASE_URL; ?>assets/admin/js/app.js"></script>
     <script src="<?php echo BASE_URL; ?>assets/admin/js/modulos/login.js"></script>

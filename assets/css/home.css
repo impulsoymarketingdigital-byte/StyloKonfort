@@ -4,16 +4,17 @@
 
 :root {
   --hm-primary: #057997;
-  --hm-primary-dark: #e62e2e;
-  --hm-primary-light: #ff5252;
+  --hm-primary-dark: #046b85;
+  --hm-primary-light: #089dbb;
   --hm-text-dark: #2d3436;
   --hm-text-light: #636e72;
   --hm-bg-light: #f8f9fa;
   --hm-white: #ffffff;
   --hm-border: #e1e8ed;
   --hm-shadow: rgba(0, 0, 0, 0.08);
-  --hm-shadow-hover: rgba(255, 56, 56, 0.25);
+  --hm-shadow-hover: rgba(5, 121, 151, 0.25); /* sombra azul suave */
 }
+
 
 /* ================================
    PRODUCTOS SECTION
@@ -176,10 +177,11 @@
 
 .hm-product-card:hover {
   transform: translateY(-15px) rotateX(2deg);
-  box-shadow: 
-    0 25px 50px rgba(255, 56, 56, 0.2),
-    0 10px 20px rgba(0, 0, 0, 0.15);
+  box-shadow:
+    0 25px 50px rgba(5, 121, 151, 0.2),   /* azul base con transparencia */
+    0 10px 20px rgba(0, 0, 0, 0.15);      /* sombra neutra para profundidad */
 }
+
 
 .hm-product-card:hover::before {
   opacity: 1;
@@ -219,7 +221,7 @@
   text-transform: uppercase;
   letter-spacing: 1px;
   z-index: 2;
-  box-shadow: 0 5px 20px rgba(255, 56, 56, 0.4);
+  box-shadow: 0 5px 20px rgba(5, 121, 151, 0.4); /* azul base con 40% opacidad */
   animation: hm-badgePulse 2.5s infinite;
 }
 

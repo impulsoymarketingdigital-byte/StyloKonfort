@@ -10,14 +10,12 @@
                 </a>
                 <ul class="dropdown-menu">
                     <li>
-                        <a class="dropdown-item" href="javascript:;"
-                            onclick="window.open('<?php echo BASE_URL . 'reportes/reporte_ventas_pdf'; ?>?desde=' + document.getElementById('desde').value + '&hasta=' + document.getElementById('hasta').value, '_blank')">
+                        <a class="dropdown-item" href="javascript:;" onclick="generarPDF()">
                             <i class="fas fa-file-pdf text-danger"></i> Reporte PDF
                         </a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="javascript:;"
-                            onclick="window.open('<?php echo BASE_URL . 'reportes/reporte_ventas_excel'; ?>?desde=' + document.getElementById('desde').value + '&hasta=' + document.getElementById('hasta').value, '_blank')">
+                        <a class="dropdown-item" href="javascript:;" onclick="generarExcel()">
                             <i class="fas fa-file-excel text-success"></i> Reporte Excel
                         </a>
                     </li>
@@ -36,11 +34,21 @@
                 <input id="hasta" class="form-control" type="date">
             </div>
             <div class="form-group me-2">
-                <label for="metodo_pago">Método de Pago</label>
-                <select id="metodo_pago" class="form-control">
+                <label for="usuario">Usuario</label>
+                <select id="usuario" class="form-control">
                     <option value="">TODOS</option>
-                    <option value="VENTA DIRECTA">VENTA DIRECTA</option>
-                    <option value="LLEVAR">LLEVAR</option>
+                    <?php foreach ($data['usuarios'] as $usuario): ?>
+                        <option value="<?php echo $usuario['id']; ?>"><?php echo $usuario['nombres']; ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="form-group me-2">
+                <label for="almacen">Almacén</label>
+                <select id="almacen" class="form-control">
+                    <option value="">TODOS</option>
+                    <?php foreach ($data['almacenes'] as $almacen): ?>
+                        <option value="<?php echo $almacen['id']; ?>"><?php echo $almacen['nombre']; ?></option>
+                    <?php endforeach; ?>
                 </select>
             </div>
         </div>
@@ -56,7 +64,8 @@
                         <th>CANTIDAD</th>
                         <th>PRECIO UNIT.</th>
                         <th>SUBTOTAL</th>
-                        <th>TOTAL PEDIDO</th>
+                        <th>USUARIO</th>
+                        <th>ALMACÉN</th>
                         <th>FECHA</th>
                     </tr>
                 </thead>
@@ -64,7 +73,7 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="9" class="text-end fw-bold">
+                        <td colspan="10" class="text-end fw-bold">
                             <div>TOTAL PRODUCTOS:</div>
                             <div>TOTAL CANTIDAD:</div>
                             <div><strong>TOTAL VENTAS:</strong></div>
@@ -72,7 +81,7 @@
                         <td colspan="1" class="text-start fw-bold">
                             <div id="totalProductos">0 (items)</div>
                             <div id="totalCantidad">0</div>
-                            <div><strong id="totalVentas">Bs. 0.00</strong></div>
+                            <div><strong id="totalVentas">COP. 0.00</strong></div>
                         </td>
                     </tr>
                 </tfoot>

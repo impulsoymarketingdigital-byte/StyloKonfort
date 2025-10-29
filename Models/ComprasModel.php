@@ -67,32 +67,48 @@ class ComprasModel extends Query
     public function getOrCreateAtributos($size, $color, $id_producto, $id_almacen = 1)
     {
         $atributo = $this->getAtributos($size, $color, $id_producto, $id_almacen);
-        
+
         if (empty($atributo)) {
             $nuevo_id = $this->crearTallaColorEnAlmacen($size, $color, $id_producto, $id_almacen);
-            
+
             if ($nuevo_id > 0) {
                 $atributo = $this->getAtributos($size, $color, $id_producto, $id_almacen);
             }
         }
-        
+
         return $atributo;
     }
-
-    public function registrarCompra($numero_compra, $tipo_comprobante, $total, $descuento, $fecha, $id_proveedor, $id_almacen, $id_usuario)
+    public function registrarCompra($numero_compra, $tipo_comprobante, $total, $descuento, $fecha, $id_proveedor, $id_almacen, $id_usuario, $id_caja)
     {
-        $sql = "INSERT INTO compras (numero_compra, tipo_comprobante, total, descuento, fecha, id_proveedor, id_almacen, id_usuario) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        $array = array($numero_compra, $tipo_comprobante, $total, $descuento, $fecha, $id_proveedor, $id_almacen, $id_usuario);
+        $sql = "INSERT INTO compras (numero_compra, tipo_comprobante, total, descuento, fecha, id_proveedor, id_almacen, id_usuario, id_caja, estado) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'COMPLETADO')";
+        $array = array($numero_compra, $tipo_comprobante, $total, $descuento, $fecha, $id_proveedor, $id_almacen, $id_usuario, $id_caja);
         return $this->insertar($sql, $array);
     }
 
+    // ⭐ REGISTRAR DETALLE DE COMPRA
     public function registrarDetalleCompra($id_compra, $id_producto, $nombre, $precio_compra, $cantidad, $descuento, $subtotal, $id_talla_color)
     {
         $sql = "INSERT INTO detalle_compras (id_compra, id_producto, producto, precio_compra, cantidad, descuento, subtotal, id_talla_color) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         $datos = array($id_compra, $id_producto, $nombre, $precio_compra, $cantidad, $descuento, $subtotal, $id_talla_color);
         return $this->insertar($sql, $datos);
+    }
+
+    // ⭐ OBTENER CAJA ABIERTA DEL USUARIO
+    public function getCajaAbierta($id_usuario)
+    {
+        $sql = "SELECT * FROM cajas WHERE estado = 1 AND id_usuario = $id_usuario ORDER BY id DESC LIMIT 1";
+        return $this->select($sql);
+    }
+
+    // ⭐ REGISTRAR MOVIMIENTO
+    public function registrarMovimiento($tipo, $tipo_movimiento, $descripcion, $monto, $id_caja, $id_usuario, $transaction_id, $transaction_type)
+    {
+        $sql = "INSERT INTO movimientos (tipo, tipo_movimiento, descripcion, monto, id_caja, id_usuario, transaction_id, transaction_type, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+        $array = array($tipo, $tipo_movimiento, $descripcion, $monto, $id_caja, $id_usuario, $transaction_id, $transaction_type);
+        return $this->insertar($sql, $array);
     }
 
     public function actualizarStockDetalle($stock, $id_talla_color)
@@ -177,14 +193,14 @@ class ComprasModel extends Query
     public function generarNumeroCompra()
     {
         $anio = date('y');
-        
+
         $sql = "SELECT numero_compra FROM compras 
                 WHERE numero_compra LIKE 'COMP-" . $anio . "-%' 
                 ORDER BY id DESC 
                 LIMIT 1";
-        
+
         $result = $this->select($sql);
-        
+
         if ($result && isset($result['numero_compra'])) {
             $partes = explode('-', $result['numero_compra']);
             $ultimo = (int) end($partes);
@@ -192,7 +208,7 @@ class ComprasModel extends Query
         } else {
             $nuevo = 1;
         }
-        
+
         return 'COMP-' . $anio . '-' . $nuevo;
     }
 }

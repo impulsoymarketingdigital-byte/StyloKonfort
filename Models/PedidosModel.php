@@ -79,8 +79,13 @@ class PedidosModel extends Query
         $sql = "SELECT * FROM configuracion";
         return $this->select($sql);
     }
+
+    public function getCliente($idCliente)
+{
+    $sql = "SELECT * FROM clientes WHERE id = $idCliente";
+    return $this->select($sql);
+}
     
-    // Verificar si hay stock suficiente para todos los productos del pedido
     public function verificarStockPedido($idPedido)
     {
         $detalles = $this->getDetallePedido($idPedido);

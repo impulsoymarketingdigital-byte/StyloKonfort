@@ -71,7 +71,6 @@ function cantidadDeseo() {
 
 //agregar productos al carrito
 function agregarCarrito(idProducto, cantidad, size, color, accion = false) {
-  // Primero verificar si hay stock disponible
   const url =
     base_url + "principal/getStock/" + size + "/" + color + "/" + idProducto;
   const http = new XMLHttpRequest();
@@ -81,13 +80,11 @@ function agregarCarrito(idProducto, cantidad, size, color, accion = false) {
     if (this.readyState == 4 && this.status == 200) {
       const res = JSON.parse(this.responseText);
 
-      // Validar que haya stock
       if (!res || res.stock <= 0) {
         alertaPerzanalizada("ESTE PRODUCTO NO TIENE STOCK DISPONIBLE", "error");
         return;
       }
 
-      // Verificar si ya está en el carrito
       for (let i = 0; i < listaCarrito.length; i++) {
         if (accion) {
           eliminarListaDeseo(idProducto, size, color, false);
@@ -102,7 +99,6 @@ function agregarCarrito(idProducto, cantidad, size, color, accion = false) {
         }
       }
 
-      // Validar que no exceda el stock disponible
       if (cantidad > res.stock) {
         alertaPerzanalizada(
           "SOLO HAY " + res.stock + " UNIDADES DISPONIBLES",
@@ -117,6 +113,8 @@ function agregarCarrito(idProducto, cantidad, size, color, accion = false) {
         cantidad: cantidad,
         size: size,
         color: color,
+        tipo_cliente: res.tipo_cliente, // NUEVO: Guardar tipo de cliente
+        precio_aplicable: res.precio_aplicable, // NUEVO: Guardar precio aplicable
       });
       localStorage.setItem("listaCarrito", JSON.stringify(listaCarrito));
       alertaPerzanalizada("PRODUCTO AGREGADO AL CARRITO", "success");
@@ -134,7 +132,6 @@ function cantidadCarrito() {
   }
 }
 
-//ver carrito
 function getListaCarrito() {
   if (listaCarrito.length > 0) {
     const url = base_url + "principal/listaProductos";
@@ -156,6 +153,18 @@ function getListaCarrito() {
         res.productos.forEach((producto) => {
           let verify =
             producto.stock == "Ilimitado" ? "" : `max="${producto.stock}"`;
+          let colorHTML = generarColorHTMLCarrito(
+            producto.colorHexa,
+            producto.colorSecundario,
+            producto.nombreColor
+          );
+
+          let atributoHTML = `
+            <div style="display: flex; align-items: center; gap: 8px; margin-top: 5px;">
+              <span class="badge bg-info" style="font-size: 11px;">${producto.nombreTalla}</span>
+              ${colorHTML}
+            </div>`;
+
           html += `<li>
                     <div class="media">
                       <a href="javascript:;">
@@ -166,7 +175,7 @@ function getListaCarrito() {
                       <div class="media-body">
                         <a href="javascript:;">
                           <h6>${producto.nombre}</h6>
-                          <p>${producto.atributo}</p>
+                          ${atributoHTML}
                         </a>
                         <h6>
                         ${res.moneda + " " + producto.precio}
@@ -212,7 +221,25 @@ function getListaCarrito() {
   }
 }
 
-//ver lista de deso
+function generarColorHTMLCarrito(colorHexa, colorSecundario, nombreColor) {
+  if (!colorHexa) {
+    return '<span class="badge bg-secondary" style="font-size: 10px;">Sin color</span>';
+  }
+
+  let colorCircle = "";
+  if (
+    colorSecundario &&
+    colorSecundario.trim() !== "" &&
+    colorSecundario !== "NULL"
+  ) {
+    colorCircle = `<span style="display: inline-block; width: 18px; height: 18px; border-radius: 50%; border: 2px solid #ddd; background: linear-gradient(90deg, ${colorHexa} 50%, ${colorSecundario} 50%); vertical-align: middle; margin-right: 5px; box-shadow: 0 1px 3px rgba(0,0,0,0.2);" title="${nombreColor}"></span>`;
+  } else {
+    colorCircle = `<span style="display: inline-block; width: 18px; height: 18px; border-radius: 50%; border: 2px solid #ddd; background-color: ${colorHexa}; vertical-align: middle; margin-right: 5px; box-shadow: 0 1px 3px rgba(0,0,0,0.2);" title="${nombreColor}"></span>`;
+  }
+
+  return `${colorCircle}<span style="font-size: 11px; vertical-align: middle;">${nombreColor}</span>`;
+}
+
 function getListaDeseo() {
   if (listaDeseo.length > 0) {
     const url = base_url + "principal/listaProductos";
@@ -226,6 +253,19 @@ function getListaDeseo() {
         res.productos.forEach((producto) => {
           let verify =
             producto.stock == "Ilimitado" ? "" : `max="${producto.stock}"`;
+
+          let colorHTML = generarColorHTMLCarrito(
+            producto.colorHexa,
+            producto.colorSecundario,
+            producto.nombreColor
+          );
+
+          let atributoHTML = `
+            <div style="display: flex; align-items: center; gap: 8px; margin-top: 5px;">
+              <span class="badge bg-info" style="font-size: 11px;">${producto.nombreTalla}</span>
+              ${colorHTML}
+            </div>`;
+
           html += `<li>
                     <div class="media">
                       <a href="javascript:;">
@@ -236,7 +276,7 @@ function getListaDeseo() {
                       <div class="media-body">
                         <a href="javascript:;">
                           <h6>${producto.nombre}</h6>
-                          <p>${producto.atributo}</p>
+                          ${atributoHTML}
                         </a>
                         <h6>
                         ${res.moneda + " " + producto.precio_venta} <span>${
@@ -276,7 +316,6 @@ function getListaDeseo() {
     contentListaDeseo.innerHTML = `<li>Lista de deseo vacio</li>`;
   }
 }
-
 function btnEliminarDeseo() {
   let listaEliminar = document.querySelectorAll(".btnEliminarDeseo");
   for (let i = 0; i < listaEliminar.length; i++) {
@@ -527,9 +566,7 @@ function verDetalle(idProducto) {
             <h2 style="font-size: 22px; margin-bottom: 8px;">${
               res.producto.nombre
             }</h2>
-            <div class="dtl-price">${
-              res.moneda + " " + res.producto.precio_venta
-            }</div>
+            <div class="dtl-price">${res.moneda + " " + (res.tipo_cliente == 'mayorista' ? res.producto.precio_mayorista : res.producto.precio_venta)}</div>
             <div class="revieu-box">
               <ul>
                 <li><i class="${uno} fa fa-star"></i></li>
@@ -538,7 +575,9 @@ function verDetalle(idProducto) {
                 <li><i class="${cuatro} fa fa-star"></i></li>
                 <li><i class="${cinco} fa fa-star"></i></li>
               </ul>
-              <a href="javascript:;"><span>(${res.totalCantidad} reviews)</span></a>
+              <a href="javascript:;"><span>(${
+                res.totalCantidad
+              } reviews)</span></a>
             </div>
             
             <p class="dtl-description">${res.producto.descripcion}</p>

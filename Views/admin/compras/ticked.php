@@ -327,7 +327,7 @@
             <table>
                 <tr>
                     <td>Subtotal:</td>
-                    <td><?php echo number_format($subtotal_general + $descuento_general, 2); ?> Bs</td>
+                    <td><?php echo number_format($subtotal_general + $descuento_general, 2); ?> COP</td>
                 </tr>
             </table>
         </div>
@@ -335,7 +335,7 @@
             <table>
                 <tr>
                     <td>Descuento:</td>
-                    <td>- <?php echo number_format($descuento_general, 2); ?> Bs</td>
+                    <td>- <?php echo number_format($descuento_general, 2); ?> COP</td>
                 </tr>
             </table>
         </div>
@@ -344,7 +344,7 @@
             <table>
                 <tr>
                     <td>Subtotal:</td>
-                    <td><?php echo number_format($subtotal_general, 2); ?> Bs</td>
+                    <td><?php echo number_format($subtotal_general, 2); ?> COP</td>
                 </tr>
             </table>
         </div>
@@ -354,7 +354,7 @@
             <table>
                 <tr>
                     <td>TOTAL COMPRA:</td>
-                    <td><?php echo number_format($data['compra']['total'], 2); ?> Bs</td>
+                    <td><?php echo number_format($data['compra']['total'], 2); ?> COP</td>
                 </tr>
             </table>
         </div>

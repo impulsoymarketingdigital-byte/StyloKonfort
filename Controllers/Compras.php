@@ -71,7 +71,6 @@ class Compras extends Controller
         echo json_encode($data, JSON_UNESCAPED_UNICODE);
         die();
     }
-
     public function registrarCompra()
     {
         $json = file_get_contents('php://input');
@@ -90,7 +89,6 @@ class Compras extends Controller
             } else {
                 // Calcular total
                 foreach ($datos['productos'] as $producto) {
-                    // USAR getOrCreateAtributos - crea automáticamente si no existe
                     $atributo = $this->model->getOrCreateAtributos(
                         $producto['size'],
                         $producto['color'],
@@ -111,10 +109,8 @@ class Compras extends Controller
                     $descuentoTotal += $descuento;
                 }
 
-                // Generar número de compra
                 $numero_compra = $this->model->generarNumeroCompra();
 
-                // Registrar compra
                 $compra = $this->model->registrarCompra(
                     $numero_compra,
                     $tipoComprobante,
@@ -123,15 +119,13 @@ class Compras extends Controller
                     $fecha,
                     $idProveedor,
                     $idAlmacen,
-                    $this->id_usuario
+                    $_SESSION['id_usuario'],
+                    null  // ⭐ YA NO SE ENVÍA id_caja
                 );
 
                 if ($compra > 0) {
-                    // Registrar detalles y actualizar stock
                     foreach ($datos['productos'] as $producto) {
                         $result = $this->model->getProducto($producto['idProducto']);
-
-                        // USAR getOrCreateAtributos
                         $atributo = $this->model->getOrCreateAtributos(
                             $producto['size'],
                             $producto['color'],
@@ -143,7 +137,6 @@ class Compras extends Controller
                         $descuento = isset($producto['descuento']) ? $producto['descuento'] : 0;
                         $subTotal = ($precioCompra * $producto['cantidad']) - $descuento;
 
-                        // Guardar detalle
                         $this->model->registrarDetalleCompra(
                             $compra,
                             $result['id'],
@@ -155,11 +148,11 @@ class Compras extends Controller
                             $atributo['id']
                         );
 
-                        // AUMENTAR stock en tallas_colores
+                        // Aumentar stock
                         $nuevoStock = $atributo['stock'] + $producto['cantidad'];
                         $this->model->actualizarStockDetalle($nuevoStock, $atributo['id']);
 
-                        // Actualizar precio de compra en productos
+                        // Actualizar precio de compra
                         $this->model->actualizarPrecioCompra($precioCompra, $result['id']);
                     }
 

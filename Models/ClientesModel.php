@@ -6,10 +6,10 @@ class ClientesModel extends Query
     {
         parent::__construct();
     }
-    public function registroDirecto($nombre, $apellido, $correo, $clave, $token, $telefono, $direccion, $documento, $tipo_cliente)
+    public function registroDirecto($nombre, $apellido, $correo, $clave, $token, $telefono, $direccion, $ciudad, $departamento, $barrio, $documento, $tipo_cliente)
     {
-        $sql = "INSERT INTO clientes (nombre, apellido, correo, clave, token, telefono, direccion, documento, tipo_cliente) VALUES (?,?,?,?,?,?,?,?,?)";
-        $datos = array($nombre, $apellido, $correo, $clave, $token, $telefono, $direccion, $documento, $tipo_cliente);
+        $sql = "INSERT INTO clientes (nombre, apellido, correo, clave, token, telefono, direccion, ciudad, departamento, barrio, documento, tipo_cliente) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+        $datos = array($nombre, $apellido, $correo, $clave, $token, $telefono, $direccion, $ciudad, $departamento, $barrio, $documento, $tipo_cliente);
         $data = $this->insertar($sql, $datos);
         if ($data > 0) {
             $res = $data;
@@ -40,6 +40,15 @@ class ClientesModel extends Query
         }
         return $res;
     }
+
+    public function aprobarClienteMayorista($id)
+    {
+        $sql = "UPDATE clientes SET verify = ? WHERE id = ?";
+        $datos = array(1, $id);
+        $data = $this->save($sql, $datos);
+        return $data;
+    }
+
     public function getVerificar($table, $correo)
     {
         $sql = "SELECT * FROM $table WHERE correo = '$correo'";
@@ -227,6 +236,17 @@ class ClientesModel extends Query
         return $this->select($sql);
     }
 
+    public function getTipoCliente()
+    {
+        if (!empty($_SESSION['correoCliente'])) {
+            $sql = "SELECT tipo_cliente FROM clientes WHERE correo = '{$_SESSION['correoCliente']}' AND estado = 1";
+            $cliente = $this->select($sql);
+            return ($cliente) ? $cliente['tipo_cliente'] : 'final';
+        }
+        return 'final';
+    }
+
+
     ##### ADMIN CLIENTES ######
     public function getClientes()
     {
@@ -234,11 +254,11 @@ class ClientesModel extends Query
         return $this->selectAll($sql);
     }
 
-    public function registrar($nombre, $apellido, $telefono, $correo, $direccion, $tipo_cliente, $accion)
+    public function registrar($nombre, $apellido, $telefono, $correo, $direccion, $ciudad, $departamento, $barrio, $tipo_cliente, $accion)
     {
-        $sql = "INSERT INTO clientes (nombre, apellido, telefono, correo, direccion, tipo_cliente, accion) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)";
-        $array = array($nombre, $apellido, $telefono, $correo, $direccion, $tipo_cliente, $accion);
+        $sql = "INSERT INTO clientes (nombre, apellido, telefono, correo, direccion, ciudad, departamento, barrio, tipo_cliente, accion) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $array = array($nombre, $apellido, $telefono, $correo, $direccion, $ciudad, $departamento, $barrio, $tipo_cliente, $accion);
         return $this->insertar($sql, $array);
     }
 
@@ -265,12 +285,12 @@ class ClientesModel extends Query
         return $this->select($sql);
     }
 
-    public function actualizar($nombre, $apellido, $telefono, $correo, $direccion, $tipo_cliente, $perfil, $id)
+    public function actualizar($nombre, $apellido, $telefono, $correo, $direccion, $ciudad, $departamento, $barrio, $tipo_cliente, $perfil, $id)
     {
         $sql = "UPDATE clientes 
-                SET nombre=?, apellido=?, telefono=?, correo=?, direccion=?, tipo_cliente=?, perfil=? 
-                WHERE id=?";
-        $array = array($nombre, $apellido, $telefono, $correo, $direccion, $tipo_cliente, $perfil, $id);
+            SET nombre=?, apellido=?, telefono=?, correo=?, direccion=?, ciudad=?, departamento=?, barrio=?, tipo_cliente=?, perfil=? 
+            WHERE id=?";
+        $array = array($nombre, $apellido, $telefono, $correo, $direccion, $ciudad, $departamento, $barrio, $tipo_cliente, $perfil, $id);
         return $this->save($sql, $array);
     }
 

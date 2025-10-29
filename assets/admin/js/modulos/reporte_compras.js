@@ -23,19 +23,19 @@ document.addEventListener('DOMContentLoaded', function () {
             { 
                 data: 'precio_compra',
                 render: function(data) {
-                    return 'Bs. ' + parseFloat(data).toFixed(2);
+                    return 'COP. ' + parseFloat(data).toFixed(2);
                 }
             },
             { 
                 data: 'descuento',
                 render: function(data) {
-                    return 'Bs. ' + parseFloat(data).toFixed(2);
+                    return 'COP. ' + parseFloat(data).toFixed(2);
                 }
             },
             { 
                 data: 'subtotal',
                 render: function(data) {
-                    return 'Bs. ' + parseFloat(data).toFixed(2);
+                    return 'COP. ' + parseFloat(data).toFixed(2);
                 }
             },
             { 
@@ -117,7 +117,7 @@ function calcularTotales() {
 
     document.getElementById('totalProductos').textContent = totalProductos + ' (items)';
     document.getElementById('totalCantidad').textContent = totalCantidad;
-    document.getElementById('totalCompras').textContent = 'Bs. ' + totalCompras.toFixed(2);
+    document.getElementById('totalCompras').textContent = 'COP. ' + totalCompras.toFixed(2);
 }
 
 function formatearFecha(fecha) {

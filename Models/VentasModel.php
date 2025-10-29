@@ -55,12 +55,26 @@ class VentasModel extends Query
         return $this->select($sql);
     }
 
-    public function registrarPedido($id_transaccion, $metodo, $monto, $estado, $fecha, $id_cliente)
+    public function registrarPedido($id_transaccion, $metodo, $monto, $estado, $fecha, $id_cliente, $cash_box_id, $id_usuario)
     {
-        $sql = "INSERT INTO pedidos (id_transaccion, metodo, monto, estado, fecha, id_cliente, proceso) 
-            VALUES (?, ?, ?, ?, ?, ?, ?)";
-        $datos = array($id_transaccion, $metodo, $monto, $estado, $fecha, $id_cliente, 1);
+        $sql = "INSERT INTO pedidos (id_transaccion, metodo, monto, estado, fecha, id_cliente, cash_box_id, id_usuario, proceso) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)";
+        $datos = array($id_transaccion, $metodo, $monto, $estado, $fecha, $id_cliente, $cash_box_id, $id_usuario);
         return $this->insertar($sql, $datos);
+    }
+
+    public function getCajaAbierta($id_usuario)
+    {
+        $sql = "SELECT * FROM cajas WHERE id_usuario = $id_usuario AND estado = 1 ORDER BY id DESC LIMIT 1";
+        return $this->select($sql);
+    }
+
+    public function registrarMovimiento($tipo, $tipo_movimiento, $descripcion, $monto, $id_caja, $id_usuario, $transaction_id, $transaction_type)
+    {
+        $sql = "INSERT INTO movimientos (tipo, tipo_movimiento, descripcion, monto, id_caja, id_usuario, transaction_id, transaction_type, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+        $array = array($tipo, $tipo_movimiento, $descripcion, $monto, $id_caja, $id_usuario, $transaction_id, $transaction_type);
+        return $this->insertar($sql, $array);
     }
 
     public function registrarDetallePedido($id_pedido, $id_producto, $nombre, $precio, $cantidad, $id_talla_color)

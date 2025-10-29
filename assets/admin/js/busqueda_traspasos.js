@@ -1,4 +1,3 @@
-
 let tblHistorial;
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -95,9 +94,17 @@ function mostrarProducto() {
             const cantidad = parseInt(producto.cantidad);
             totalProds += cantidad;
 
+            // ⭐ CONSTRUIR ATRIBUTO CORRECTAMENTE
+            let atributoTexto = "Sin atributo";
+            if (producto.nombreTalla && producto.nombreColor) {
+              atributoTexto = `${producto.nombreTalla} - ${producto.nombreColor}`;
+            } else if (producto.atributoMP) {
+              atributoTexto = producto.atributoMP;
+            }
+
             html += `<tr>
                             <td>${producto.nombre}</td>
-                            <td>${producto.atributo || "Sin atributo"}</td>
+                            <td>${atributoTexto}</td>
                             <td>${producto.stock || 0}</td>
                             <td width="100">
                                 <input type="number" class="form-control inputCantidad" 

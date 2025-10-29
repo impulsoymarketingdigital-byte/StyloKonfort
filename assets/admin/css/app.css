@@ -2350,7 +2350,7 @@ input::placeholder {
     background-color: #fff;
     border: 2px solid #057997;
     outline: none;
-    box-shadow: 0 0 0 4px rgba(252, 0, 56, 0.15);
+  box-shadow: 0 0 0 4px rgba(5, 121, 151, 0.15); 
 }
 .form-anio {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.055), 0 1px 3px rgba(0, 0, 0, 0.055);

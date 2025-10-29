@@ -164,9 +164,9 @@
                     <td><?php echo $item['color']; ?></td>
                     <td><?php echo $item['almacen']; ?></td>
                     <td class="text-center <?php echo $stockClass; ?>"><?php echo $item['stock']; ?></td>
-                    <td class="text-right">Bs. <?php echo number_format($item['precio_compra'], 2); ?></td>
-                    <td class="text-right">Bs. <?php echo number_format($item['precio_venta'], 2); ?></td>
-                    <td class="text-right">Bs. <?php echo number_format($item['valor_stock'], 2); ?></td>
+                    <td class="text-right">COP. <?php echo number_format($item['precio_compra'], 2); ?></td>
+                    <td class="text-right">COP. <?php echo number_format($item['precio_venta'], 2); ?></td>
+                    <td class="text-right">COP. <?php echo number_format($item['valor_stock'], 2); ?></td>
                 </tr>
             <?php 
                 endforeach;
@@ -188,7 +188,7 @@
             </tr>
             <tr>
                 <td colspan="11" class="text-right">VALOR TOTAL STOCK:</td>
-                <td><strong>Bs. <?php echo number_format($valorTotal, 2); ?></strong></td>
+                <td><strong>COP. <?php echo number_format($valorTotal, 2); ?></strong></td>
             </tr>
         </tfoot>
     </table>

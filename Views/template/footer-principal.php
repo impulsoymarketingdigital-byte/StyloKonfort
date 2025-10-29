@@ -162,7 +162,7 @@
         </a>
       </div>
     </div>
-    <form class="theme-form" id="frmLogin" autocomplete="off">
+    <form class="theme-form" id="frmLogin">
       <span id="errorLogin" class=""></span>
       <div class="form-group mt-2">
         <label for="correoLogin">Correo electrónico</label>
@@ -187,6 +187,106 @@
   </div>
 </div>
 <!-- Add to account bar end-->
+
+<div class="modal fade" id="modalPerfil" tabindex="-1" aria-labelledby="modalPerfilLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalPerfilLabel">
+          <i class="fa fa-user-circle"></i> Mi Perfil
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form autocomplete="off" id="frmDatos">
+        <div class="modal-body">
+          <?php if (!empty($_SESSION['idCliente'])) { ?>
+            <div class="text-center mb-4">
+              <?php
+              $perfil = (empty($_SESSION['perfilCliente']) || $_SESSION['perfilCliente'] == null) ? 'default.png' : $_SESSION['perfilCliente'];
+              ?>
+              <img class="img-thumbnail rounded-circle" id="imgPerfilModal"
+                src="<?php echo BASE_URL . 'assets/images/clientes/' . $perfil; ?>" alt="Perfil" width="150" height="150"
+                style="object-fit: cover;">
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group mb-3">
+                  <label for="nomCliente" class="form-label">
+                    <i class="fa fa-user"></i> Nombres <span class="text-danger">*</span>
+                  </label>
+                  <input id="nomCliente" class="form-control" type="text" name="nombre" placeholder="Nombres">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group mb-3">
+                  <label for="apeCliente" class="form-label">
+                    <i class="fa fa-user"></i> Apellidos <span class="text-danger">*</span>
+                  </label>
+                  <input id="apeCliente" class="form-control" type="text" name="apellidos" placeholder="Apellidos">
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group mb-3">
+                  <label for="corCliente" class="form-label">
+                    <i class="fa fa-envelope"></i> Correo <span class="text-danger">*</span>
+                  </label>
+                  <input id="corCliente" class="form-control" type="email" name="correo" placeholder="Correo">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group mb-3">
+                  <label for="telCliente" class="form-label">
+                    <i class="fa fa-phone"></i> Teléfono <span class="text-danger">*</span>
+                  </label>
+                  <input id="telCliente" class="form-control" type="text" name="telefono" placeholder="Teléfono">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="dirCliente" class="form-label">
+                <i class="fa fa-map-marker-alt"></i> Dirección <span class="text-danger">*</span>
+              </label>
+              <textarea id="dirCliente" class="form-control" name="direccion" rows="3"
+                placeholder="Dirección completa"></textarea>
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="fotoCliente" class="form-label">
+                <i class="fa fa-camera"></i> Cambiar Foto de Perfil
+              </label>
+              <input id="fotoCliente" class="form-control" type="file" name="fotoCliente" accept="image/*">
+              <small class="text-muted">Formatos: JPG, PNG. Tamaño máximo: 2MB</small>
+            </div>
+          <?php } else { ?>
+            <div class="text-center py-5">
+              <i class="fa fa-user-lock fa-3x text-muted mb-3"></i>
+              <h5>Debes iniciar sesión</h5>
+              <p class="text-muted">Inicia sesión para ver tu perfil</p>
+              <button type="button" class="btn btn-primary" onclick="openAccount()" data-bs-dismiss="modal">
+                <i class="fa fa-sign-in-alt"></i> Iniciar Sesión
+              </button>
+            </div>
+          <?php } ?>
+        </div>
+        <?php if (!empty($_SESSION['idCliente'])) { ?>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+              <i class="fa fa-times"></i> Cancelar
+            </button>
+            <button class="btn btn-primary" type="submit">
+              <i class="fa fa-save"></i> Guardar Cambios
+            </button>
+          </div>
+        <?php } ?>
+      </form>
+    </div>
+  </div>
+</div>
 
 <!-- latest jquery-->
 <script src="<?php echo BASE_URL; ?>assets/admin/js/jquery-3.6.0.min.js"></script>
@@ -223,6 +323,75 @@
     })
   }
   const base_url = '<?php echo BASE_URL; ?>';
+</script>
+
+
+<script>
+// Script global para modal de perfil
+document.addEventListener('DOMContentLoaded', function() {
+    const frmDatos = document.getElementById('frmDatos');
+    const modalPerfil = document.getElementById('modalPerfil');
+    
+    if (modalPerfil) {
+        modalPerfil.addEventListener('show.bs.modal', function() {
+            cargarDatosCliente();
+        });
+    }
+
+    if (frmDatos) {
+        frmDatos.addEventListener("submit", function (e) {
+            e.preventDefault();
+            
+            const nomCliente = document.getElementById('nomCliente');
+            const apeCliente = document.getElementById('apeCliente');
+            const telCliente = document.getElementById('telCliente');
+            const corCliente = document.getElementById('corCliente');
+            const dirCliente = document.getElementById('dirCliente');
+            
+            if (!nomCliente.value || !apeCliente.value || !telCliente.value || !corCliente.value || !dirCliente.value) {
+                alertaPerzanalizada("TODOS LOS CAMPOS CON * SON REQUERIDOS", "warning");
+            } else {
+                const url = base_url + "principal/modificarDatos";
+                const http = new XMLHttpRequest();
+                http.open("POST", url, true);
+                http.send(new FormData(this));
+                http.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        const res = JSON.parse(this.responseText);
+                        alertaPerzanalizada(res.msg, res.type);
+                        if (res.type == 'success') {
+                            setTimeout(() => location.reload(), 1500);
+                        }
+                    }
+                };
+            }
+        });
+    }
+});
+
+function cargarDatosCliente() {
+    const url = base_url + "principal/getDatosCliente";
+    const http = new XMLHttpRequest();
+    http.open("GET", url, true);
+    http.send();
+    http.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            const res = JSON.parse(this.responseText);
+            if (res.success) {
+                document.getElementById('nomCliente').value = res.data.nombre || '';
+                document.getElementById('apeCliente').value = res.data.apellido || '';
+                document.getElementById('corCliente').value = res.data.correo || '';
+                document.getElementById('telCliente').value = res.data.telefono || '';
+                document.getElementById('dirCliente').value = res.data.direccion || '';
+            }
+        }
+    };
+}
+
+function abrirModalPerfil() {
+    const modalPerfil = new bootstrap.Modal(document.getElementById('modalPerfil'));
+    modalPerfil.show();
+}
 </script>
 
 <script src="<?php echo BASE_URL; ?>assets/js/carrito.js"></script>

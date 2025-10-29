@@ -11,7 +11,7 @@
         }
         body {
             padding: 20px;
-            font-size: 11px;
+            font-size: 10px;
             color: #333;
         }
         table {
@@ -46,17 +46,17 @@
         #container-producto thead th {
             background: #4472C4;
             color: white;
-            padding: 8px 5px;
+            padding: 6px 4px;
             text-align: left;
-            font-size: 10px;
+            font-size: 9px;
         }
         #container-producto tbody td {
-            padding: 6px 5px;
+            padding: 5px 4px;
             border-bottom: 1px solid #ddd;
-            font-size: 10px;
+            font-size: 9px;
         }
         #container-producto tfoot td {
-            padding: 8px 5px;
+            padding: 6px 4px;
             font-weight: bold;
             background: #f0f5ff;
             border-top: 2px solid #4472C4;
@@ -117,6 +117,8 @@
                 <th>CANT.</th>
                 <th>PRECIO</th>
                 <th>SUBTOTAL</th>
+                <th>USUARIO</th>
+                <th>ALMACÉN</th>
                 <th>FECHA</th>
             </tr>
         </thead>
@@ -139,8 +141,10 @@
                     <td><?php echo $venta['cliente']; ?></td>
                     <td><?php echo $venta['producto']; ?></td>
                     <td class="text-center"><?php echo $venta['cantidad']; ?></td>
-                    <td class="text-right">Bs. <?php echo number_format($venta['precio_venta'], 2); ?></td>
-                    <td class="text-right">Bs. <?php echo number_format($venta['subtotal'], 2); ?></td>
+                    <td class="text-right">COP. <?php echo number_format($venta['precio_venta'], 2); ?></td>
+                    <td class="text-right">COP. <?php echo number_format($venta['subtotal'], 2); ?></td>
+                    <td><?php echo $venta['usuario'] ?? 'N/A'; ?></td>
+                    <td><?php echo $venta['almacen'] ?? 'N/A'; ?></td>
                     <td><?php echo date('d/m/Y H:i', strtotime($venta['fecha'])); ?></td>
                 </tr>
             <?php 
@@ -148,30 +152,30 @@
             else:
             ?>
                 <tr>
-                    <td colspan="9" class="text-center">No hay ventas en el período seleccionado</td>
+                    <td colspan="11" class="text-center">No hay ventas en el período seleccionado</td>
                 </tr>
             <?php endif; ?>
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="8" class="text-right">TOTAL PRODUCTOS:</td>
+                <td colspan="10" class="text-right">TOTAL PRODUCTOS:</td>
                 <td><?php echo $totalProductos; ?> items</td>
             </tr>
             <tr>
-                <td colspan="8" class="text-right">TOTAL CANTIDAD:</td>
+                <td colspan="10" class="text-right">TOTAL CANTIDAD:</td>
                 <td><?php echo $totalCantidad; ?></td>
             </tr>
             <tr>
-                <td colspan="8" class="text-right">TOTAL VENTAS:</td>
-                <td><strong>Bs. <?php echo number_format($totalVentas, 2); ?></strong></td>
+                <td colspan="10" class="text-right">TOTAL VENTAS:</td>
+                <td><strong>COP. <?php echo number_format($totalVentas, 2); ?></strong></td>
             </tr>
         </tfoot>
     </table>
 
     <!-- Mensaje final -->
-  <div class="mensaje">
+    <div class="mensaje">
         <p><strong>Generado por Mastec Digital</strong></p>
-        <p> <?php echo date('Y'); ?></p>
+        <p><?php echo date('Y'); ?></p>
     </div>
 </body>
 </html>

@@ -98,11 +98,20 @@ function mostrarProducto() {
         let html = "";
         if (res.productos.length > 0) {
           res.productos.forEach((producto) => {
+            // ⭐ CONSTRUIR ATRIBUTO CORRECTAMENTE
+            let atributoTexto = "Sin atributo";
+            if (producto.nombreTalla && producto.nombreColor) {
+              atributoTexto = `${producto.nombreTalla} - ${producto.nombreColor}`;
+            } else if (producto.atributoMP) {
+              atributoTexto = producto.atributoMP;
+            }
+
             let verify =
               producto.stock == "Ilimitado" ? "" : `max="${producto.stock}"`;
+            
             html += `<tr>
                             <td>${producto.nombre}</td>
-                            <td>${producto.atributo}</td>
+                            <td>${atributoTexto}</td>
                             <td>${producto.precio}</td>                            
                             <td width="100">
                             <input type="number" class="form-control inputCantidad" data-id="${producto.id}" size="${producto.size}" color="${producto.color}" value="${producto.cantidad}" min="1" ${verify}>

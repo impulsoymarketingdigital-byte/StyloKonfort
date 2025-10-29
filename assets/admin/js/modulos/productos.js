@@ -48,6 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
       { data: "nombre" },
       { data: "precio_compra" },
       { data: "precio_venta" },
+      { data: "precio_mayorista" },
       { data: "categoria" },
       { data: "marca" },
       { data: "estado" },
@@ -57,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
     responsive: true,
     language,
     
-    order: [[5, "desc"]],
+    order: [[6, "desc"]],
   });
 
   //levantar modal
@@ -220,6 +221,7 @@ function edit(id) {
       document.querySelector("#genero").value = res.genero;
       document.querySelector("#precio_compra").value = res.precio_compra;
       document.querySelector("#precio_venta").value = res.precio_venta;
+      document.querySelector("#precio_mayorista").value = res.precio_mayorista;
       document.querySelector("#categoria").value = res.id_categoria;
       document.querySelector("#marca").value = res.id_marca;
       document.querySelector("#descripcion").value = res.descripcion;

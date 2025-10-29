@@ -26,8 +26,10 @@ class Principal extends Controller
         $total = $this->model->getTotalProductos();
         $data['pagina'] = $pagina;
         $data['total'] = ceil($total['total'] / PORPAGINA);
+        $data['tipo_cliente'] = $this->model->getTipoCliente();
 
-        ######### CALIFICACION ###########
+
+
         for ($i = 0; $i < count($data['productos']); $i++) {
             $calificacion = $this->model->getCalificacion('SUM', $data['productos'][$i]['id']);
             $cantidad = $this->model->getCalificacion('COUNT', $data['productos'][$i]['id']);
@@ -35,7 +37,6 @@ class Principal extends Controller
             $total = ($calificacion['total'] != null) ? $calificacion['total'] / $totalCantidad : $totalCantidad;
             $data['productos'][$i]['calificacion'] = round($total);
 
-            // ⭐ AGREGAR LA PRIMERA IMAGEN DE LA GALERÍA
             $primeraImagen = $this->model->getPrimeraImagen($data['productos'][$i]['id']);
             $data['productos'][$i]['imagen'] = $primeraImagen;
         }
@@ -48,14 +49,12 @@ class Principal extends Controller
             $total = ($calificacion['total'] != null) ? $calificacion['total'] / $totalCantidad : $totalCantidad;
             $productos[$i]['calificacion'] = round($total);
 
-            // ⭐ AGREGAR LA PRIMERA IMAGEN DE LA GALERÍA
             $primeraImagen = $this->model->getPrimeraImagen($productos[$i]['id']);
             $productos[$i]['imagen'] = $primeraImagen;
         }
 
         $data['nuevosProductos'] = $productos;
 
-        // Filtros
         $data['sizes'] = $this->model->getDatos('tallas');
         $data['colores'] = $this->model->getDatos('colores');
         $data['marcas'] = $this->model->getMarcas();
@@ -69,16 +68,20 @@ class Principal extends Controller
         $colores = isset($_POST['colores']) && !empty($_POST['colores']) ? $_POST['colores'] : '';
         $sizes = isset($_POST['sizes']) && !empty($_POST['sizes']) ? $_POST['sizes'] : '';
         $marcas = isset($_POST['marcas']) && !empty($_POST['marcas']) ? $_POST['marcas'] : '';
+        $generos = isset($_POST['generos']) && !empty($_POST['generos']) ? $_POST['generos'] : '';
+
         $precio = explode(';', $_POST['precios']);
         $precioMin = $precio[0];
         $precioMax = $precio[1];
         $pagina = (empty($_POST['page'])) ? 1 : $_POST['page'];
         $desde = ($pagina - 1) * PORPAGINA;
 
-        $total = $this->model->getTotalFiltroProductos($categorias, $precioMin, $precioMax, $colores, $sizes, $marcas);
+        $data['tipo_cliente'] = $this->model->getTipoCliente(); // ← SOLO ESTA LÍNEA
+
+        $total = $this->model->getTotalFiltroProductos($categorias, $precioMin, $precioMax, $colores, $sizes, $marcas, $generos);
         $data['pagina'] = $pagina;
         $data['total'] = ceil($total['total'] / PORPAGINA);
-        $data['productos'] = $this->model->getFiltroProductos($categorias, $precioMin, $precioMax, $colores, $sizes, $marcas, $desde, PORPAGINA);
+        $data['productos'] = $this->model->getFiltroProductos($categorias, $precioMin, $precioMax, $colores, $sizes, $marcas, $generos, $desde, PORPAGINA);
 
         for ($i = 0; $i < count($data['productos']); $i++) {
             $calificacion = $this->model->getCalificacion('SUM', $data['productos'][$i]['id']);
@@ -94,6 +97,7 @@ class Principal extends Controller
         echo json_encode($data, JSON_UNESCAPED_UNICODE);
         die();
     }
+
     //vista detail
     public function detail($slug)
     {
@@ -239,12 +243,18 @@ class Principal extends Controller
             $total = ($calificacion['total'] != null) ? $calificacion['total'] / $totalCantidad : $totalCantidad;
 
             $data['productos'][$i]['calificacion'] = round($total);
+
+            // ⭐ AGREGA ESTAS 2 LÍNEAS ⭐
+            $primeraImagen = $this->model->getPrimeraImagen($data['productos'][$i]['id']);
+            $data['productos'][$i]['imagen'] = $primeraImagen;
         }
+
         $data['title'] = 'Categorias';
         $data['slug'] = $slug;
-        //sizes
         $data['sizes'] = $this->model->getDatos('tallas');
         $data['colores'] = $this->model->getDatos('colores');
+        $data['marcas'] = $this->model->getMarcas();
+
         $this->views->getView('principal', "categorias", $data);
     }
     public function contactos()
@@ -260,15 +270,20 @@ class Principal extends Controller
         $array['productos'] = array();
         $total = 0.00;
 
+        // NUEVO: Obtener tipo de cliente
+        $tipoCliente = $this->model->getTipoCliente();
+
         if (!empty($json)) {
             foreach ($json as $producto) {
                 $result = $this->model->getProducto($producto['idProducto']);
                 $nombreTalla = '';
                 $nombreColor = '';
                 $colorHexa = '#000';
-                $colorSecundario = null; 
+                $colorSecundario = null;
                 $atributoMP = '';
-                $precio = $result['precio_venta'] ?? 0;
+
+                // NUEVO: Precio según tipo de cliente
+                $precio = ($tipoCliente == 'mayorista') ? $result['precio_mayorista'] : $result['precio_venta'];
                 $stock = 'Ilimitado';
 
                 // Obtener talla y color
@@ -281,7 +296,7 @@ class Principal extends Controller
                         $colorHexa = $detalle['color'] ?? '#000';
                         $colorSecundario = $detalle['color_secundario'] ?? null;
                         $atributoMP = $nombreTalla . ' - ' . $nombreColor;
-                        $precio = $detalle['precio_venta'] ?? $precio;
+                        // NUEVO: Mantener el precio según tipo de cliente (no usar detalle precio)
                         $stock = $detalle['stock'] ?? 'Ilimitado';
                     } else {
                         $color = $this->model->getColorSize('colores', $producto['color']);
@@ -389,6 +404,7 @@ class Principal extends Controller
             $empresa = $this->model->getEmpresa();
             $data['whatsapp'] = !empty($empresa) ? $empresa['whatsapp'] : '573003665138';
 
+            $data['tipo_cliente'] = $this->model->getTipoCliente(); // ← SOLO ESTA LÍNEA
 
             if (!empty($data['producto'])) {
                 $result = array();
@@ -436,8 +452,109 @@ class Principal extends Controller
         $idProducto = $array[2];
         if (is_numeric($idSize) && is_numeric($idColor) && is_numeric($idProducto)) {
             $data = $this->model->getAtributos($idSize, $idColor, $idProducto);
+
+            $data['tipo_cliente'] = $this->model->getTipoCliente(); // Ya funciona con correoCliente
+
+            $producto = $this->model->getProducto($idProducto);
+            if ($data['tipo_cliente'] == 'mayorista') {
+                $data['precio_aplicable'] = $producto['precio_mayorista'];
+            } else {
+                $data['precio_aplicable'] = $producto['precio_venta'];
+            }
+
             echo json_encode($data, JSON_UNESCAPED_UNICODE);
         }
+        die();
+    }
+
+    /**PERFIL */
+    public function getDatosCliente()
+    {
+        if (empty($_SESSION['idCliente'])) {
+            $res = array('success' => false, 'msg' => 'No autorizado');
+        } else {
+            $id = $_SESSION['idCliente'];
+            $data = $this->model->getDatosCliente($id);
+            if (!empty($data)) {
+                $res = array('success' => true, 'data' => $data);
+            } else {
+                $res = array('success' => false, 'msg' => 'No se encontraron datos');
+            }
+        }
+        echo json_encode($res, JSON_UNESCAPED_UNICODE);
+        die();
+    }
+
+    public function modificarDatos()
+    {
+        if (empty($_SESSION['idCliente'])) {
+            $res = array('msg' => 'NO AUTORIZADO', 'type' => 'error');
+        } else if (isset($_POST['nombre']) && isset($_POST['apellidos']) && isset($_POST['correo'])) {
+            $nombre = strClean($_POST['nombre']);
+            $apellidos = strClean($_POST['apellidos']);
+            $telefono = strClean($_POST['telefono']);
+            $correo = strClean($_POST['correo']);
+            $direccion = strClean($_POST['direccion']);
+            $foto = $_FILES['fotoCliente'];
+            $id = $_SESSION['idCliente'];
+
+            if (empty($nombre) || empty($apellidos) || empty($telefono) || empty($correo) || empty($direccion)) {
+                $res = array('msg' => 'TODOS LOS CAMPOS CON * SON REQUERIDOS', 'type' => 'warning');
+            } else {
+                $verificarTelefono = $this->model->getValidarCliente('telefono', $telefono, 'actualizar', $id);
+                if (empty($verificarTelefono)) {
+                    if ($correo != null) {
+                        $verificarCorreo = $this->model->getValidarCliente('correo', $correo, 'actualizar', $id);
+                        if (!empty($verificarCorreo)) {
+                            $res = array('msg' => 'EL CORREO DEBE SER ÚNICO', 'type' => 'warning');
+                            echo json_encode($res);
+                            die();
+                        }
+                    }
+
+                    $tmp = $this->model->getDatosCliente($id);
+
+                    if (!empty($tmp['perfil']) && $tmp['perfil'] != 'default.png' && file_exists('assets/images/clientes/' . $tmp['perfil'])) {
+                        if (!empty($foto['name'])) {
+                            unlink('assets/images/clientes/' . $tmp['perfil']);
+                        }
+                        $destino = $tmp['perfil'];
+                    } else {
+                        $destino = (!empty($foto['name'])) ? $id . '.jpg' : 'default.png';
+                    }
+
+                    $data = $this->model->actualizarCliente(
+                        $nombre,
+                        $apellidos,
+                        $telefono,
+                        $correo,
+                        $direccion,
+                        $tmp['tipo_cliente'],
+                        $destino,
+                        $id
+                    );
+
+                    if ($data > 0) {
+                        if (!empty($foto['name'])) {
+                            move_uploaded_file($foto['tmp_name'], 'assets/images/clientes/' . $destino);
+                        }
+
+                        $_SESSION['perfilCliente'] = $destino;
+                        $_SESSION['nombreCliente'] = $nombre . ' ' . $apellidos;
+
+                        $res = array('msg' => 'PERFIL ACTUALIZADO CORRECTAMENTE', 'type' => 'success');
+                    } else {
+                        $res = array('msg' => 'ERROR AL MODIFICAR', 'type' => 'error');
+                    }
+                } else {
+                    $res = array('msg' => 'EL TELÉFONO DEBE SER ÚNICO', 'type' => 'warning');
+                }
+            }
+        } else {
+            $res = array('msg' => 'ERROR DESCONOCIDO', 'type' => 'error');
+        }
+
+        echo json_encode($res);
         die();
     }
 }

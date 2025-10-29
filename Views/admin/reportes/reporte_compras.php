@@ -74,7 +74,7 @@
                         <td colspan="1" class="text-start fw-bold">
                             <div id="totalProductos">0 (items)</div>
                             <div id="totalCantidad">0</div>
-                            <div><strong id="totalCompras">Bs. 0.00</strong></div>
+                            <div><strong id="totalCompras">COP. 0.00</strong></div>
                         </td>
                     </tr>
                 </tfoot>

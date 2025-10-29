@@ -38,22 +38,22 @@ class ProductosModel extends Query
         $sql = "SELECT * FROM productos WHERE id = $id";
         return $this->select($sql);
     }
-    public function registrar($codigo, $nombre, $slug, $descripcion, $genero, $precio_compra, $precio_venta, $id_categoria, $id_marca)
+    public function registrar($codigo, $nombre, $slug, $descripcion, $genero, $precio_compra, $precio_venta, $precio_mayorista, $id_categoria, $id_marca)
     {
         $id_sucursal = $_SESSION['id_sucursal'];
-        $sql = "INSERT INTO productos (codigo, nombre, slug, descripcion, genero, precio_compra, precio_venta, id_categoria, id_marca, id_sucursal) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $array = array($codigo, $nombre, $slug, $descripcion, $genero, $precio_compra, $precio_venta, $id_categoria, $id_marca, $id_sucursal);
+        $sql = "INSERT INTO productos (codigo, nombre, slug, descripcion, genero, precio_compra, precio_venta, precio_mayorista, id_categoria, id_marca, id_sucursal) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $array = array($codigo, $nombre, $slug, $descripcion, $genero, $precio_compra, $precio_venta, $precio_mayorista, $id_categoria, $id_marca, $id_sucursal);
         return $this->insertar($sql, $array);
     }
 
-    public function modificar($codigo, $nombre, $slug, $descripcion, $genero, $precio_compra, $precio_venta, $id_categoria, $id_marca, $id)
+    public function modificar($codigo, $nombre, $slug, $descripcion, $genero, $precio_compra, $precio_venta, $precio_mayorista, $id_categoria, $id_marca, $id)
     {
         $id_sucursal = $_SESSION['id_sucursal'];
         $sql = "UPDATE productos 
-        SET codigo=?, nombre=?, slug=?, descripcion=?, genero=?, precio_compra=?, precio_venta=?, id_categoria=?, id_marca=?, id_sucursal=?
+        SET codigo=?, nombre=?, slug=?, descripcion=?, genero=?, precio_compra=?, precio_venta=?, precio_mayorista=?, id_categoria=?, id_marca=?, id_sucursal=?
         WHERE id = ?";
-        $array = array($codigo, $nombre, $slug, $descripcion, $genero, $precio_compra, $precio_venta, $id_categoria, $id_marca, $id_sucursal, $id);
+        $array = array($codigo, $nombre, $slug, $descripcion, $genero, $precio_compra, $precio_venta, $precio_mayorista, $id_categoria, $id_marca, $id_sucursal, $id);
         return $this->save($sql, $array);
     }
 
@@ -142,6 +142,7 @@ class ProductosModel extends Query
                 tc.stock,
                 p.precio_compra,
                 p.precio_venta,
+                p.precio_mayorista,
                 (tc.stock * p.precio_compra) as valor_stock
             FROM tallas_colores tc
             INNER JOIN productos p ON tc.id_producto = p.id
@@ -168,6 +169,7 @@ class ProductosModel extends Query
                 tc.stock,
                 p.precio_compra,
                 p.precio_venta,
+                p.precio_mayorista,
                 (tc.stock * p.precio_compra) as valor_stock
             FROM tallas_colores tc
             INNER JOIN productos p ON tc.id_producto = p.id

@@ -23,7 +23,8 @@ class Reportes extends Controller
     public function reporte_ventas()
     {
         $data['title'] = 'Reporte de Ventas';
-        $data['script'] = 'reporte_ventas.js';
+        $data['usuarios'] = $this->model->getDatos('usuarios');
+        $data['almacenes'] = $this->model->getDatos('almacenes');
         $this->views->getView('admin/reportes', 'reporte_ventas', $data);
     }
 
@@ -38,11 +39,13 @@ class Reportes extends Controller
     {
         $desde = $_GET['desde'] ?? null;
         $hasta = $_GET['hasta'] ?? null;
+        $id_usuario = $_GET['id_usuario'] ?? null;
+        $id_almacen = $_GET['id_almacen'] ?? null;
 
         ob_start();
         $data['title'] = 'REPORTE DE VENTAS';
         $data['empresa'] = $this->model->getEmpresa();
-        $data['ventas'] = $this->model->getVentasPdf($desde, $hasta);
+        $data['ventas'] = $this->model->getVentasPdf($desde, $hasta, $id_usuario, $id_almacen);
         $this->views->getView('admin/rooms', 'reporte_ventas_pdf', $data);
         $html = ob_get_clean();
 
@@ -60,6 +63,8 @@ class Reportes extends Controller
     {
         $desde = $_GET['desde'] ?? null;
         $hasta = $_GET['hasta'] ?? null;
+        $id_usuario = $_GET['id_usuario'] ?? null;
+        $id_almacen = $_GET['id_almacen'] ?? null;
 
         if (ob_get_level()) {
             ob_end_clean();
@@ -85,16 +90,17 @@ class Reportes extends Controller
                 'G' => 'PRECIO UNITARIO',
                 'H' => 'SUBTOTAL',
                 'I' => 'TOTAL PEDIDO',
-                'J' => 'FECHA',
-                'K' => 'ESTADO'
+                'J' => 'USUARIO',
+                'K' => 'ALMACÉN',
+                'L' => 'FECHA'
             ];
 
             // Estilo encabezado
-            $hojaActiva->getStyle('A1:K1')->getFont()->setBold(true);
-            $hojaActiva->getStyle('A1:K1')->getFill()
+            $hojaActiva->getStyle('A1:L1')->getFont()->setBold(true);
+            $hojaActiva->getStyle('A1:L1')->getFill()
                 ->setFillType(Fill::FILL_SOLID)
                 ->getStartColor()->setARGB('4472C4');
-            $hojaActiva->getStyle('A1:K1')->getFont()->getColor()->setARGB(Color::COLOR_WHITE);
+            $hojaActiva->getStyle('A1:L1')->getFont()->getColor()->setARGB(Color::COLOR_WHITE);
 
             foreach ($columnas as $col => $titulo) {
                 $hojaActiva->setCellValue($col . '1', $titulo);
@@ -102,8 +108,7 @@ class Reportes extends Controller
             }
 
             // Obtener datos
-            $ventas = $this->model->getVentasPdf($desde, $hasta);
-
+            $ventas = $this->model->getVentasPdf($desde, $hasta, $id_usuario, $id_almacen);
             $fila = 2;
             $totalProductos = 0;
             $totalCantidad = 0;
@@ -119,13 +124,13 @@ class Reportes extends Controller
                 $hojaActiva->setCellValue('G' . $fila, $venta['precio_venta']);
                 $hojaActiva->setCellValue('H' . $fila, $venta['subtotal']);
                 $hojaActiva->setCellValue('I' . $fila, $venta['total_pedido']);
-                $hojaActiva->setCellValue('J' . $fila, $venta['fecha']);
-                $hojaActiva->setCellValue('K' . $fila, $venta['estado']);
+                $hojaActiva->setCellValue('J' . $fila, $venta['usuario']);
+                $hojaActiva->setCellValue('K' . $fila, $venta['almacen']);
+                $hojaActiva->setCellValue('L' . $fila, $venta['fecha']);
 
                 $totalProductos++;
                 $totalCantidad += $venta['cantidad'];
                 $totalVentas += $venta['subtotal'];
-
                 $fila++;
             }
 
@@ -145,7 +150,6 @@ class Reportes extends Controller
             $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
             $writer->save('php://output');
             exit;
-
         } catch (\Exception $e) {
             echo "Error generando Excel: " . $e->getMessage();
             exit;
