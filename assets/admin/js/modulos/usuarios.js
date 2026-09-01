@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
       { data: "nombres" },
       { data: "apellidos" },
       { data: "correo" },
-      { data: "sucursal" },
+      { data: "almacen" },
       { data: "rol" },
       { data: "estado" },
       { data: "accion" },
@@ -126,7 +126,7 @@ function editUser(id) {
       document.querySelector("#nombre").value = res.nombres;
       document.querySelector("#apellido").value = res.apellidos;
       document.querySelector("#correo").value = res.correo;
-      document.querySelector("#id_sucursal").value = res.id_sucursal;
+      document.querySelector("#id_almacen").value = res.id_almacen;
       document.querySelector("#id_rol").value = res.id_rol;
       document.querySelector("#clave").setAttribute("readonly", "readonly");
       btnAccion.textContent = "Actualizar";

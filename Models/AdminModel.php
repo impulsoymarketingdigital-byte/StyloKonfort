@@ -31,7 +31,7 @@ class AdminModel extends Query
         return $this->selectAll($sql);
     }
 
-    public function productosMinimos()
+    public function productosMinimos($stockMinimo = 0)
     {
         $sql = "SELECT 
                 p.id,
@@ -41,10 +41,12 @@ class AdminModel extends Query
             INNER JOIN tallas_colores tc ON p.id = tc.id_producto
             WHERE p.estado = 1
             GROUP BY p.id, p.nombre
+            HAVING cantidad <= $stockMinimo
             ORDER BY cantidad ASC
             LIMIT 5";
         return $this->selectAll($sql);
     }
+
 
     public function topProductos()
     {

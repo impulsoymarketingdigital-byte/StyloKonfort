@@ -1,5 +1,5 @@
 <?php
-
+/*
 const BASE_URL = "http://localhost/ecomerce/";
 const HOST = "localhost";
 const USER = "root";
@@ -24,15 +24,15 @@ const PUERTO_SMTP = 465; // puerto SSL
 const HOST_SMTP = "mail.mastecdigital.com"; // servidor SMTP
 
 
-
+*/
 
 ////DEPLOYMENT
-/*
-const BASE_URL = "https://stylokonfort.mastecdigital.com/ecomerce/";
+
+const BASE_URL = "http://localhost/ecomerce/";
 const HOST = "localhost";
-const USER = "mastecdi_ecomerce";
-const PASS = "lsmSantander76*";
-const DB = "mastecdi_ecomerce";
+const USER = "u949923376_ecomerce";
+const PASS = "Ecomerce1";
+const DB = "u949923376_ecomerce";
 const CHARSET = "charset=utf8";
 const TITLE = "Stylo Konfort";
 const MONEDA = "COP. ";
@@ -50,5 +50,5 @@ const USER_SMTP = "mastecdigital@mastecdigital.com"; // usuario SMTP
 const PASS_SMTP = "lsmSantander76*"; // contraseña SMTP
 const PUERTO_SMTP = 465; // puerto SSL
 const HOST_SMTP = "mail.mastecdigital.com"; // servidor SMTP
-*/
+
 ?>

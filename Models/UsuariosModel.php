@@ -8,9 +8,9 @@ class UsuariosModel extends Query
     
     public function getUsuarios()
     {
-        $sql = "SELECT u.*, s.nombre AS sucursal, r.nombre AS rol
+        $sql = "SELECT u.*, a.nombre AS almacen, r.nombre AS rol
             FROM usuarios u
-            LEFT JOIN sucursales s ON u.id_sucursal = s.id
+            LEFT JOIN almacenes a ON u.id_almacen = a.id
             LEFT JOIN roles r ON u.id_rol = r.id";
         return $this->selectAll($sql);
     }
@@ -21,10 +21,10 @@ class UsuariosModel extends Query
         return $this->selectAll($sql);
     }
     
-    public function registrar($nombre, $apellido, $correo, $clave, $id_sucursal, $id_rol)
+    public function registrar($nombre, $apellido, $correo, $clave, $id_almacen, $id_rol)
     {
-        $sql = "INSERT INTO usuarios (nombres, apellidos, correo, clave, id_sucursal, id_rol) VALUES (?,?,?,?,?,?)";
-        $array = array($nombre, $apellido, $correo, $clave, $id_sucursal, $id_rol);
+        $sql = "INSERT INTO usuarios (nombres, apellidos, correo, clave, id_almacen, id_rol) VALUES (?,?,?,?,?,?)";
+        $array = array($nombre, $apellido, $correo, $clave, $id_almacen, $id_rol);
         return $this->insertar($sql, $array);
     }
     
@@ -44,10 +44,10 @@ class UsuariosModel extends Query
         return $this->select($sql);
     }
 
-    public function modificarDatos($nombre, $apellidos, $correo, $perfil, $id_sucursal, $id)
+    public function modificarDatos($nombre, $apellidos, $correo, $perfil, $id_almacen, $id)
     {
-        $sql = "UPDATE usuarios SET nombres=?, apellidos=?, correo=?, perfil=?, id_sucursal=? WHERE id=?";
-        $array = array($nombre, $apellidos, $correo, $perfil, $id_sucursal, $id);
+        $sql = "UPDATE usuarios SET nombres=?, apellidos=?, correo=?, perfil=?, id_almacen=? WHERE id=?";
+        $array = array($nombre, $apellidos, $correo, $perfil, $id_almacen, $id);
         return $this->save($sql, $array);
     }
 
@@ -60,18 +60,18 @@ class UsuariosModel extends Query
 
     public function getUsuario($idUser)
     {
-        $sql = "SELECT u.id, u.nombres, u.apellidos, u.correo, u.perfil, u.clave, u.id_sucursal, u.id_rol, s.nombre AS sucursal, r.nombre AS rol
+        $sql = "SELECT u.id, u.nombres, u.apellidos, u.correo, u.perfil, u.clave, u.id_almacen, u.id_rol, a.nombre AS almacen, r.nombre AS rol
             FROM usuarios u
-            LEFT JOIN sucursales s ON u.id_sucursal = s.id
+            LEFT JOIN almacenes a ON u.id_almacen = a.id
             LEFT JOIN roles r ON u.id_rol = r.id
             WHERE u.id = $idUser";
         return $this->select($sql);
     }
 
-    public function modificar($nombre, $apellido, $correo, $id_sucursal, $id_rol, $id)
+    public function modificar($nombre, $apellido, $correo, $id_almacen, $id_rol, $id)
     {
-        $sql = "UPDATE usuarios SET nombres=?, apellidos=?, correo=?, id_sucursal=?, id_rol=? WHERE id = ?";
-        $array = array($nombre, $apellido, $correo, $id_sucursal, $id_rol, $id);
+        $sql = "UPDATE usuarios SET nombres=?, apellidos=?, correo=?, id_almacen=?, id_rol=? WHERE id = ?";
+        $array = array($nombre, $apellido, $correo, $id_almacen, $id_rol, $id);
         return $this->save($sql, $array);
     }
 

@@ -219,7 +219,6 @@ class ClientesModel extends Query
         return $res;
     }
 
-
     public function getAtributosPorId($id_talla_color)
     {
         $sql = "SELECT t.nombre AS size, c.nombre, c.color
@@ -246,6 +245,28 @@ class ClientesModel extends Query
         return 'final';
     }
 
+    public function generarNumeroPedido()
+    {
+        $anio = date('y');
+        $prefijo = 'EC';
+
+        $sql = "SELECT id_transaccion FROM pedidos 
+            WHERE id_transaccion LIKE '" . $prefijo . "-" . $anio . "-%' 
+            ORDER BY id DESC 
+            LIMIT 1";
+
+        $result = $this->select($sql);
+
+        if ($result && isset($result['id_transaccion'])) {
+            $partes = explode('-', $result['id_transaccion']);
+            $ultimo = (int) end($partes);
+            $nuevo = $ultimo + 1;
+        } else {
+            $nuevo = 1;
+        }
+
+        return $prefijo . '-' . $anio . '-' . $nuevo;
+    }
 
     ##### ADMIN CLIENTES ######
     public function getClientes()

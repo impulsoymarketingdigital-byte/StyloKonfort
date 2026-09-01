@@ -10,6 +10,7 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 class Ventas extends Controller
 {
     private $id_usuario;
+    private $id_almacen;
     public function __construct()
     {
         parent::__construct();
@@ -19,6 +20,7 @@ class Ventas extends Controller
             exit;
         }
         $this->id_usuario = $_SESSION['id_usuario'];
+        $this->id_almacen = $_SESSION['id_almacen'];
     }
     public function index()
     {
@@ -74,17 +76,7 @@ class Ventas extends Controller
             $fecha = date('Y-m-d H:i:s');
             $idCliente = $datos['idCliente'];
             $metodo = isset($datos['metodo']) ? $datos['metodo'] : 'VENTA DIRECTA';
-
             $id_usuario = $_SESSION['id_usuario'];
-            $cajaAbierta = $this->model->getCajaAbierta($id_usuario);
-
-            if (empty($cajaAbierta)) {
-                $res = array('msg' => 'DEBES ABRIR UNA CAJA PRIMERO', 'type' => 'warning');
-                echo json_encode($res);
-                die();
-            }
-
-            $cash_box_id = $cajaAbierta['id'];
 
             if (empty($idCliente)) {
                 $res = array('msg' => 'EL CLIENTE ES REQUERIDO', 'type' => 'warning');
@@ -100,10 +92,10 @@ class Ventas extends Controller
                     $total += $subTotal;
                 }
 
-                $id_transaccion = $metodo . '-' . uniqid();
-                $estado = 'COMPLETADO';
+                $id_transaccion = $this->model->generarNumeroVenta($metodo);
 
-                // ✅ AQUÍ SE AGREGA EL id_usuario
+                $estado = 'PENDIENTE';
+                $cash_box_id = NULL;
                 $venta = $this->model->registrarPedido($id_transaccion, $metodo, $total, $estado, $fecha, $idCliente, $cash_box_id, $id_usuario);
 
                 if ($venta > 0) {
@@ -119,23 +111,23 @@ class Ventas extends Controller
                             $producto['cantidad'],
                             $atributo['id']
                         );
-
-                        $nuevoStock = $atributo['stock'] - $producto['cantidad'];
-                        $this->model->actualizarStockDetalle($nuevoStock, $atributo['id']);
                     }
 
-                    $this->model->registrarMovimiento(
-                        'INGRESO',
-                        'VENTA',
-                        'NOTA DE VENTA - ' . $id_transaccion,
-                        $total,
-                        $cash_box_id,
-                        $id_usuario,
-                        $venta,
-                        'sales'
-                    );
-
-                    $res = array('msg' => 'VENTA GENERADA', 'type' => 'success', 'idVenta' => $venta);
+                    if ($metodo == 'VENTA DIRECTA') {
+                        $res = array(
+                            'msg' => 'VENTA ' . $id_transaccion . ' REGISTRADA - Cliente debe pasar a caja',
+                            'type' => 'success',
+                            'idVenta' => $venta,
+                            'metodo' => $metodo
+                        );
+                    } else {
+                        $res = array(
+                            'msg' => 'PEDIDO ' . $id_transaccion . ' REGISTRADO - Para entregar después',
+                            'type' => 'success',
+                            'idVenta' => $venta,
+                            'metodo' => $metodo
+                        );
+                    }
                 } else {
                     $res = array('msg' => 'ERROR AL GENERAR VENTA', 'type' => 'error');
                 }
@@ -196,7 +188,7 @@ class Ventas extends Controller
 
             if ($data[$i]['estado'] == 'COMPLETADO') {
                 $data[$i]['estado'] = '<span class="badge bg-success">Completado</span>';
-            } else {
+            } else if ($data[$i]['estado'] == 'ANULADO') {
                 $data[$i]['estado'] = '<span class="badge bg-secondary">Anulado</span>';
             }
 
@@ -229,6 +221,114 @@ class Ventas extends Controller
         echo json_encode($data);
         die();
     }
+    public function procesar_pagos()
+    {
+        $data['title'] = 'Procesar Pagos';
+        $this->views->getView('admin/ventas', 'procesar_pagos', $data);
+    }
+
+    public function listarPendientes()
+    {
+        $data = $this->model->getPedidosPendientes();
+
+        for ($i = 0; $i < count($data); $i++) {
+
+            // Estado
+            $estado = $data[$i]['estado'];
+            if ($estado == 'PENDIENTE') {
+                $data[$i]['estado'] = '<span class="badge bg-warning text-dark">Pendiente</span>';
+            }
+
+            // Formatear monto
+            $data[$i]['monto'] = 'COP ' . number_format($data[$i]['monto'], 2);
+
+            // Cliente
+            $data[$i]['cliente'] = $data[$i]['nombre'] . ' ' . $data[$i]['apellido'];
+
+            // Acciones - solo para PENDIENTES
+            $data[$i]['acciones'] = '
+            <div class="text-center">
+                <button class="btn btn-success btn-sm" onclick="abrirModalPago(' . $data[$i]['id'] . ')" title="Procesar Pago">
+                    <i class="fas fa-cash-register"></i>
+                </button>
+                <button class="btn btn-info btn-sm" onclick="verDetallePedido(' . $data[$i]['id'] . ')" title="Ver Detalle">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="anularPedido(' . $data[$i]['id'] . ')" title="Anular">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>';
+        }
+
+        echo json_encode($data);
+        die();
+    }
+
+    public function procesarPago()
+    {
+        $json = file_get_contents('php://input');
+        $datos = json_decode($json, true);
+
+        if (empty($datos['idPedido'])) {
+            $res = array('msg' => 'PEDIDO NO VÁLIDO', 'type' => 'warning');
+        } else {
+            $idPedido = $datos['idPedido'];
+            $pedido = $this->model->getVenta($idPedido);
+
+            if (empty($pedido)) {
+                $res = array('msg' => 'PEDIDO NO ENCONTRADO', 'type' => 'error');
+            } else if ($pedido['estado'] != 'PENDIENTE') {
+                $res = array('msg' => 'EL PEDIDO YA FUE PROCESADO', 'type' => 'warning');
+            } else {
+                // ⭐ PASAR id_almacen al buscar caja
+                $cajaAbierta = $this->model->getCajaAbierta($this->id_usuario, $this->id_almacen);
+
+                if (empty($cajaAbierta)) {
+                    $res = array('msg' => 'DEBES ABRIR UNA CAJA PRIMERO', 'type' => 'warning');
+                } else {
+                    $cash_box_id = $cajaAbierta['id'];
+                    $detalles = $this->model->getDetallePedido($idPedido);
+
+                    foreach ($detalles as $detalle) {
+                        $tallasColores = $this->model->getTallaColorPorId($detalle['id_talla_color']);
+
+                        if (!empty($tallasColores)) {
+                            $nuevoStock = $tallasColores['stock'] - $detalle['cantidad'];
+                            $this->model->actualizarStockDetalle($nuevoStock, $detalle['id_talla_color']);
+                        }
+                    }
+
+                    $resultado = $this->model->actualizarEstadoPedido($idPedido, 'COMPLETADO');
+
+                    if ($resultado == 1) {
+                        $this->model->actualizarCajaPedido($idPedido, $cash_box_id);
+
+                        $this->model->registrarMovimiento(
+                            'INGRESO',
+                            'VENTA',
+                            'PAGO VENTA #' . $pedido['id_transaccion'],
+                            $pedido['monto'],
+                            $cash_box_id,
+                            $this->id_usuario,
+                            $idPedido,
+                            'sales'
+                        );
+
+                        $res = array(
+                            'msg' => 'PAGO PROCESADO CORRECTAMENTE',
+                            'type' => 'success',
+                            'idVenta' => $idPedido
+                        );
+                    } else {
+                        $res = array('msg' => 'ERROR AL PROCESAR EL PAGO', 'type' => 'error');
+                    }
+                }
+            }
+        }
+
+        echo json_encode($res);
+        die();
+    }
 
     public function detalle($idPedido)
     {
@@ -259,6 +359,30 @@ class Ventas extends Controller
                 $res = array('msg' => 'VENTA ANULADA', 'type' => 'success');
             } else {
                 $res = array('msg' => 'ERROR AL ANULAR', 'type' => 'error');
+            }
+        } else {
+            $res = array('msg' => 'ERROR DESCONOCIDO', 'type' => 'error');
+        }
+        echo json_encode($res);
+        die();
+    }
+
+    public function anularPendiente($idPedido)
+    {
+        if (isset($_GET) && is_numeric($idPedido)) {
+            $pedido = $this->model->getVenta($idPedido);
+
+            if (empty($pedido)) {
+                $res = array('msg' => 'PEDIDO NO ENCONTRADO', 'type' => 'error');
+            } else if ($pedido['estado'] != 'PENDIENTE') {
+                $res = array('msg' => 'SOLO SE PUEDEN ANULAR PEDIDOS PENDIENTES', 'type' => 'warning');
+            } else {
+                $data = $this->model->anular($idPedido);
+                if ($data == 1) {
+                    $res = array('msg' => 'PEDIDO ANULADO', 'type' => 'success');
+                } else {
+                    $res = array('msg' => 'ERROR AL ANULAR', 'type' => 'error');
+                }
             }
         } else {
             $res = array('msg' => 'ERROR DESCONOCIDO', 'type' => 'error');

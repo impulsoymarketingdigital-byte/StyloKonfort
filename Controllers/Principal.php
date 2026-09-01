@@ -6,6 +6,7 @@ class Principal extends Controller
         parent::__construct();
         session_start();
     }
+    
     //vista about
     public function about()
     {
@@ -15,7 +16,7 @@ class Principal extends Controller
         $this->views->getView('principal', "about", $data);
     }
 
-    //vista shop
+    //vista shop (MEJORADA PARA MAYORISTAS)
     public function shop($page)
     {
         $pagina = (empty($page)) ? 1 : $page;
@@ -26,35 +27,45 @@ class Principal extends Controller
         $total = $this->model->getTotalProductos();
         $data['pagina'] = $pagina;
         $data['total'] = ceil($total['total'] / PORPAGINA);
+        
+        // 1. Identificamos si es mayorista
         $data['tipo_cliente'] = $this->model->getTipoCliente();
-
-
+        $esMayorista = ($data['tipo_cliente'] == 'mayorista');
 
         for ($i = 0; $i < count($data['productos']); $i++) {
+            // ⭐ MAGIA B2B: Si es mayorista, cambiamos el precio visual de la vitrina
+            if ($esMayorista && isset($data['productos'][$i]['precio_mayorista'])) {
+                $data['productos'][$i]['precio_venta'] = $data['productos'][$i]['precio_mayorista'];
+            }
+
             $calificacion = $this->model->getCalificacion('SUM', $data['productos'][$i]['id']);
             $cantidad = $this->model->getCalificacion('COUNT', $data['productos'][$i]['id']);
             $totalCantidad = ($cantidad['total'] == 0) ? 5 : $cantidad['total'];
-            $total = ($calificacion['total'] != null) ? $calificacion['total'] / $totalCantidad : $totalCantidad;
-            $data['productos'][$i]['calificacion'] = round($total);
+            $totalCal = ($calificacion['total'] != null) ? $calificacion['total'] / $totalCantidad : $totalCantidad;
+            $data['productos'][$i]['calificacion'] = round($totalCal);
 
             $primeraImagen = $this->model->getPrimeraImagen($data['productos'][$i]['id']);
             $data['productos'][$i]['imagen'] = $primeraImagen;
         }
 
-        $productos = $this->model->getNuevosProductos();
-        for ($i = 0; $i < count($productos); $i++) {
-            $calificacion = $this->model->getCalificacion('SUM', $productos[$i]['id']);
-            $cantidad = $this->model->getCalificacion('COUNT', $productos[$i]['id']);
-            $totalCantidad = ($cantidad['total'] == 0) ? 5 : $cantidad['total'];
-            $total = ($calificacion['total'] != null) ? $calificacion['total'] / $totalCantidad : $totalCantidad;
-            $productos[$i]['calificacion'] = round($total);
+        $productosNuevos = $this->model->getNuevosProductos();
+        for ($i = 0; $i < count($productosNuevos); $i++) {
+            // ⭐ MAGIA B2B para sección "Nuevos Productos"
+            if ($esMayorista && isset($productosNuevos[$i]['precio_mayorista'])) {
+                $productosNuevos[$i]['precio_venta'] = $productosNuevos[$i]['precio_mayorista'];
+            }
 
-            $primeraImagen = $this->model->getPrimeraImagen($productos[$i]['id']);
-            $productos[$i]['imagen'] = $primeraImagen;
+            $calificacion = $this->model->getCalificacion('SUM', $productosNuevos[$i]['id']);
+            $cantidad = $this->model->getCalificacion('COUNT', $productosNuevos[$i]['id']);
+            $totalCantidad = ($cantidad['total'] == 0) ? 5 : $cantidad['total'];
+            $totalCal = ($calificacion['total'] != null) ? $calificacion['total'] / $totalCantidad : $totalCantidad;
+            $productosNuevos[$i]['calificacion'] = round($totalCal);
+
+            $primeraImagen = $this->model->getPrimeraImagen($productosNuevos[$i]['id']);
+            $productosNuevos[$i]['imagen'] = $primeraImagen;
         }
 
-        $data['nuevosProductos'] = $productos;
-
+        $data['nuevosProductos'] = $productosNuevos;
         $data['sizes'] = $this->model->getDatos('tallas');
         $data['colores'] = $this->model->getDatos('colores');
         $data['marcas'] = $this->model->getMarcas();
@@ -76,7 +87,8 @@ class Principal extends Controller
         $pagina = (empty($_POST['page'])) ? 1 : $_POST['page'];
         $desde = ($pagina - 1) * PORPAGINA;
 
-        $data['tipo_cliente'] = $this->model->getTipoCliente(); // ← SOLO ESTA LÍNEA
+        $data['tipo_cliente'] = $this->model->getTipoCliente(); 
+        $esMayorista = ($data['tipo_cliente'] == 'mayorista');
 
         $total = $this->model->getTotalFiltroProductos($categorias, $precioMin, $precioMax, $colores, $sizes, $marcas, $generos);
         $data['pagina'] = $pagina;
@@ -84,11 +96,17 @@ class Principal extends Controller
         $data['productos'] = $this->model->getFiltroProductos($categorias, $precioMin, $precioMax, $colores, $sizes, $marcas, $generos, $desde, PORPAGINA);
 
         for ($i = 0; $i < count($data['productos']); $i++) {
+            // ⭐ MAGIA B2B en los filtros
+            if ($esMayorista && isset($data['productos'][$i]['precio_mayorista'])) {
+                $data['productos'][$i]['precio_venta'] = $data['productos'][$i]['precio_mayorista'];
+            }
+
             $calificacion = $this->model->getCalificacion('SUM', $data['productos'][$i]['id']);
             $cantidad = $this->model->getCalificacion('COUNT', $data['productos'][$i]['id']);
             $totalCantidad = ($cantidad['total'] == 0) ? 5 : $cantidad['total'];
-            $total = ($calificacion['total'] != null) ? $calificacion['total'] / $totalCantidad : $totalCantidad;
-            $data['productos'][$i]['calificacion'] = round($total);
+            $totalCal = ($calificacion['total'] != null) ? $calificacion['total'] / $totalCantidad : $totalCantidad;
+            $data['productos'][$i]['calificacion'] = round($totalCal);
+            
             $primeraImagen = $this->model->getPrimeraImagen($data['productos'][$i]['id']);
             $data['productos'][$i]['imagen'] = $primeraImagen;
         }
@@ -103,12 +121,22 @@ class Principal extends Controller
     {
         $data['perfil'] = 'si';
         $data['producto'] = $this->model->getSlug('productos', $slug);
+        
         if (empty($data['producto'])) {
             echo 'Pagina no encontrada';
             exit;
         }
+
         $empresa = $this->model->getEmpresa();
         $data['whatsapp'] = !empty($empresa) ? $empresa['whatsapp'] : '573003665138';
+
+        $data['tipo_cliente'] = $this->model->getTipoCliente();
+        $esMayorista = ($data['tipo_cliente'] == 'mayorista');
+
+        // ⭐ MAGIA B2B en el detalle del producto
+        if ($esMayorista && isset($data['producto']['precio_mayorista'])) {
+            $data['producto']['precio_venta'] = $data['producto']['precio_mayorista'];
+        }
 
         //CALIFICACION PRODUCTO
         $calific = $this->model->getCalificacion('SUM', $data['producto']['id']);
@@ -118,25 +146,28 @@ class Principal extends Controller
         $data['calificacion'] = round($tot);
         $data['reviews'] = $cant['total'];
 
-        $productos = $this->model->getNuevosProductos();
-        for ($i = 0; $i < count($productos); $i++) {
-            $calificacion = $this->model->getCalificacion('SUM', $productos[$i]['id']);
-            $cantidad = $this->model->getCalificacion('COUNT', $productos[$i]['id']);
-            $totalCantidad = ($cantidad['total'] == 0) ? 5 : $cantidad['total'];
-            $total = ($calificacion['total'] != null) ? $calificacion['total'] / $totalCantidad : $totalCantidad;
-            $productos[$i]['calificacion'] = round($total);
+        $productosNuevos = $this->model->getNuevosProductos();
+        for ($i = 0; $i < count($productosNuevos); $i++) {
+            if ($esMayorista && isset($productosNuevos[$i]['precio_mayorista'])) {
+                $productosNuevos[$i]['precio_venta'] = $productosNuevos[$i]['precio_mayorista'];
+            }
 
-            $primeraImagen = $this->model->getPrimeraImagen($productos[$i]['id']);
-            $productos[$i]['imagen'] = $primeraImagen;
+            $calificacion = $this->model->getCalificacion('SUM', $productosNuevos[$i]['id']);
+            $cantidad = $this->model->getCalificacion('COUNT', $productosNuevos[$i]['id']);
+            $totalCantidad = ($cantidad['total'] == 0) ? 5 : $cantidad['total'];
+            $totalCal = ($calificacion['total'] != null) ? $calificacion['total'] / $totalCantidad : $totalCantidad;
+            $productosNuevos[$i]['calificacion'] = round($totalCal);
+
+            $primeraImagen = $this->model->getPrimeraImagen($productosNuevos[$i]['id']);
+            $productosNuevos[$i]['imagen'] = $primeraImagen;
         }
-        $data['nuevosProductos'] = $productos;
+        $data['nuevosProductos'] = $productosNuevos;
 
         $tallasBase = $this->model->getTalla($data['producto']['id']);
         $data['sizes'] = [];
 
         foreach ($tallasBase as $talla) {
             $stockTotal = 0;
-
             $colores = $this->model->getColores($talla['id'], $data['producto']['id']);
 
             foreach ($colores as $color) {
@@ -149,7 +180,6 @@ class Principal extends Controller
             $data['sizes'][] = $talla;
         }
 
-        // Verificar si el producto tiene stock
         $data['tiene_stock'] = false;
         foreach ($data['sizes'] as $size) {
             if ($size['stock_disponible'] > 0) {
@@ -161,20 +191,21 @@ class Principal extends Controller
         $id_categoria = $data['producto']['id_categoria'];
         $data['relacionados'] = $this->model->getAleatorios($id_categoria, $data['producto']['id']);
 
-        ######### CALIFICACION ###########
         for ($i = 0; $i < count($data['relacionados']); $i++) {
+            if ($esMayorista && isset($data['relacionados'][$i]['precio_mayorista'])) {
+                $data['relacionados'][$i]['precio_venta'] = $data['relacionados'][$i]['precio_mayorista'];
+            }
+
             $calificacion = $this->model->getCalificacion('SUM', $data['relacionados'][$i]['id']);
             $cantidad = $this->model->getCalificacion('COUNT', $data['relacionados'][$i]['id']);
             $totalCantidad = ($cantidad['total'] == 0) ? 5 : $cantidad['total'];
-            $total = ($calificacion['total'] != null) ? $calificacion['total'] / $totalCantidad : $totalCantidad;
-            $data['relacionados'][$i]['calificacion'] = round($total);
+            $totalCal = ($calificacion['total'] != null) ? $calificacion['total'] / $totalCantidad : $totalCantidad;
+            $data['relacionados'][$i]['calificacion'] = round($totalCal);
 
-            // Agregar primera imagen
             $primeraImagen = $this->model->getPrimeraImagen($data['relacionados'][$i]['id']);
             $data['relacionados'][$i]['imagen'] = $primeraImagen;
         }
 
-        //scanear galeria
         $result = array();
         $directorio = 'assets/images/productos/' . $data['producto']['id'];
         if (file_exists($directorio)) {
@@ -187,11 +218,11 @@ class Principal extends Controller
                 }
             }
         }
+        
         $data['imagenes'] = $result;
         $data['title'] = $data['producto']['nombre'];
         $this->views->getView('principal', "detail", $data);
     }
-
 
     public function getColores($datos)
     {
@@ -205,7 +236,7 @@ class Principal extends Controller
         die();
     }
 
-    //vista categorias
+    //vista categorias (MEJORADA PARA MAYORISTAS)
     public function categorias($datos)
     {
         $data['perfil'] = 'si';
@@ -214,37 +245,33 @@ class Principal extends Controller
         if (is_numeric($datos)) {
             $slug = $datos;
         } else {
-            if (isset($array[0])) {
-                if (!empty($array[0])) {
-                    $slug = $array[0];
-                }
-            }
-            if (isset($array[1])) {
-                if (!empty($array[1])) {
-                    $page = $array[1];
-                }
-            }
+            if (isset($array[0]) && !empty($array[0])) { $slug = $array[0]; }
+            if (isset($array[1]) && !empty($array[1])) { $page = $array[1]; }
         }
         $pagina = (empty($page)) ? 1 : $page;
         $desde = ($pagina - 1) * PORPAGINA;
 
         $data['categoria'] = $this->model->getSlug('categorias', $slug);
-
         $data['pagina'] = $pagina;
         $total = $this->model->getTotalProductosCat($data['categoria']['id']);
         $data['total'] = ceil($total['total'] / PORPAGINA);
 
+        $data['tipo_cliente'] = $this->model->getTipoCliente();
+        $esMayorista = ($data['tipo_cliente'] == 'mayorista');
+
         $data['productos'] = $this->model->getProductosCat($data['categoria']['id'], $desde, PORPAGINA);
+        
         for ($i = 0; $i < count($data['productos']); $i++) {
+            if ($esMayorista && isset($data['productos'][$i]['precio_mayorista'])) {
+                $data['productos'][$i]['precio_venta'] = $data['productos'][$i]['precio_mayorista'];
+            }
+
             $calificacion = $this->model->getCalificacion('SUM', $data['productos'][$i]['id']);
             $cantidad = $this->model->getCalificacion('COUNT', $data['productos'][$i]['id']);
             $totalCantidad = ($cantidad['total'] == 0) ? 5 : $cantidad['total'];
+            $totalCal = ($calificacion['total'] != null) ? $calificacion['total'] / $totalCantidad : $totalCantidad;
+            $data['productos'][$i]['calificacion'] = round($totalCal);
 
-            $total = ($calificacion['total'] != null) ? $calificacion['total'] / $totalCantidad : $totalCantidad;
-
-            $data['productos'][$i]['calificacion'] = round($total);
-
-            // ⭐ AGREGA ESTAS 2 LÍNEAS ⭐
             $primeraImagen = $this->model->getPrimeraImagen($data['productos'][$i]['id']);
             $data['productos'][$i]['imagen'] = $primeraImagen;
         }
@@ -257,12 +284,14 @@ class Principal extends Controller
 
         $this->views->getView('principal', "categorias", $data);
     }
+    
     public function contactos()
     {
         $data['perfil'] = 'si';
         $data['title'] = 'Contactos';
         $this->views->getView('principal', "contact", $data);
     }
+    
     public function listaProductos()
     {
         $datos = file_get_contents('php://input');
@@ -270,7 +299,6 @@ class Principal extends Controller
         $array['productos'] = array();
         $total = 0.00;
 
-        // NUEVO: Obtener tipo de cliente
         $tipoCliente = $this->model->getTipoCliente();
 
         if (!empty($json)) {
@@ -282,11 +310,9 @@ class Principal extends Controller
                 $colorSecundario = null;
                 $atributoMP = '';
 
-                // NUEVO: Precio según tipo de cliente
                 $precio = ($tipoCliente == 'mayorista') ? $result['precio_mayorista'] : $result['precio_venta'];
                 $stock = 'Ilimitado';
 
-                // Obtener talla y color
                 if (!empty($producto['size']) && !empty($producto['color'])) {
                     $detalle = $this->model->getAtributos($producto['size'], $producto['color'], $producto['idProducto']);
 
@@ -296,7 +322,6 @@ class Principal extends Controller
                         $colorHexa = $detalle['color'] ?? '#000';
                         $colorSecundario = $detalle['color_secundario'] ?? null;
                         $atributoMP = $nombreTalla . ' - ' . $nombreColor;
-                        // NUEVO: Mantener el precio según tipo de cliente (no usar detalle precio)
                         $stock = $detalle['stock'] ?? 'Ilimitado';
                     } else {
                         $color = $this->model->getColorSize('colores', $producto['color']);
@@ -339,8 +364,8 @@ class Principal extends Controller
         $array['login'] = empty($_SESSION['idCliente']) ? 0 : 1;
         $array['total'] = number_format($total, 2);
         $array['totalPaypal'] = number_format($total, 2, '.', '');
-        $array['moneda'] = MONEDA ?? 'Bs';
-        $array['currency'] = CURRENCY ?? 'USD';
+        $array['moneda'] = MONEDA ?? 'COP';
+        $array['currency'] = CURRENCY ?? 'COP';
 
         echo json_encode($array, JSON_UNESCAPED_UNICODE);
         die();
@@ -363,7 +388,6 @@ class Principal extends Controller
         die();
     }
 
-    ####### cambiarStock #######
     public function cambiarStock()
     {
         $size = (!empty($_POST['size'])) ? strClean($_POST['size']) : null;
@@ -404,9 +428,15 @@ class Principal extends Controller
             $empresa = $this->model->getEmpresa();
             $data['whatsapp'] = !empty($empresa) ? $empresa['whatsapp'] : '573003665138';
 
-            $data['tipo_cliente'] = $this->model->getTipoCliente(); // ← SOLO ESTA LÍNEA
+            $data['tipo_cliente'] = $this->model->getTipoCliente(); 
+            $esMayorista = ($data['tipo_cliente'] == 'mayorista');
 
             if (!empty($data['producto'])) {
+                // ⭐ MAGIA B2B en el API interno
+                if ($esMayorista && isset($data['producto']['precio_mayorista'])) {
+                    $data['producto']['precio_venta'] = $data['producto']['precio_mayorista'];
+                }
+
                 $result = array();
                 $directorio = 'assets/images/productos/' . $idProducto;
                 if (file_exists($directorio)) {
@@ -434,15 +464,14 @@ class Principal extends Controller
             $calificacion = $this->model->getCalificacion('SUM', $idProducto);
             $cantidad = $this->model->getCalificacion('COUNT', $idProducto);
             $totalCantidad = ($cantidad['total'] == 0) ? 5 : $cantidad['total'];
-            $total = ($calificacion['total'] != null) ? $calificacion['total'] / $totalCantidad : $totalCantidad;
-            $data['calificacion'] = round($total);
+            $totalCal = ($calificacion['total'] != null) ? $calificacion['total'] / $totalCantidad : $totalCantidad;
+            $data['calificacion'] = round($totalCal);
             $data['totalCantidad'] = $cantidad['total'];
 
             echo json_encode($data, JSON_UNESCAPED_UNICODE);
         }
         die();
     }
-
 
     public function getStock($datos)
     {
@@ -453,7 +482,7 @@ class Principal extends Controller
         if (is_numeric($idSize) && is_numeric($idColor) && is_numeric($idProducto)) {
             $data = $this->model->getAtributos($idSize, $idColor, $idProducto);
 
-            $data['tipo_cliente'] = $this->model->getTipoCliente(); // Ya funciona con correoCliente
+            $data['tipo_cliente'] = $this->model->getTipoCliente();
 
             $producto = $this->model->getProducto($idProducto);
             if ($data['tipo_cliente'] == 'mayorista') {
@@ -524,14 +553,8 @@ class Principal extends Controller
                     }
 
                     $data = $this->model->actualizarCliente(
-                        $nombre,
-                        $apellidos,
-                        $telefono,
-                        $correo,
-                        $direccion,
-                        $tmp['tipo_cliente'],
-                        $destino,
-                        $id
+                        $nombre, $apellidos, $telefono, $correo, $direccion,
+                        $tmp['tipo_cliente'], $destino, $id
                     );
 
                     if ($data > 0) {

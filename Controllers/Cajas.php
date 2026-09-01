@@ -5,6 +5,7 @@ use Dompdf\Dompdf;
 class Cajas extends Controller
 {
     private $id_usuario;
+    private $id_almacen;
 
     public function __construct()
     {
@@ -15,6 +16,7 @@ class Cajas extends Controller
             exit;
         }
         $this->id_usuario = $_SESSION['id_usuario'];
+        $this->id_almacen = $_SESSION['id_almacen']; // ✅ Obtener almacén de la sesión
     }
 
     public function index()
@@ -28,30 +30,23 @@ class Cajas extends Controller
     {
         $data['title'] = 'Historial de Cajas';
         $data['script'] = 'listar_cajas.js';
-        $this->views->getView('cajas', 'listar_cajas', $data);
+        $this->views->getView('admin/cajas', 'listar_cajas', $data);
     }
 
-    // Listar movimientos de la caja abierta
     public function listar()
     {
         $data = $this->model->getCajas($this->id_usuario);
 
         for ($i = 0; $i < count($data); $i++) {
-            // Formatear tipo
             $tipo = $data[$i]['tipo'];
             $colorTipo = $tipo == 'INGRESO' ? 'success' : 'danger';
             $data[$i]['tipo'] = "<div class='badge rounded-pill text-$colorTipo bg-light-$colorTipo p-2 text-uppercase px-3'>$tipo</div>";
-
-            // Formatear montos
-            $data[$i]['ingreso'] = $data[$i]['ingreso'] > 0 ? 'COP. ' . number_format($data[$i]['ingreso'], 2) : '0.00';
-            $data[$i]['egreso'] = $data[$i]['egreso'] > 0 ? 'COP. ' . number_format($data[$i]['egreso'], 2) : '0.00';
         }
 
         echo json_encode($data);
         die();
     }
 
-    // Listar historial de cajas cerradas
     public function listarCajas()
     {
         $data = $this->model->listarCajas($this->id_usuario);
@@ -62,7 +57,6 @@ class Cajas extends Controller
             $texto = $estado == 1 ? 'ABIERTA' : 'CERRADA';
             $data[$i]['apertura'] = "<div class='badge rounded-pill text-$color bg-light-$color p-2 text-uppercase px-3'>$texto</div>";
 
-            // Formatear montos
             $data[$i]['monto_inicial'] = 'COP. ' . number_format($data[$i]['monto_inicial'], 2);
             $data[$i]['monto_final'] = $data[$i]['monto_final'] ? 'COP. ' . number_format($data[$i]['monto_final'], 2) : '-';
             $data[$i]['monto_fisico'] = $data[$i]['monto_fisico'] ? 'COP. ' . number_format($data[$i]['monto_fisico'], 2) : '-';
@@ -84,7 +78,8 @@ class Cajas extends Controller
             $verificar = $this->model->getCajaAbierta($this->id_usuario);
 
             if (empty($verificar)) {
-                $id_caja = $this->model->abrirCaja($monto, $this->id_usuario);
+                // ✅ Pasar id_almacen al modelo
+                $id_caja = $this->model->abrirCaja($monto, $this->id_usuario, $this->id_almacen);
 
                 if ($id_caja > 0) {
                     $this->model->insertarMovimientoAperturaCaja($id_caja, $monto, $this->id_usuario);
@@ -101,7 +96,6 @@ class Cajas extends Controller
         die();
     }
 
-    // Guardar movimiento manual
     public function guardarMovimiento()
     {
         $json = file_get_contents('php://input');
@@ -124,7 +118,6 @@ class Cajas extends Controller
                 if (!is_numeric($amount) || $amount <= 0) {
                     $res = array('msg' => 'EL MONTO DEBE SER UN NÚMERO VÁLIDO MAYOR A 0', 'type' => 'warning');
                 } else {
-                    // Validar egreso
                     if ($type === 'EGRESO') {
                         $saldoActual = $this->model->getSaldoActual($this->id_usuario, $id_caja);
                         if ($amount > $saldoActual['saldo']) {
@@ -149,7 +142,6 @@ class Cajas extends Controller
         die();
     }
 
-    // Obtener saldo actual
     public function getSaldo()
     {
         $cajaAbierta = $this->model->getCajaAbierta($this->id_usuario);
@@ -166,7 +158,6 @@ class Cajas extends Controller
         die();
     }
 
-    // ✅ SIMPLIFICADO: Obtener datos para cierre
     public function getDatosCierre()
     {
         $cajaAbierta = $this->model->getCajaAbierta($this->id_usuario);
@@ -179,7 +170,6 @@ class Cajas extends Controller
 
         $id_caja = $cajaAbierta['id'];
 
-        // TOTAL VENTAS Y COMPRAS (sin separar por método)
         $totalVentas = $this->model->getTotalVentas($this->id_usuario, $id_caja);
         $totalCompras = $this->model->getTotalCompras($this->id_usuario, $id_caja);
 
@@ -199,7 +189,6 @@ class Cajas extends Controller
         die();
     }
 
-    // Cerrar caja
     public function cerrarCaja()
     {
         $json = file_get_contents('php://input');

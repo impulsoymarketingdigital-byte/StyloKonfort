@@ -6,7 +6,6 @@ class CajasModel extends Query
         parent::__construct();
     }
 
-    // ✅ CORREGIDO: Listar movimientos SIN ANULADOS
     public function getCajas($id_usuario)
     {
         $sql = "SELECT 
@@ -31,17 +30,14 @@ class CajasModel extends Query
         WHERE m.id_usuario = $id_usuario 
         AND c.estado = 1
         AND (
-            -- ✅ Movimientos manuales (siempre se muestran)
             (m.transaction_type IN ('cajas', 'income', 'expense'))
             OR
-            -- ✅ Solo ventas COMPLETADAS (sin ANULADO ni PENDIENTE)
             (m.transaction_type = 'sales' AND EXISTS (
                 SELECT 1 FROM pedidos p 
                 WHERE p.id = m.transaction_id 
                 AND p.estado = 'COMPLETADO'
             ))
             OR
-            -- ✅ Solo compras COMPLETADAS (sin ANULADO)
             (m.transaction_type = 'compras' AND EXISTS (
                 SELECT 1 FROM compras co 
                 WHERE co.id = m.transaction_id 
@@ -53,7 +49,6 @@ class CajasModel extends Query
         return $this->selectAll($sql);
     }
 
-    // Listar historial de cajas cerradas
     public function listarCajas($id_usuario)
     {
         $sql = "SELECT 
@@ -73,24 +68,21 @@ class CajasModel extends Query
         return $this->selectAll($sql);
     }
 
-    // Obtener caja abierta del usuario
     public function getCajaAbierta($id_usuario)
     {
         $sql = "SELECT * FROM cajas WHERE id_usuario = $id_usuario AND estado = 1";
         return $this->select($sql);
     }
 
-    // Abrir caja
-    public function abrirCaja($monto_inicial, $id_usuario)
+    public function abrirCaja($monto_inicial, $id_usuario, $id_almacen)
     {
         $fecha = date('Y-m-d H:i:s');
-        $sql = "INSERT INTO cajas (fecha_apertura, monto_inicial, estado, id_usuario, created_at, updated_at) 
-                VALUES (?, ?, 1, ?, ?, ?)";
-        $array = array($fecha, $monto_inicial, $id_usuario, $fecha, $fecha);
+        $sql = "INSERT INTO cajas (fecha_apertura, monto_inicial, estado, id_usuario, id_almacen, created_at, updated_at) 
+                VALUES (?, ?, 1, ?, ?, ?, ?)";
+        $array = array($fecha, $monto_inicial, $id_usuario, $id_almacen, $fecha, $fecha);
         return $this->insertar($sql, $array);
     }
 
-    // Registrar movimiento de apertura
     public function insertarMovimientoAperturaCaja($id_caja, $monto, $id_usuario)
     {
         $tipo = 'INGRESO';
@@ -106,7 +98,6 @@ class CajasModel extends Query
         return $this->insertar($sql, $array);
     }
 
-    // Guardar movimiento manual
     public function guardarMovimiento($tipo, $descripcion, $monto, $id_usuario, $id_caja)
     {
         $tipo_movimiento = 'MOVIMIENTO DE CAJA';
@@ -120,15 +111,12 @@ class CajasModel extends Query
         return $this->insertar($sql, $array);
     }
 
-    // ✅ CORREGIDO: Obtener saldo actual SIN ANULADOS
     public function getSaldoActual($id_usuario, $id_caja)
     {
-        // Obtener monto inicial
         $sqlInicial = "SELECT monto_inicial FROM cajas WHERE id = $id_caja AND id_usuario = $id_usuario";
         $inicial = $this->select($sqlInicial);
         $montoInicial = $inicial['monto_inicial'] ?? 0;
 
-        // ✅ Total ingresos (SOLO movimientos válidos)
         $sqlIngresos = "SELECT COALESCE(SUM(m.monto), 0) AS total 
                         FROM movimientos m
                         WHERE m.id_caja = $id_caja 
@@ -145,7 +133,6 @@ class CajasModel extends Query
                         )";
         $ingresos = $this->select($sqlIngresos);
 
-        // ✅ Total egresos (SOLO movimientos válidos)
         $sqlEgresos = "SELECT COALESCE(SUM(m.monto), 0) AS total 
                        FROM movimientos m
                        WHERE m.id_caja = $id_caja 
@@ -167,7 +154,6 @@ class CajasModel extends Query
         return array('saldo' => $saldoActual);
     }
 
-    // ✅ CORREGIDO: Total de ventas SIN ANULADOS
     public function getTotalVentas($id_usuario, $id_caja)
     {
         $sql = "SELECT COALESCE(SUM(monto), 0) AS total 
@@ -177,7 +163,6 @@ class CajasModel extends Query
         return $this->select($sql);
     }
 
-    // ✅ CORREGIDO: Total de compras SIN ANULADOS
     public function getTotalCompras($id_usuario, $id_caja)
     {
         $sql = "SELECT COALESCE(SUM(total), 0) AS total 
@@ -187,7 +172,6 @@ class CajasModel extends Query
         return $this->select($sql);
     }
 
-    // Cerrar caja
     public function cerrarCaja($monto_final, $monto_fisico, $fecha_cierre, $id_usuario)
     {
         $sql = "UPDATE cajas 
@@ -197,7 +181,6 @@ class CajasModel extends Query
         return $this->save($sql, $array);
     }
 
-    // Registrar movimiento (para ventas y compras)
     public function registrarMovimiento($tipo, $tipo_movimiento, $descripcion, $monto, $id_caja, $id_usuario, $transaction_id, $transaction_type)
     {
         $sql = "INSERT INTO movimientos 

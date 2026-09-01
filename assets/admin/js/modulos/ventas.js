@@ -64,11 +64,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (res.type == "success") {
               localStorage.removeItem(nombreKey);
-              setTimeout(() => {
-                const ruta = base_url + "ventas/reporte/ticked/" + res.idVenta;
-                window.open(ruta, "_blank");
-                window.location.reload();
-              }, 2000);
+              
+              // ✅ SOLO generar ticket si es LLEVAR (ya completado)
+              // Si es VENTA DIRECTA (pendiente), NO se genera ticket aquí
+              if (res.metodo === 'LLEVAR') {
+                setTimeout(() => {
+                  const ruta = base_url + "ventas/reporte/ticked/" + res.idVenta;
+                  window.open(ruta, "_blank");
+                  window.location.reload();
+                }, 2000);
+              } else {
+                // Para VENTA DIRECTA solo recarga la página
+                setTimeout(() => {
+                  window.location.reload();
+                }, 2000);
+              }
             }
           } catch (e) {
             console.error("Error al parsear JSON:", e);

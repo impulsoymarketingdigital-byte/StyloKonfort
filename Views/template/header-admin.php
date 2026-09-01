@@ -98,6 +98,24 @@
                 </li>
                 <?php } ?>
 
+                <?php if (verificar('cajas') || verificar('listar_cajas')) { ?>
+                <li>
+                    <a href="javascript:;" class="has-arrow">
+                        <div class="parent-icon"><i class="fas fa-wallet"></i></div>
+                        <div class="menu-title">Cajas</div>
+                    </a>
+                    <ul>
+                        <?php if (verificar('cajas')) { ?>
+                        <li><a href="<?php echo BASE_URL . 'cajas'; ?>"><i class="bx bx-radio-circle"></i>Movimientos de Caja</a></li>
+                        <?php } ?>
+                        
+                        <?php if (verificar('listar_cajas')) { ?>
+                        <li><a href="<?php echo BASE_URL . 'cajas/listar_cajas'; ?>"><i class="bx bx-radio-circle"></i>Historial de Cajas</a></li>
+                        <?php } ?>
+                    </ul>
+                </li>
+                <?php } ?>
+
                 <?php if (verificar('productos') || verificar('marcas') || verificar('categorias') || verificar('sizes') || verificar('colores')) { ?>
                 <li>
                     <a href="javascript:;" class="has-arrow">
@@ -193,6 +211,9 @@
                         
                         <?php if (verificar('listar_ventas')) { ?>
                         <li><a href="<?php echo BASE_URL . 'ventas/listar_ventas'; ?>"><i class="bx bx-radio-circle"></i>Listar Ventas</a></li>
+                        <?php } ?>
+                        <?php if (verificar('procesar_pagos')) { ?>
+                        <li><a href="<?php echo BASE_URL . 'ventas/procesar_pagos'; ?>"><i class="bx bx-radio-circle"></i>Procesar Pagos</a></li>
                         <?php } ?>
                     </ul>
                 </li>

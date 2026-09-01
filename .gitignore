@@ -1,0 +1,9 @@
+vendor/
+.env
+*.zip
+*.sql
+.vscode/
+.idea/
+Config/Config - copia.php
+Config/- copia.env
+BD_ECOMERCE/

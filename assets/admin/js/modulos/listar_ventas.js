@@ -125,7 +125,7 @@ function anularVenta(idVenta) {
     confirmButtonText: "Si, Anular!",
   }).then((result) => {
     if (result.isConfirmed) {
-      const url = base_url + "ventas/anular/" + idVenta;
+      const url = base_url + "ventas/anularPendiente/" + idVenta;
       //hacer una instancia del objeto XMLHttpRequest
       const http = new XMLHttpRequest();
       //Abrir una Conexion - POST - GET

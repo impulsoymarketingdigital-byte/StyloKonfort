@@ -36,11 +36,11 @@
 
 <!-- Modal Procesar Pago -->
 <div id="modalProcesarPago" class="modal fade" tabindex="-1">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
+            <div class="modal-header">
                 <h5 class="modal-title"><i class="fas fa-money-bill-wave"></i> Procesar Pago - Pedido #<span id="numPedidoPago"></span></h5>
-                <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <div class="row mb-4">
@@ -65,11 +65,9 @@
                         </div>
                     </div>
                 </div>
-
-                <h6><i class="fas fa-shopping-cart"></i> Productos</h6>
                 <div class="table-responsive mb-3">
-                    <table class="table table-sm table-bordered">
-                        <thead class="table-light">
+                    <table class="table">
+                        <thead >
                             <tr>
                                 <th>Producto</th>
                                 <th>Talla</th>
@@ -88,7 +86,7 @@
                     <div class="col-md-4">
                         <div class="card bg-light">
                             <div class="card-body">
-                                <h4 class="text-end mb-3">
+                                <h4 class="text-end">
                                     <strong>TOTAL A PAGAR:</strong><br>
                                     <span class="text-primary" id="pagoTotal">COP 0.00</span>
                                 </h4>

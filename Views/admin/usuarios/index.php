@@ -15,7 +15,7 @@
                         <th>Nombres</th>
                         <th>Apellidos</th>
                         <th>Correo</th>
-                        <th>Sucursal</th>
+                        <th>Almacén</th>
                         <th>Rol</th>
                         <th>Estado</th>
                         <th>Acciones</th>
@@ -52,13 +52,13 @@
                         <input id="correo" class="form-control" type="email" name="correo" placeholder="Correo Electrónico">
                     </div>
                     <div class="form-group mb-2">
-                        <label for="">Sucursal <span class="text-danger">*</span></label>
+                        <label for="">Almacén <span class="text-danger">*</span></label>
                         <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-building"></i></span>
-                            <select id="id_sucursal" class="form-control" name="id_sucursal">
+                            <span class="input-group-text"><i class="fas fa-warehouse"></i></span>
+                            <select id="id_almacen" class="form-control" name="id_almacen">
                                 <option value="">Seleccionar</option>
-                                <?php foreach ($data['sucursales'] as $sucursal) { ?>
-                                    <option value="<?php echo $sucursal['id']; ?>"><?php echo $sucursal['nombre']; ?></option>
+                                <?php foreach ($data['almacenes'] as $almacen) { ?>
+                                    <option value="<?php echo $almacen['id']; ?>"><?php echo $almacen['nombre']; ?></option>
                                 <?php } ?>
                             </select>
                         </div>

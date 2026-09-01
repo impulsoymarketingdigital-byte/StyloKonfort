@@ -1,20 +1,16 @@
 let tbl;
-//MODALES
 const closeModal = new bootstrap.Modal("#closeModal");
 const theModal = new bootstrap.Modal("#theModal");
 const movementModal = new bootstrap.Modal("#movementCashBox");
 
-//BOTONES
 const btnNuevo = document.querySelector("#btnNuevo");
 const btnCierre = document.querySelector("#btnCierre");
 const btnMovimiento = document.querySelector("#btnMovimiento");
 
-//FORMULARIOS
 const frmRegistro = document.querySelector("#frmRegistro");
 const frmMovimiento = document.querySelector("#frmMovimiento");
 const frmCierre = document.querySelector("#frmCierre");
 
-//CAMPOS
 const monto_inicial = document.querySelector("#monto_inicial");
 const errorMontoInicial = document.querySelector("#errorMontoInicial");
 
@@ -49,52 +45,45 @@ document.addEventListener("DOMContentLoaded", function () {
     footerCallback: function (row, data, start, end, display) {
       let api = this.api();
 
-      // Total de ingresos (columna 6)
       let totalIngreso = api
         .column(6, { page: 'current' })
         .data()
         .reduce(function (a, b) {
-          let valor = typeof b === 'string' ? parseFloat(b.replace(/[^\d.-]/g, '')) : parseFloat(b);
-          return a + (isNaN(valor) ? 0 : valor);
+          let valor = typeof b === 'string' ? b.replace(/[^\d.]/g, '') : b;
+          return a + (parseFloat(valor) || 0);
         }, 0);
 
-      // Total de egresos (columna 7)
       let totalEgreso = api
         .column(7, { page: 'current' })
         .data()
         .reduce(function (a, b) {
-          let valor = typeof b === 'string' ? parseFloat(b.replace(/[^\d.-]/g, '')) : parseFloat(b);
-          return a + (isNaN(valor) ? 0 : valor);
+          let valor = typeof b === 'string' ? b.replace(/[^\d.]/g, '') : b;
+          return a + (parseFloat(valor) || 0);
         }, 0);
 
-      // Mostrar totales en el footer
-      $(api.column(6).footer()).html("COP. " + totalIngreso.toFixed(2));
-      $(api.column(7).footer()).html("COP. " + totalEgreso.toFixed(2));
+      $(api.column(6).footer()).html("COP. " + totalIngreso.toLocaleString('es-CO', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+      $(api.column(7).footer()).html("COP. " + totalEgreso.toLocaleString('es-CO', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
     },
   });
 
-  // Abrir modal de apertura
   btnNuevo.addEventListener("click", function () {
     frmRegistro.reset();
     errorMontoInicial.textContent = "";
     theModal.show();
   });
 
-  // Abrir modal de movimiento
   btnMovimiento.addEventListener("click", function () {
     frmMovimiento.reset();
     cargarSaldoActual();
     movementModal.show();
   });
 
-  // Abrir modal de cierre
   btnCierre.addEventListener("click", function () {
     frmCierre.reset();
     cargarDatosCierre();
     closeModal.show();
   });
 
-  // Submit apertura de caja
   frmRegistro.addEventListener("submit", function (e) {
     e.preventDefault();
     
@@ -127,20 +116,17 @@ document.addEventListener("DOMContentLoaded", function () {
     };
   });
 
-  // Submit movimiento de caja
   frmMovimiento.addEventListener("submit", function (e) {
     e.preventDefault();
     guardarMovimiento();
   });
 
-  // ✅ VALIDACIÓN AGREGADA: Submit cierre de caja
   frmCierre.addEventListener("submit", function (e) {
     e.preventDefault();
 
     const physical_amount = parseFloat(document.getElementById("fisicoInput").value) || 0;
     const final_amount = parseFloat(document.getElementById("saldoInput").value) || 0;
 
-    // Validar que el físico no esté vacío
     if (physical_amount == 0) {
       alertas("EL MONTO FÍSICO ES REQUERIDO", "warning");
       document.getElementById("fisicoInput").focus();
@@ -178,7 +164,6 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-// Función para cargar saldo actual
 function cargarSaldoActual() {
   const url = base_url + "cajas/getSaldo";
   const http = new XMLHttpRequest();
@@ -199,13 +184,11 @@ function cargarSaldoActual() {
   };
 }
 
-// Función para guardar movimiento
 function guardarMovimiento() {
   const type = document.querySelector('select[name="type"]').value;
   const description = document.querySelector('textarea[name="description"]').value;
   const amount = document.querySelector('input[name="amount"]').value;
 
-  // Validar campos
   if (!type) {
     alertas("El tipo es obligatorio", "warning");
     return;
@@ -221,7 +204,6 @@ function guardarMovimiento() {
     return;
   }
 
-  // Preparar datos
   const datos = {
     type: type,
     description: description.trim(),
@@ -249,7 +231,6 @@ function guardarMovimiento() {
   };
 }
 
-// Función para cargar datos de cierre
 function cargarDatosCierre() {
   const url = base_url + "cajas/getDatosCierre";
   const http = new XMLHttpRequest();
@@ -267,21 +248,18 @@ function cargarDatosCierre() {
         return;
       }
 
-      // Actualizar valores
       document.getElementById("montoInicial").textContent = res.montoInicial;
       document.getElementById("totalVentas").textContent = res.totalVentas;
       document.getElementById("totalCompras").textContent = res.totalCompras;
       document.getElementById("saldoFinal").textContent = res.saldoFinal;
       document.getElementById("saldoInput").value = res.saldoFinal;
 
-      // Limpiar campos
       document.getElementById("fisicoInput").value = "";
       document.getElementById("diferenciaInput").value = "0.00";
     }
   };
 }
 
-// ✅ MEJORADA: Función para calcular diferencia con indicador visual
 function calcularDiferencia() {
   const saldo = parseFloat(document.getElementById("saldoInput").value) || 0;
   const fisico = parseFloat(document.getElementById("fisicoInput").value) || 0;
@@ -290,17 +268,13 @@ function calcularDiferencia() {
   const diferenciaInput = document.getElementById("diferenciaInput");
   diferenciaInput.value = diferencia.toFixed(2);
   
-  // Cambiar color según la diferencia
   if (diferencia < 0) {
-    // FALTA DINERO (diferencia negativa) - ROJO
     diferenciaInput.style.color = "red";
     diferenciaInput.style.fontWeight = "bold";
   } else if (diferencia > 0) {
-    // SOBRA DINERO (diferencia positiva) - AZUL
     diferenciaInput.style.color = "blue";
     diferenciaInput.style.fontWeight = "bold";
   } else {
-    // EXACTO (diferencia = 0) - VERDE
     diferenciaInput.style.color = "green";
     diferenciaInput.style.fontWeight = "bold";
   }

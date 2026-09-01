@@ -63,9 +63,13 @@ class VentasModel extends Query
         return $this->insertar($sql, $datos);
     }
 
-    public function getCajaAbierta($id_usuario)
+    public function getCajaAbierta($id_usuario, $id_almacen = null)
     {
-        $sql = "SELECT * FROM cajas WHERE id_usuario = $id_usuario AND estado = 1 ORDER BY id DESC LIMIT 1";
+        if ($id_almacen !== null) {
+            $sql = "SELECT * FROM cajas WHERE id_usuario = $id_usuario AND id_almacen = $id_almacen AND estado = 1 ORDER BY id DESC LIMIT 1";
+        } else {
+            $sql = "SELECT * FROM cajas WHERE id_usuario = $id_usuario AND estado = 1 ORDER BY id DESC LIMIT 1";
+        }
         return $this->select($sql);
     }
 
@@ -98,7 +102,12 @@ class VentasModel extends Query
     }
     public function getVentas()
     {
-        $sql = "SELECT v.*, CONCAT(c.nombre,' ',c.apellido) AS nombre FROM pedidos  v INNER JOIN clientes c ON v.id_cliente = c.id WHERE v.metodo = 'VENTA DIRECTA'";
+        $sql = "SELECT v.*, CONCAT(c.nombre,' ',c.apellido) AS nombre 
+                FROM pedidos v 
+                INNER JOIN clientes c ON v.id_cliente = c.id 
+                WHERE v.metodo IN ('VENTA DIRECTA', 'LLEVAR')
+                AND v.estado IN ('COMPLETADO', 'ANULADO')
+                ORDER BY v.fecha DESC";
         return $this->selectAll($sql);
     }
     public function getVenta($idVenta)
@@ -139,6 +148,60 @@ class VentasModel extends Query
     {
         $sql = "SELECT v.*, CONCAT(c.nombre, ' ', c.apellido) AS nombre FROM ventas v INNER JOIN clientes c ON v.id_cliente = c.id WHERE v.fecha BETWEEN '$desde' AND '$hasta' AND v.id_usuario = $id_usuario";
         return $this->selectAll($sql);
+    }
+
+    public function getPedidosPendientes()
+    {
+        $sql = "SELECT p.*, 
+                CONCAT(c.nombre, ' ', c.apellido) AS cliente_nombre,
+                c.nombre,
+                c.apellido,
+                CONCAT(u.nombres, ' ', u.apellidos) AS vendedor
+                FROM pedidos p 
+                INNER JOIN clientes c ON p.id_cliente = c.id 
+                LEFT JOIN usuarios u ON p.id_usuario = u.id
+                WHERE p.metodo = 'VENTA DIRECTA'
+                AND p.estado = 'PENDIENTE'
+                ORDER BY p.fecha DESC";
+        return $this->selectAll($sql);
+    }
+
+    public function actualizarEstadoPedido($idPedido, $estado)
+    {
+        $sql = "UPDATE pedidos SET estado = ? WHERE id = ?";
+        $array = array($estado, $idPedido);
+        return $this->save($sql, $array);
+    }
+
+    public function actualizarCajaPedido($idPedido, $cash_box_id)
+    {
+        $sql = "UPDATE pedidos SET cash_box_id = ? WHERE id = ?";
+        $array = array($cash_box_id, $idPedido);
+        return $this->save($sql, $array);
+    }
+
+    public function generarNumeroVenta($metodo)
+    {
+        $anio = date('y');
+
+        $prefijo = ($metodo == 'VENTA DIRECTA') ? 'VT' : 'EC';
+
+        $sql = "SELECT id_transaccion FROM pedidos 
+            WHERE id_transaccion LIKE '" . $prefijo . "-" . $anio . "-%' 
+            ORDER BY id DESC 
+            LIMIT 1";
+
+        $result = $this->select($sql);
+
+        if ($result && isset($result['id_transaccion'])) {
+            $partes = explode('-', $result['id_transaccion']);
+            $ultimo = (int) end($partes);
+            $nuevo = $ultimo + 1;
+        } else {
+            $nuevo = 1;
+        }
+
+        return $prefijo . '-' . $anio . '-' . $nuevo;
     }
 }
 

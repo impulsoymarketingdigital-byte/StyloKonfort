@@ -1,96 +1,107 @@
-let tblPendientes, tblFinalizados, tblProceso;
+let tblPendientes, tblFinalizados, tblProceso, tblAnulados;
 const myModal = new bootstrap.Modal(document.getElementById("modalPedidos"));
 
 document.addEventListener("DOMContentLoaded", function() {
+    // Tabla 1: Pendientes
     tblPendientes = $("#tblPendientes").DataTable({
         ajax: {
             url: base_url + "pedidos/listarPedidos",
             dataSrc: "",
         },
         columns: [
-            { data: "id" },
-            { data: "fecha" },
-            { data: "id_transaccion" },
-            { data: "monto" },
-            { data: "estado" },
-            { data: "email" },
-            { data: "nombre" },
-            { data: "apellido" },
-            { data: "direccion" },
+            { data: "id" }, { data: "fecha" }, { data: "id_transaccion" },
+            { data: "monto" }, { data: "estado" }, { data: "email" },
+            { data: "nombre" }, { data: "apellido" }, { data: "direccion" },
             { data: "accion" },
         ],
-        responsive: false,
-        language,
-        dom,
-        buttons,
+        responsive: true,
+        language: language,
+        dom: dom,
+        buttons: buttons,
     });
     
+    // Tabla 2: En Proceso
     tblProceso = $("#tblProceso").DataTable({
         ajax: {
             url: base_url + "pedidos/listarProceso",
             dataSrc: "",
         },
         columns: [
-            { data: "id" },
-            { data: "fecha" },
-            { data: "id_transaccion" },
-            { data: "monto" },
-            { data: "estado" },
-            { data: "email" },
-            { data: "nombre" },
-            { data: "apellido" },
-            { data: "direccion" },
+            { data: "id" }, { data: "fecha" }, { data: "id_transaccion" },
+            { data: "monto" }, { data: "estado" }, { data: "email" },
+            { data: "nombre" }, { data: "apellido" }, { data: "direccion" },
             { data: "accion" },
         ],
-        responsive: false,
-        language,
-        dom,
-        buttons,
+        responsive: true,
+        language: language,
+        dom: dom,
+        buttons: buttons,
     });
     
+    // Tabla 3: Finalizados
     tblFinalizados = $("#tblFinalizados").DataTable({
         ajax: {
             url: base_url + "pedidos/listarFinalizados",
             dataSrc: "",
         },
         columns: [
-            { data: "id" },
-            { data: "fecha" },
-            { data: "id_transaccion" },
-            { data: "monto" },
-            { data: "estado" },
-            { data: "email" },
-            { data: "nombre" },
-            { data: "apellido" },
-            { data: "direccion" },
+            { data: "id" }, { data: "fecha" }, { data: "id_transaccion" },
+            { data: "monto" }, { data: "estado" }, { data: "email" },
+            { data: "nombre" }, { data: "apellido" }, { data: "direccion" },
             { data: "accion" },
         ],
-        responsive: false,
-        language,
-        dom,
-        buttons,
+        responsive: true,
+        language: language,
+        dom: dom,
+        buttons: buttons,
+    });
+
+    // NUEVA Tabla 4: Anulados
+    tblAnulados = $("#tblAnulados").DataTable({
+        ajax: {
+            // Reutilizamos la función del backend pero le pasamos el estado 4 si es necesario, 
+            // aunque el backend que te di mezcla 3 y 4. Vamos a crear una ruta rápida si no carga,
+            // pero con el código actual cargará los finalizados. Lo ideal es que pida listarAnulados()
+            url: base_url + "pedidos/listarFinalizados", 
+            dataSrc: function (json) {
+                // Filtramos por JS solo los anulados (Proceso 4) para no crear más rutas en PHP
+                return json.filter(item => item.estado.includes('Cancelado'));
+            }
+        },
+        columns: [
+            { data: "id" }, { data: "fecha" }, { data: "id_transaccion" },
+            { data: "monto" }, { data: "estado" }, { data: "email" },
+            { data: "nombre" }, { data: "apellido" }, { data: "direccion" },
+            { data: "accion" },
+        ],
+        responsive: true,
+        language: language,
+        dom: dom,
+        buttons: buttons,
     });
     
     $.datetimepicker.setLocale('es');
     
     // Filtro rango de fechas
-    desde.addEventListener('blur', function () {
+    document.getElementById('desde').addEventListener('blur', function () {
         tblPendientes.draw();
         tblProceso.draw();
         tblFinalizados.draw();
-    })
+        tblAnulados.draw();
+    });
     
-    hasta.addEventListener('blur', function () {
+    document.getElementById('hasta').addEventListener('blur', function () {
         tblPendientes.draw();
         tblProceso.draw();
         tblFinalizados.draw();
-    })
+        tblAnulados.draw();
+    });
     
     // Agregar filtro personalizado solo UNA VEZ
     $.fn.dataTable.ext.search.push(
         function (settings, data, dataIndex) {
-            var FilterStart = desde.value;
-            var FilterEnd = hasta.value;
+            var FilterStart = document.getElementById('desde').value;
+            var FilterEnd = document.getElementById('hasta').value;
             var DataTableDate = data[1].trim();
             
             if (FilterStart == '' || FilterEnd == '') {
@@ -111,10 +122,13 @@ function cambiarProceso(idPedido, proceso) {
     
     switch(proceso) {
         case 2:
-            mensaje = '¿Pasar este pedido a "En Proceso"?';
+            mensaje = '¿Pasar a "En Proceso"? (Se descontará el stock virtualmente)';
             break;
         case 3:
-            mensaje = '¿Marcar como "Entregado"? (Se descontará el stock)';
+            mensaje = '¿Marcar pedido como "Entregado y Finalizado"?';
+            break;
+        case 4:
+            mensaje = '¿Anular pedido? (Los productos volverán al stock de la página web)';
             break;
         default:
             mensaje = '¿Está seguro de cambiar el estado?';
@@ -127,37 +141,40 @@ function cambiarProceso(idPedido, proceso) {
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
-        confirmButtonText: "Sí, cambiar",
+        confirmButtonText: "Sí, proceder",
         cancelButtonText: "Cancelar"
     }).then((result) => {
         if (result.isConfirmed) {
-            const url = base_url + "pedidos/update/" + idPedido + "/" + proceso;
-            const http = new XMLHttpRequest();
-            http.open("GET", url, true);
-            http.send();
-            http.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    const res = JSON.parse(this.responseText);
+            // Usando fetch moderno en lugar de XMLHttpRequest
+            const url = base_url + "pedidos/update/" + idPedido + "," + proceso;
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(res => {
                     if (res.icono == "success") {
+                        // Recargar todas las tablas para mantener los datos frescos
                         tblPendientes.ajax.reload();
                         tblProceso.ajax.reload();
                         tblFinalizados.ajax.reload();
+                        tblAnulados.ajax.reload();
                     }
+                    // Asumiendo que tu función alertas() viene de otro archivo global
                     alertas(res.msg.toUpperCase(), res.icono);
-                }
-            };
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alertas("ERROR DE CONEXIÓN CON EL SERVIDOR", "error");
+                });
         }
     });
 }
 
 function verPedido(idPedido) {
     const url = base_url + "pedidos/verPedido/" + idPedido;
-    const http = new XMLHttpRequest();
-    http.open('GET', url, true);
-    http.send();
-    http.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            const res = JSON.parse(this.responseText);
+    
+    fetch(url)
+        .then(response => response.json())
+        .then(res => {
             let html = '';
             res.productos.forEach(row => {
                 let subTotal = parseFloat(row.precio) * parseInt(row.cantidad);
@@ -171,12 +188,12 @@ function verPedido(idPedido) {
             });
             document.querySelector('#tablePedidos tbody').innerHTML = html;
             myModal.show();
-        }
-    }
+        })
+        .catch(error => console.error('Error:', error));
 }
 
 function verReportePedido(idPedido) {
-    const ruta = base_url + "pedidos/reporte/ticked/" + idPedido;
+    const ruta = base_url + "pedidos/reporte/ticked," + idPedido;
     window.open(ruta, "_blank");
 }
 

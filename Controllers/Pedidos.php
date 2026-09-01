@@ -17,13 +17,13 @@ class Pedidos extends Controller
 
     public function index()
     {
-        $data['title'] = 'pedidos';
+        $data['title'] = 'Gestión de Pedidos';
         $this->views->getView('admin/pedidos', "index", $data);
     }
 
+    // PASO 1: RECEPCIÓN (Nuevos Pedidos)
     public function listarPedidos()
     {
-        // Proceso 1: Recepción del pedido
         $data = $this->model->getPedidos(1);
         for ($i = 0; $i < count($data); $i++) {
             $data[$i]['estado'] = $this->obtenerBadgeEstado($data[$i]['proceso']);
@@ -35,11 +35,11 @@ class Pedidos extends Controller
                 <button class="btn btn-danger btn-sm" type="button" onclick="verReportePedido(' . $data[$i]['id'] . ')" title="Imprimir ticket">
                     <i class="fas fa-file-pdf"></i>
                 </button>
-                <button class="btn btn-warning btn-sm" type="button" onclick="verEtiquetaEnvio(' . $data[$i]['id'] . ')" title="Imprimir etiqueta">
-                    <i class="fas fa-tag"></i>
+                <button class="btn btn-info btn-sm" type="button" onclick="cambiarProceso(' . $data[$i]['id'] . ', 2)" title="Empacar (Pasar a En Proceso)">
+                    <i class="fas fa-box-open"></i>
                 </button>
-                <button class="btn btn-info btn-sm" type="button" onclick="cambiarProceso(' . $data[$i]['id'] . ', 2)" title="Pasar a En Proceso">
-                    <i class="fas fa-arrow-right"></i>
+                <button class="btn btn-dark btn-sm" type="button" onclick="cambiarProceso(' . $data[$i]['id'] . ', 4)" title="Anular/Cancelar Pedido">
+                    <i class="fas fa-times-circle"></i>
                 </button>
             </div>';
         }
@@ -47,26 +47,25 @@ class Pedidos extends Controller
         die();
     }
 
+    // PASO 2: EN PROCESO (Empacados y listos para enviar)
     public function listarProceso()
     {
-        // Proceso 2: En Proceso
         $data = $this->model->getPedidosEnProceso();
         for ($i = 0; $i < count($data); $i++) {
             $data[$i]['estado'] = $this->obtenerBadgeEstado($data[$i]['proceso']);
-
-          $data[$i]['accion'] = '
+            $data[$i]['accion'] = '
             <div class="d-flex gap-1">
                 <button class="btn btn-success btn-sm" type="button" onclick="verPedido(' . $data[$i]['id'] . ')" title="Ver detalle">
                     <i class="fas fa-eye"></i>
                 </button>
-                <button class="btn btn-danger btn-sm" type="button" onclick="verReportePedido(' . $data[$i]['id'] . ')" title="Imprimir ticket">
-                    <i class="fas fa-file-pdf"></i>
-                </button>
                 <button class="btn btn-warning btn-sm" type="button" onclick="verEtiquetaEnvio(' . $data[$i]['id'] . ')" title="Imprimir etiqueta">
                     <i class="fas fa-tag"></i>
                 </button>
-                <button class="btn btn-warning btn-sm" type="button" onclick="cambiarProceso(' . $data[$i]['id'] . ', 3)" title="Marcar como Entregado">
+                <button class="btn btn-primary btn-sm" type="button" onclick="cambiarProceso(' . $data[$i]['id'] . ', 3)" title="Marcar como Entregado">
                     <i class="fas fa-check-circle"></i>
+                </button>
+                <button class="btn btn-dark btn-sm" type="button" onclick="cambiarProceso(' . $data[$i]['id'] . ', 4)" title="Anular y Retornar Stock">
+                    <i class="fas fa-undo"></i>
                 </button>
             </div>';
         }
@@ -74,10 +73,14 @@ class Pedidos extends Controller
         die();
     }
 
+    // PASO 3: ENTREGADOS / FINALIZADOS
     public function listarFinalizados()
     {
-        // Proceso 3: Entregados
+        // Se pueden mostrar tanto los entregados (3) como los anulados (4) en el histórico si lo deseas
         $data = $this->model->getPedidos(3);
+        // Opcional: También obtener anulados -> $dataAnulados = $this->model->getPedidos(4);
+        // $data = array_merge($data, $dataAnulados);
+
         for ($i = 0; $i < count($data); $i++) {
             $data[$i]['estado'] = $this->obtenerBadgeEstado($data[$i]['proceso']);
             $data[$i]['accion'] = '
@@ -87,9 +90,6 @@ class Pedidos extends Controller
                 </button>
                 <button class="btn btn-danger btn-sm" type="button" onclick="verReportePedido(' . $data[$i]['id'] . ')" title="Imprimir ticket">
                     <i class="fas fa-file-pdf"></i>
-                </button>
-                <button class="btn btn-warning btn-sm" type="button" onclick="verEtiquetaEnvio(' . $data[$i]['id'] . ')" title="Imprimir etiqueta">
-                    <i class="fas fa-tag"></i>
                 </button>
             </div>';
         }
@@ -101,112 +101,125 @@ class Pedidos extends Controller
     {
         switch ($proceso) {
             case 1:
-                return '<span class="badge bg-warning">Recepción</span>';
+                return '<span class="badge bg-warning">Pendiente</span>';
             case 2:
-                return '<span class="badge bg-info">En Proceso</span>';
+                return '<span class="badge bg-info">En Proceso / Empacado</span>';
             case 3:
                 return '<span class="badge bg-success">Entregado</span>';
+            case 4:
+                return '<span class="badge bg-dark">Cancelado</span>';
             default:
-                return '<span class="badge bg-dark">Desconocido</span>';
+                return '<span class="badge bg-secondary">Desconocido</span>';
         }
     }
 
+    // EL MOTOR DE ACTUALIZACIÓN (BLINDADO)
     public function update($datos)
     {
-        $array = explode(',', $datos);
-        $idPedido = $array[0];
-        $proceso = $array[1];
+        // Limpiamos la entrada para evitar ataques
+        $array = explode(',', strClean($datos));
+        $idPedido = intval($array[0]);
+        $proceso = intval($array[1]);
 
-        if (is_numeric($idPedido)) {
-            // Si el proceso es 3 (Entregado), verificar stock antes de descontar
-            if ($proceso == 3) {
-                // Verificar stock disponible
+        if ($idPedido > 0) {
+            // Obtenemos el estado actual del pedido en la base de datos
+            $pedidoActual = $this->model->getPedido($idPedido);
+            $estadoActual = intval($pedidoActual['proceso']);
+
+            // LÓGICA 1: Si pasamos de Recepción (1) a En Proceso (2) -> DESCONTAMOS STOCK
+            if ($estadoActual == 1 && $proceso == 2) {
                 $productosInvalidos = $this->model->verificarStockPedido($idPedido);
-
+                
                 if (count($productosInvalidos) > 0) {
-                    // Hay productos sin stock suficiente
-                    $mensaje = 'No se puede entregar el pedido. Los siguientes productos no tienen stock suficiente:\n\n';
-
+                    $mensaje = "No se puede empacar. Stock insuficiente en Bodega Principal:\n\n";
                     foreach ($productosInvalidos as $prod) {
                         $mensaje .= '• ' . $prod['producto'] . ' (' . $prod['atributos'] . '): ';
-                        $mensaje .= 'Stock disponible: ' . $prod['stock_disponible'] . ', ';
-                        $mensaje .= 'Cantidad requerida: ' . $prod['cantidad_requerida'] . '\n';
+                        $mensaje .= 'Disp: ' . $prod['stock_disponible'] . ', Req: ' . $prod['cantidad_requerida'] . '\n';
                     }
-
-                    $respuesta = array('msg' => $mensaje, 'icono' => 'error');
-                    echo json_encode($respuesta);
+                    echo json_encode(array('msg' => $mensaje, 'icono' => 'error'));
                     die();
                 }
-
-                // Hay stock suficiente, descontar
+                // Si hay stock, lo descontamos de la estantería
                 $this->descontarStock($idPedido);
+            }
 
-                // Actualizar estado a COMPLETADO
+            // LÓGICA 2: Si el pedido se Finaliza (3) -> Solo actualizamos estado a COMPLETO
+            if ($proceso == 3) {
+                // El stock ya se debió haber descontado en el paso 2, solo cerramos la orden
                 $this->model->actualizarEstadoCompleto($idPedido);
             }
 
-            // Actualizar proceso
+            // LÓGICA 3: Si se Cancela (4) y ya estaba "En Proceso" (2) -> DEVOLVEMOS STOCK
+            if ($proceso == 4 && $estadoActual == 2) {
+                $this->restaurarStock($idPedido);
+            }
+
+            // Guardar el nuevo estado en la Base de Datos
             $data = $this->model->actualizarEstado($proceso, $idPedido);
 
             if ($data == 1) {
-                $mensajeExito = ($proceso == 3) ? 'Pedido entregado y stock actualizado correctamente' : 'Pedido actualizado correctamente';
-                $respuesta = array('msg' => $mensajeExito, 'icono' => 'success');
+                $msgExito = 'Estado del pedido actualizado';
+                if ($proceso == 2) $msgExito = 'Pedido en proceso. Inventario descontado.';
+                if ($proceso == 4) $msgExito = 'Pedido Anulado correctamente.';
+                
+                echo json_encode(array('msg' => $msgExito, 'icono' => 'success'));
             } else {
-                $respuesta = array('msg' => 'Error al actualizar', 'icono' => 'error');
+                echo json_encode(array('msg' => 'Error al actualizar el estado', 'icono' => 'error'));
             }
-            echo json_encode($respuesta);
         }
         die();
     }
 
     private function descontarStock($idPedido)
     {
-        // Obtener detalles del pedido
         $detalles = $this->model->getDetallePedido($idPedido);
-
         foreach ($detalles as $detalle) {
-            $id_talla_color = $detalle['id_talla_color'];
-            $cantidad = $detalle['cantidad'];
+            if (!empty($detalle['id_talla_color'])) {
+                $atributo = $this->model->getStockDetalle($detalle['id_talla_color']);
+                if ($atributo) {
+                    $nuevoStock = $atributo['stock'] - $detalle['cantidad'];
+                    $this->model->actualizarStockDetalle($nuevoStock, $detalle['id_talla_color']);
+                }
+            }
+        }
+    }
 
-            // Obtener stock actual
-            $atributo = $this->model->getStockDetalle($id_talla_color);
-
-            if ($atributo) {
-                $stockActual = $atributo['stock'];
-                $nuevoStock = $stockActual - $cantidad;
-
-                // Actualizar stock
-                $this->model->actualizarStockDetalle($nuevoStock, $id_talla_color);
+    // NUEVO: Función para devolver el stock si la compra fracasa
+    private function restaurarStock($idPedido)
+    {
+        $detalles = $this->model->getDetallePedido($idPedido);
+        foreach ($detalles as $detalle) {
+            if (!empty($detalle['id_talla_color'])) {
+                $atributo = $this->model->getStockDetalle($detalle['id_talla_color']);
+                if ($atributo) {
+                    $nuevoStock = $atributo['stock'] + $detalle['cantidad'];
+                    $this->model->actualizarStockDetalle($nuevoStock, $detalle['id_talla_color']);
+                }
             }
         }
     }
 
     public function verPedido($idPedido)
     {
+        $idPedido = intval($idPedido);
         $pedido = $this->model->getPedido($idPedido);
         $productos = $this->model->getDetallePedido($idPedido);
 
-        $configuracion = $this->model->getConfiguracion();
-        $moneda = $configuracion['moneda'] ?? 'COP. ';
-
         for ($i = 0; $i < count($productos); $i++) {
             $id_talla_color = $productos[$i]['id_talla_color'];
-
             $atributos = $this->model->getTallaColor($id_talla_color);
 
             if ($atributos) {
-                $talla = $atributos['talla'] ?? '';
-                $color = $atributos['color'] ?? '';
-                $productos[$i]['atributos'] = $talla . ' - ' . $color;
+                $productos[$i]['atributos'] = ($atributos['talla'] ?? '') . ' - ' . ($atributos['color'] ?? '');
             } else {
-                $productos[$i]['atributos'] = ' - ';
+                $productos[$i]['atributos'] = 'Estándar';
             }
         }
 
         $data = array(
             'pedido' => $pedido,
             'productos' => $productos,
-            'moneda' => $moneda
+            'moneda' => MONEDA
         );
 
         echo json_encode($data);
@@ -216,29 +229,27 @@ class Pedidos extends Controller
     public function reporte($datos)
     {
         ob_start();
-        $array = explode(',', $datos);
+        $array = explode(',', strClean($datos));
         $tipo = $array[0];
-        $idPedido = $array[1];
+        $idPedido = intval($array[1]);
 
         $data['title'] = 'Reporte Pedido';
         $data['empresa'] = $this->model->getEmpresa();
         $data['pedido'] = $this->model->getPedido($idPedido);
         $data['detalle'] = $this->model->getDetallePedido($idPedido);
 
-        // Agregar atributos a los productos
+        if (empty($data['pedido'])) {
+            echo '<h3>Página no encontrada o pedido inválido</h3>';
+            exit;
+        }
+
         for ($i = 0; $i < count($data['detalle']); $i++) {
             $id_talla_color = $data['detalle'][$i]['id_talla_color'];
             $atributos = $this->model->getTallaColor($id_talla_color);
-
             if ($atributos) {
                 $data['detalle'][$i]['talla'] = $atributos['talla'] ?? '';
                 $data['detalle'][$i]['color'] = $atributos['color'] ?? '';
             }
-        }
-
-        if (empty($data['pedido'])) {
-            echo 'Página no encontrada';
-            exit;
         }
 
         $this->views->getView('admin/pedidos', $tipo, $data);
@@ -250,7 +261,7 @@ class Pedidos extends Controller
         $dompdf->setOptions($options);
         $dompdf->loadHtml($html);
 
-        if ($tipo == 'ticked') {
+        if ($tipo == 'ticked') { // Ojo: el desarrollador lo llamó 'ticked', se mantiene para compatibilidad
             $dompdf->setPaper(array(0, 0, 226.77, 500), 'portrait');
         } else {
             $dompdf->setPaper('A4', 'vertical');
@@ -263,16 +274,18 @@ class Pedidos extends Controller
     public function etiqueta($idPedido)
     {
         ob_start();
+        $idPedido = intval($idPedido);
 
         $data['title'] = 'Etiqueta Envío';
         $data['empresa'] = $this->model->getEmpresa();
         $data['pedido'] = $this->model->getPedido($idPedido);
-        $data['cliente'] = $this->model->getCliente($data['pedido']['id_cliente']);
-
+        
         if (empty($data['pedido'])) {
-            echo 'Página no encontrada';
+            echo '<h3>Página no encontrada o pedido inválido</h3>';
             exit;
         }
+        
+        $data['cliente'] = $this->model->getCliente($data['pedido']['id_cliente']);
 
         $this->views->getView('admin/pedidos', 'etiqueta', $data);
         $html = ob_get_clean();

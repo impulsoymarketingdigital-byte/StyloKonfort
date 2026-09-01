@@ -15,7 +15,7 @@ class Usuarios extends Controller
     public function index()
     {
         $data['title'] = 'usuarios';
-        $data['sucursales'] = $this->model->getDatos('sucursales');
+        $data['almacenes'] = $this->model->getDatos('almacenes');
         $data['roles'] = $this->model->getDatos('roles');
 
         $this->views->getView('admin/usuarios', "index", $data);
@@ -51,18 +51,18 @@ class Usuarios extends Controller
             $nombre = $_POST['nombre'];
             $apellido = $_POST['apellido'];
             $correo = $_POST['correo'];
-            $id_sucursal = $_POST['id_sucursal'];
+            $id_almacen = $_POST['id_almacen'];
             $id_rol = $_POST['id_rol'];
             $clave = $_POST['clave'];
             $hash = password_hash($clave, PASSWORD_DEFAULT);
 
-            if (empty($_POST['nombre']) || empty($_POST['apellido']) || empty($_POST['id_sucursal']) || empty($_POST['id_rol'])) {
+            if (empty($_POST['nombre']) || empty($_POST['apellido']) || empty($_POST['id_almacen']) || empty($_POST['id_rol'])) {
                 $respuesta = array('msg' => 'todo los campos son requeridos', 'icono' => 'warning');
             } else {
                 if (empty($id)) {
                     $result = $this->model->verificarCorreo($correo);
                     if (empty($result)) {
-                        $data = $this->model->registrar($nombre, $apellido, $correo, $hash, $id_sucursal, $id_rol);
+                        $data = $this->model->registrar($nombre, $apellido, $correo, $hash, $id_almacen, $id_rol);
                         if ($data > 0) {
                             $respuesta = array('msg' => 'usuario registrado', 'icono' => 'success');
                         } else {
@@ -72,7 +72,7 @@ class Usuarios extends Controller
                         $respuesta = array('msg' => 'correo ya existe', 'icono' => 'warning');
                     }
                 } else {
-                    $data = $this->model->modificar($nombre, $apellido, $correo, $id_sucursal, $id_rol, $id);
+                    $data = $this->model->modificar($nombre, $apellido, $correo, $id_almacen, $id_rol, $id);
                     if ($data == 1) {
                         $respuesta = array('msg' => 'usuario modificado', 'icono' => 'success');
                     } else {
