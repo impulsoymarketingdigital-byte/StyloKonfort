@@ -1,4 +1,7 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 require_once 'Config/Config.php';
 $ruta = !empty($_GET['url']) ? $_GET['url'] : "home/index";
 $array = explode("/", $ruta);
