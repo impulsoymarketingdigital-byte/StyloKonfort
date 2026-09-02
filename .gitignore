@@ -3,7 +3,7 @@ vendor/
 
 # ─── Configuración sensible ───────────────────────────────────────────────────
 # Config.php contiene credenciales — NUNCA versionar
-Config/Config.php
+
 Config/.env
 Config/- copia.env
 Config/Config - copia.php
@@ -38,3 +38,4 @@ logs/
 # ─── Uploads (opcional — decide si versionarlos o usar storage externo) ───────
 # assets/images/productos/
 # assets/images/clientes/
+
