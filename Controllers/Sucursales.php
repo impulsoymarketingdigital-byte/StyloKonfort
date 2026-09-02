@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 class Sucursales extends Controller
 {
     public function __construct()

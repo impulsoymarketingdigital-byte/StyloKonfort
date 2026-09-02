@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 class Roles extends Controller
 {
     public function __construct()

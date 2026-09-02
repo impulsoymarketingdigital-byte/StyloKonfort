@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require 'vendor/autoload.php';
 
 class Productos extends Controller

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 class Sliders extends Controller
 {
     public function __construct()

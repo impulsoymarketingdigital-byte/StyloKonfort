@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 class Marcas extends Controller
 {
     public function __construct()

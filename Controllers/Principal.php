@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 class Principal extends Controller
 {
     public function __construct()

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 class Proveedores extends Controller
 {
     public function __construct()

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 class Promociones extends Controller
 {
     public function __construct()

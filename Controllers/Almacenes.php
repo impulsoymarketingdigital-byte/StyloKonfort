@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 class Almacenes extends Controller
 {
     public function __construct()

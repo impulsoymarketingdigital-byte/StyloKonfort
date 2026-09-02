@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 class Categorias extends Controller
 {
     public function __construct()

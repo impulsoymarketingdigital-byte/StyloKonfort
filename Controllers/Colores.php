@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 class Colores extends Controller
 {
     public function __construct()
