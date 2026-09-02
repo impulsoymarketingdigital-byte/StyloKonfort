@@ -56,7 +56,7 @@ class Admin extends Controller
                         $_SESSION['email'] = $data['correo'];
                         $_SESSION['nombre_usuario'] = $data['nombres'];
                         $_SESSION['perfil_usuario'] = $data['perfil'];
-                        $_SESSION['id_almacen'] = $data['id_almacen'];
+                        $_SESSION['id_almacen'] = $data['id_sucursal'] ?? 0;
                         $_SESSION['id_rol'] = $data['id_rol'];
                         $_SESSION['nombre_rol'] = $data['nombre_rol'];
 
