@@ -20,7 +20,7 @@ ecomerce.zip
 ecomerce/
 
 # ─── Archivos de base de datos (no van en la imagen Docker) ──────────────────
-*.sql
+# *.sql
 BD_ECOMERCE/
 
 # ─── Configuración sensible (se inyectan como ENV en Docker/Dokploy) ─────────
@@ -38,4 +38,5 @@ logs/
 # ─── Sistema operativo ───────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
+
 
