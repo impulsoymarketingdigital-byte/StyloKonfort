@@ -68,7 +68,7 @@ class Compras extends Controller
     public function size($idProducto)
     {
         $data = $this->model->getSizes($idProducto);
-        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
     public function registrarCompra()
@@ -98,7 +98,7 @@ class Compras extends Controller
 
                     if (empty($atributo)) {
                         $res = array('msg' => 'ERROR: No se pudo crear el producto en este almacén', 'type' => 'error');
-                        echo json_encode($res);
+                        echo json_encode($res, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
                         die();
                     }
 
@@ -165,7 +165,7 @@ class Compras extends Controller
             $res = array('msg' => 'CARRITO VACIO', 'type' => 'warning');
         }
 
-        echo json_encode($res);
+        echo json_encode($res, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -242,7 +242,7 @@ class Compras extends Controller
             }
         }
 
-        echo json_encode($data);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -251,7 +251,7 @@ class Compras extends Controller
         if (is_numeric($idCompra)) {
             $data['compra'] = $this->model->getCompra($idCompra);
             $data['detalle'] = $this->model->getDetalleCompra($idCompra);
-            echo json_encode($data, JSON_UNESCAPED_UNICODE);
+            echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         }
         die();
     }
@@ -283,7 +283,7 @@ class Compras extends Controller
             $res = array('msg' => 'ERROR DESCONOCIDO', 'type' => 'error');
         }
 
-        echo json_encode($res);
+        echo json_encode($res, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 }

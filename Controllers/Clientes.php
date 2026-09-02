@@ -289,7 +289,7 @@ class Clientes extends Controller
                 'accion'         => '<button class="btn btn-info btn-sm" onclick="verPedido(' . $pedido['id'] . ')"><i class="fa fa-eye"></i> Ver</button>',
             ];
         }
-        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
     }
 
     public function verPedido($idPedido = null)
@@ -354,7 +354,7 @@ class Clientes extends Controller
                 'calificacion' => $estrellas,
             ];
         }
-        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
     }
 
     // ─── Calificaciones ───────────────────────────────────────────────────────

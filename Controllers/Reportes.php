@@ -31,7 +31,7 @@ class Reportes extends Controller
     public function listar_ventas()
     {
         $data = $this->model->getVentas();
-        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -169,7 +169,7 @@ class Reportes extends Controller
     public function listar_compras()
     {
         $data = $this->model->getCompras();
-        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 

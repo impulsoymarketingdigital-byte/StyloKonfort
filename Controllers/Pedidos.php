@@ -43,7 +43,7 @@ class Pedidos extends Controller
                 </button>
             </div>';
         }
-        echo json_encode($data);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -69,7 +69,7 @@ class Pedidos extends Controller
                 </button>
             </div>';
         }
-        echo json_encode($data);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -93,7 +93,7 @@ class Pedidos extends Controller
                 </button>
             </div>';
         }
-        echo json_encode($data);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -222,7 +222,7 @@ class Pedidos extends Controller
             'moneda' => MONEDA
         );
 
-        echo json_encode($data);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 

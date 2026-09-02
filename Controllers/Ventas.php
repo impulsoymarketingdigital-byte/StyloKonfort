@@ -63,7 +63,7 @@ class Ventas extends Controller
     public function size($idProducto)
     {
         $data = $this->model->getSizes($idProducto);
-        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
     public function registrarVenta()
@@ -85,7 +85,7 @@ class Ventas extends Controller
                     $atributo = $this->model->getAtributos($producto['size'], $producto['color'], $producto['idProducto']);
                     if (empty($atributo)) {
                         $res = array('msg' => 'ERROR: Producto sin stock disponible', 'type' => 'error');
-                        echo json_encode($res);
+                        echo json_encode($res, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
                         die();
                     }
                     $subTotal = $atributo['precio_venta'] * $producto['cantidad'];
@@ -136,7 +136,7 @@ class Ventas extends Controller
             $res = array('msg' => 'CARRITO VACIO', 'type' => 'warning');
         }
 
-        echo json_encode($res);
+        echo json_encode($res, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
     public function reporte($datos)
@@ -218,7 +218,7 @@ class Ventas extends Controller
             }
         }
 
-        echo json_encode($data);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
     public function procesar_pagos()
@@ -260,7 +260,7 @@ class Ventas extends Controller
             </div>';
         }
 
-        echo json_encode($data);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -326,7 +326,7 @@ class Ventas extends Controller
             }
         }
 
-        echo json_encode($res);
+        echo json_encode($res, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -335,7 +335,7 @@ class Ventas extends Controller
         if (is_numeric($idPedido)) {
             $data['pedido'] = $this->model->getVenta($idPedido);
             $data['detalle'] = $this->model->getDetallePedido($idPedido);
-            echo json_encode($data, JSON_UNESCAPED_UNICODE);
+            echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         }
         die();
     }
@@ -363,7 +363,7 @@ class Ventas extends Controller
         } else {
             $res = array('msg' => 'ERROR DESCONOCIDO', 'type' => 'error');
         }
-        echo json_encode($res);
+        echo json_encode($res, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -387,14 +387,14 @@ class Ventas extends Controller
         } else {
             $res = array('msg' => 'ERROR DESCONOCIDO', 'type' => 'error');
         }
-        echo json_encode($res);
+        echo json_encode($res, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
     public function verificarStock($idProducto)
     {
         $data = $this->model->getProducto($idProducto);
-        echo json_encode($data);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -508,3 +508,4 @@ class Ventas extends Controller
         $writer->save('php://output');
     }
 }
+

@@ -38,7 +38,7 @@ class Roles extends Controller
             ' . $botonAccion . '
              </div>';
         }
-        echo json_encode($data);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -130,7 +130,7 @@ class Roles extends Controller
                 $permisos = json_decode($data['rol']['permisos'], true);
             }
             $data['permisos'] = $permisos;
-            echo json_encode($data, JSON_UNESCAPED_UNICODE);
+            echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         }
         die();
     }

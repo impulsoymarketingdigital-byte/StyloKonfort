@@ -50,7 +50,7 @@ class Traspasos extends Controller
     {
         $idAlmacen = isset($_GET['almacen']) ? $_GET['almacen'] : 1;
         $data = $this->model->getSizes($idProducto, $idAlmacen);
-        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -83,13 +83,13 @@ class Traspasos extends Controller
                     
                     if (empty($atributoOrigen)) {
                         $res = array('msg' => 'ERROR: Producto no encontrado en almacén origen', 'type' => 'error');
-                        echo json_encode($res);
+                        echo json_encode($res, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
                         die();
                     }
 
                     if ($atributoOrigen['stock'] < $producto['cantidad']) {
                         $res = array('msg' => 'STOCK INSUFICIENTE EN ALMACÉN ORIGEN', 'type' => 'error');
-                        echo json_encode($res);
+                        echo json_encode($res, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
                         die();
                     }
 
@@ -158,7 +158,7 @@ class Traspasos extends Controller
             $res = array('msg' => 'CARRITO VACIO', 'type' => 'warning');
         }
 
-        echo json_encode($res);
+        echo json_encode($res, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -193,7 +193,7 @@ class Traspasos extends Controller
             }
         }
 
-        echo json_encode($data);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -202,7 +202,7 @@ class Traspasos extends Controller
         if (is_numeric($idTraspaso)) {
             $data['traspaso'] = $this->model->getTraspaso($idTraspaso);
             $data['detalle'] = $this->model->getDetalleTraspaso($idTraspaso);
-            echo json_encode($data, JSON_UNESCAPED_UNICODE);
+            echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         }
         die();
     }
@@ -241,7 +241,7 @@ class Traspasos extends Controller
             $res = array('msg' => 'ERROR DESCONOCIDO', 'type' => 'error');
         }
 
-        echo json_encode($res);
+        echo json_encode($res, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 }

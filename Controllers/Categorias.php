@@ -36,7 +36,7 @@ class Categorias extends Controller
             ' . $botonAccion . '
              </div>';
         }
-        echo json_encode($data);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -128,8 +128,9 @@ class Categorias extends Controller
     {
         if (is_numeric($id)) {
             $data = $this->model->getCatoria($id);
-            echo json_encode($data, JSON_UNESCAPED_UNICODE);
+            echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         }
         die();
     }
 }
+

@@ -52,7 +52,7 @@ class Productos extends Controller
             </div>';
 
         }
-        echo json_encode($data);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -67,7 +67,7 @@ class Productos extends Controller
     public function listar_stock()
     {
         $data = $this->model->getStock();
-        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -219,7 +219,7 @@ class Productos extends Controller
     {
         if (is_numeric($id)) {
             $data = $this->model->getProducto($id);
-            echo json_encode($data, JSON_UNESCAPED_UNICODE);
+            echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         }
         die();
     }
@@ -266,7 +266,7 @@ class Productos extends Controller
         } else {
             $res = array('msg' => 'ERROR AL ELIMINAR', 'icono' => 'error');
         }
-        echo json_encode($res);
+        echo json_encode($res, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -285,7 +285,7 @@ class Productos extends Controller
     {
         $data['producto'] = $this->model->getProducto($id_producto);
         $data['detalle'] = $this->model->getAtributos($id_producto);
-        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 

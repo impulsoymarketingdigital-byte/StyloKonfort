@@ -24,7 +24,7 @@ class Sizes extends Controller
                 <button class="btn btn-danger" type="button" onclick="eliminarSize(' . $data[$i]['id'] . ')"><i class="fas fa-trash"></i></button>
             </div>';
         }
-        echo json_encode($data);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -83,7 +83,7 @@ class Sizes extends Controller
     {
         if (is_numeric($idSize)) {
             $data = $this->model->getSize($idSize);
-            echo json_encode($data, JSON_UNESCAPED_UNICODE);
+            echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         }
         die();
     }

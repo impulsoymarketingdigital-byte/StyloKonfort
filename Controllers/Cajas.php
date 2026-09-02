@@ -43,7 +43,7 @@ class Cajas extends Controller
             $data[$i]['tipo'] = "<div class='badge rounded-pill text-$colorTipo bg-light-$colorTipo p-2 text-uppercase px-3'>$tipo</div>";
         }
 
-        echo json_encode($data);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -62,7 +62,7 @@ class Cajas extends Controller
             $data[$i]['monto_fisico'] = $data[$i]['monto_fisico'] ? 'COP. ' . number_format($data[$i]['monto_fisico'], 2) : '-';
         }
 
-        echo json_encode($data);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -92,7 +92,7 @@ class Cajas extends Controller
             }
         }
 
-        echo json_encode($res);
+        echo json_encode($res, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -122,7 +122,7 @@ class Cajas extends Controller
                         $saldoActual = $this->model->getSaldoActual($this->id_usuario, $id_caja);
                         if ($amount > $saldoActual['saldo']) {
                             $res = array('msg' => 'EL MONTO NO PUEDE SER MAYOR AL SALDO ACTUAL', 'type' => 'warning');
-                            echo json_encode($res);
+                            echo json_encode($res, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
                             die();
                         }
                     }
@@ -138,7 +138,7 @@ class Cajas extends Controller
             }
         }
 
-        echo json_encode($res);
+        echo json_encode($res, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -154,7 +154,7 @@ class Cajas extends Controller
             $res = array('saldo' => number_format($saldoActual['saldo'], 2, '.', ''), 'type' => 'success');
         }
 
-        echo json_encode($res);
+        echo json_encode($res, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -164,7 +164,7 @@ class Cajas extends Controller
 
         if (empty($cajaAbierta)) {
             $res = array('msg' => 'NO HAY CAJA ABIERTA', 'type' => 'warning');
-            echo json_encode($res);
+            echo json_encode($res, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
             die();
         }
 
@@ -185,7 +185,7 @@ class Cajas extends Controller
             'saldoFinal' => number_format($saldoFinal, 2, '.', '')
         );
 
-        echo json_encode($data);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -210,7 +210,7 @@ class Cajas extends Controller
             }
         }
 
-        echo json_encode($res);
+        echo json_encode($res, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 }

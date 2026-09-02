@@ -102,7 +102,7 @@ class Admin extends Controller
     {
         $this->verificarAcceso();
         $data = $this->model->productosMinimos();
-        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -203,7 +203,7 @@ class Admin extends Controller
     {
         $this->verificarAcceso();
         $data = $this->model->topProductos();
-        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -266,7 +266,7 @@ class Admin extends Controller
         } else {
             $res = array('msg' => 'ERROR DESCONOCIDO', 'type' => 'error');
         }
-        echo json_encode($res);
+        echo json_encode($res, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 }

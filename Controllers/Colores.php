@@ -45,7 +45,7 @@ class Colores extends Controller
                 ' . $botonAccion . '
             </div>';
         }
-        echo json_encode($data);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
     public function registrar()
@@ -122,7 +122,7 @@ class Colores extends Controller
     {
         if (is_numeric($idColor)) {
             $data = $this->model->getColor($idColor);
-            echo json_encode($data, JSON_UNESCAPED_UNICODE);
+            echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         }
         die();
     }

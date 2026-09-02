@@ -22,7 +22,7 @@ class Sliders extends Controller
             $data[$i]['imagen'] = '<img class="img-thumbnail" src="' . $data[$i]['imagen'] . '" width="50">';
             $data[$i]['accion'] = '<button class="btn btn-primary" type="button" onclick="editSli(' . $data[$i]['id'] . ')"><i class="fas fa-edit"></i></button>';
         }
-        echo json_encode($data);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -71,8 +71,9 @@ class Sliders extends Controller
     {
         if (is_numeric($idSli)) {
             $data = $this->model->getSlider($idSli);
-            echo json_encode($data, JSON_UNESCAPED_UNICODE);
+            echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         }
         die();
     }
 }
+

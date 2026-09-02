@@ -40,7 +40,7 @@ class Usuarios extends Controller
             ' . $botonAccion . '
         </div>';
         }
-        echo json_encode($data);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -122,7 +122,7 @@ class Usuarios extends Controller
     {
         if (is_numeric($idUser)) {
             $data = $this->model->getUsuario($idUser);
-            echo json_encode($data, JSON_UNESCAPED_UNICODE);
+            echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         }
         die();
     }

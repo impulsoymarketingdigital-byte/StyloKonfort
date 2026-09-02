@@ -112,7 +112,7 @@ class Principal extends Controller
         }
 
         $data['moneda'] = MONEDA;
-        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -231,7 +231,7 @@ class Principal extends Controller
         $idSize = $array[1];
         if (is_numeric($idProducto) && is_numeric($idSize)) {
             $data['colores'] = $this->model->getColores($idSize, $idProducto);
-            echo json_encode($data, JSON_UNESCAPED_UNICODE);
+            echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         }
         die();
     }
@@ -374,7 +374,7 @@ class Principal extends Controller
     public function getPromocionesActivas()
     {
         $data = $this->model->getPromocionesActivas();
-        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -384,7 +384,7 @@ class Principal extends Controller
         if (!empty($valor)) {
             $data = $this->model->getBusqueda($valor);
         }
-        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -405,7 +405,7 @@ class Principal extends Controller
         }
 
         $data['moneda'] = MONEDA;
-        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 
@@ -413,7 +413,7 @@ class Principal extends Controller
     {
         if (is_numeric($idCat)) {
             $data = $this->model->getProductosCategoria($idCat);
-            echo json_encode($data, JSON_UNESCAPED_UNICODE);
+            echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         }
         die();
     }
@@ -468,7 +468,7 @@ class Principal extends Controller
             $data['calificacion'] = round($totalCal);
             $data['totalCantidad'] = $cantidad['total'];
 
-            echo json_encode($data, JSON_UNESCAPED_UNICODE);
+            echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         }
         die();
     }
@@ -491,7 +491,7 @@ class Principal extends Controller
                 $data['precio_aplicable'] = $producto['precio_venta'];
             }
 
-            echo json_encode($data, JSON_UNESCAPED_UNICODE);
+            echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         }
         die();
     }
@@ -536,7 +536,7 @@ class Principal extends Controller
                         $verificarCorreo = $this->model->getValidarCliente('correo', $correo, 'actualizar', $id);
                         if (!empty($verificarCorreo)) {
                             $res = array('msg' => 'EL CORREO DEBE SER ÚNICO', 'type' => 'warning');
-                            echo json_encode($res);
+                            echo json_encode($res, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
                             die();
                         }
                     }
@@ -577,7 +577,7 @@ class Principal extends Controller
             $res = array('msg' => 'ERROR DESCONOCIDO', 'type' => 'error');
         }
 
-        echo json_encode($res);
+        echo json_encode($res, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         die();
     }
 }
