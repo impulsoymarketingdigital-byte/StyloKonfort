@@ -1,8 +1,8 @@
-FROM php:8.2-apache
+FROM php:8.3-apache
 
 # ─── Metadata ─────────────────────────────────────────────────────────────────
 LABEL maintainer="StyloKonfort Dev Team"
-LABEL description="StyloKonfort Ecommerce — PHP 8.2 + Apache"
+LABEL description="StyloKonfort Ecommerce — PHP 8.3 + Apache"
 
 # ─── Habilitar módulos Apache ─────────────────────────────────────────────────
 RUN a2enmod rewrite headers
