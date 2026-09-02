@@ -24,7 +24,6 @@ ecomerce/
 BD_ECOMERCE/
 
 # ─── Configuración sensible (se inyectan como ENV en Docker/Dokploy) ─────────
-Config/Config.php
 Config/.env
 Config/- copia.env
 Config/Config - copia.php
@@ -39,3 +38,4 @@ logs/
 # ─── Sistema operativo ───────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
+
