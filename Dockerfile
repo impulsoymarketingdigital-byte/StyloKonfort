@@ -61,7 +61,8 @@ WORKDIR /var/www/html
 COPY . /var/www/html/
 
 # ─── Instalar dependencias PHP ────────────────────────────────────────────────
-RUN composer install --no-dev --optimize-autoloader --no-interaction 2>&1 \
+RUN rm -rf vendor/ \
+    && composer install --no-dev --optimize-autoloader --no-interaction 2>&1 \
     && sed -i 's/use function Safe\\class_alias;//' vendor/sabberworm/php-css-parser/src/Rule/Rule.php \
     && sed -i 's/class_alias(Declaration::class, Rule::class);/\\class_alias(Declaration::class, Rule::class, true);/' vendor/sabberworm/php-css-parser/src/Rule/Rule.php
 
