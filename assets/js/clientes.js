@@ -250,34 +250,6 @@ function eliminarProductoCarrito(idProducto, size, color) {
   });
 }
 
-function eliminarProductoCarrito(idProducto, size, color) {
-  Swal.fire({
-    title: "¿Eliminar producto?",
-    text: "Se quitará del carrito",
-    icon: "question",
-    showCancelButton: true,
-    confirmButtonColor: "#d33",
-    cancelButtonColor: "#3085d6",
-    confirmButtonText: "Sí, eliminar",
-    cancelButtonText: "Cancelar",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      listaCarrito = listaCarrito.filter(
-        (item) =>
-          !(
-            item.idProducto == idProducto &&
-            item.size == size &&
-            item.color == color
-          )
-      );
-      localStorage.setItem("listaCarrito", JSON.stringify(listaCarrito));
-      alertaPerzanalizada("PRODUCTO ELIMINADO", "success");
-      cantidadCarrito();
-      getListaProductos();
-    }
-  });
-}
-
 function registrarPedido() {
   const url = base_url + "clientes/registrarPedido";
   const http = new XMLHttpRequest();
@@ -360,29 +332,32 @@ function verPedido(idPedido) {
       }
 
       res.productos.forEach((row) => {
-        let atributos = JSON.parse(row.atributos);
+        // FIX: atributos puede ser JSON o un string simple ('TALLA - COLOR')
+        let atributos = {};
+        try {
+          atributos = (typeof row.atributos === 'string' && row.atributos.startsWith('{'))
+            ? JSON.parse(row.atributos)
+            : { size: row.atributos || '-', color: '', hexa: '#cccccc' };
+        } catch (e) {
+          atributos = { size: row.atributos || '-', color: '', hexa: '#cccccc' };
+        }
         let subTotal = parseFloat(row.precio) * parseInt(row.cantidad);
+
+        // Color visual
+        let colorBadge = '';
+        if (atributos.hexa && atributos.hexa !== '#cccccc') {
+          const textColor = getLuminance(atributos.hexa) > 0.5 ? '#000' : '#fff';
+          colorBadge = `<span class="badge rounded-pill ms-1" style="background-color:${atributos.hexa};color:${textColor};">${atributos.color || ''}</span>`;
+        }
 
         html += `<tr>
                     <td>${row.producto}</td>
                     <td>
-                        <span class="badge rounded-pill me-2">${
-                          atributos.size
-                        }</span>
-                        <span class="badge rounded-pill" style="background-color: ${
-                          atributos.hexa
-                        }; color: ${
-          getLuminance(atributos.hexa) > 0.5 ? "#000" : "#fff"
-        };">
-                            ${atributos.color}
-                        </span>
+                        <span class="badge rounded-pill bg-secondary me-1">${atributos.size || '-'}</span>
+                        ${colorBadge}
                     </td>
-                    <td><span class="badge bg-warning text-dark">${
-                      res.moneda + " " + row.precio
-                    }</span></td>
-                    <td><span class="badge bg-primary">${
-                      row.cantidad
-                    }</span></td>
+                    <td><span class="badge bg-warning text-dark">${res.moneda + ' ' + row.precio}</span></td>
+                    <td><span class="badge bg-primary">${row.cantidad}</span></td>
                     <td>${subTotal.toFixed(2)}</td>
                 </tr>`;
       });

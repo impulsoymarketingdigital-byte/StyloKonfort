@@ -1,33 +1,42 @@
 <?php
-class Conexion {
+class Conexion
+{
     private $conect;
 
-    public function __construct() {
-        $pdo = "mysql:host=" . HOST . ";dbname=" . DB . ";" . CHARSET;
-        
+    public function __construct()
+    {
+        $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';' . DB_CHARSET;
+
         try {
-            $this->conect = new PDO($pdo, USER, PASS);
-            
-            // 1. Manejo estricto de errores
+            $this->conect = new PDO($dsn, DB_USER, DB_PASS);
+
+            // Manejo estricto de errores
             $this->conect->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            
-            // 2. Apagar emulación (Seguridad extrema contra Inyección SQL)
+
+            // Seguridad extrema contra SQL Injection — deshabilitar emulación
             $this->conect->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-            
-            // 3. Optimización de memoria (Array asociativo limpio)
+
+            // Fetch como array asociativo por defecto
             $this->conect->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-            
+
+            // Charset para emojis y caracteres especiales
+            $this->conect->exec("SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci");
+
         } catch (PDOException $e) {
-            // Guardamos el error real en los logs del servidor para que tú lo veas si algo falla
-            error_log("Fallo crítico en BD: " . $e->getMessage());
-            
-            // Le mostramos un mensaje amigable y genérico al cliente
-            die("Estamos realizando tareas de mantenimiento. Por favor, regresa en unos minutos.");
+            // Loguear el error real (visible en Docker logs / servidor)
+            error_log('[StyloKonfort] Fallo crítico en BD: ' . $e->getMessage());
+
+            // Mensaje genérico al usuario — nunca exponer detalles
+            http_response_code(503);
+            die(json_encode([
+                'error' => true,
+                'msg'   => 'Estamos realizando tareas de mantenimiento. Por favor, regresa en unos minutos.'
+            ]));
         }
     }
 
-    public function conect() {
+    public function conect(): PDO
+    {
         return $this->conect;
     }
 }
-?>

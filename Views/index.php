@@ -87,7 +87,7 @@
                         <?php echo $producto['nombre']; ?>
                       </a>
                     </h3>
-                    <p class="hm-product-price">Precio Variado</p>
+                    <?php echo MONEDA . number_format((float)($producto['precio_venta'] ?? 0), 0, ',', '.'); ?>
                   </div>
                 </div>
               <?php } ?>
@@ -142,7 +142,7 @@
                         <?php echo $producto['prod']['nombre']; ?>
                       </a>
                     </h3>
-                    <p class="hm-product-price">Precio Variado</p>
+                    <?php echo MONEDA . number_format((float)($producto['prod']['precio_venta'] ?? 0), 0, ',', '.'); ?>
                   </div>
                 </div>
               <?php } ?>
@@ -197,7 +197,7 @@
                         <?php echo $producto['prod']['nombre']; ?>
                       </a>
                     </h3>
-                    <p class="hm-product-price">Precio Variado</p>
+                    <?php echo MONEDA . number_format((float)($producto['prod']['precio_venta'] ?? 0), 0, ',', '.'); ?>
                   </div>
                 </div>
               <?php } ?>

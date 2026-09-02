@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
@@ -11,7 +11,7 @@ class Contactos extends Controller
     public function __construct()
     {
         parent::__construct();
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) { session_start(); }
     }
     public function index()
     {

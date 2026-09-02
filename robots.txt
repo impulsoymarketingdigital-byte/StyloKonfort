@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+
+# Bloquear rutas del panel de administración
+Disallow: /admin/
+Disallow: /admin
+Disallow: /Config/
+Disallow: /Models/
+Disallow: /Controllers/
+Disallow: /Views/admin/
+Disallow: /migrations/
+Disallow: /vendor/
+
+# Bloquear archivos sensibles
+Disallow: /*.sql$
+Disallow: /*.env$
+Disallow: /index.php?url=admin*
+
+# Sitemap
+Sitemap: https://www.stylokonfort.com/sitemap.xml

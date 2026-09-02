@@ -1,9 +1,40 @@
+# ─── Dependencias ─────────────────────────────────────────────────────────────
 vendor/
-.env
-*.zip
+
+# ─── Configuración sensible ───────────────────────────────────────────────────
+# Config.php contiene credenciales — NUNCA versionar
+Config/Config.php
+Config/.env
+Config/- copia.env
+Config/Config - copia.php
+
+# ─── Archivos de base de datos ────────────────────────────────────────────────
 *.sql
+BD_ECOMERCE/
+tienda_virtual.sql
+ecommerce*.sql
+
+# ─── Archivos pesados / temporales ───────────────────────────────────────────
+*.zip
+*.tar.gz
+*.tar
+ecomerce/
+
+# ─── IDEs y editores ──────────────────────────────────────────────────────────
 .vscode/
 .idea/
-Config/Config - copia.php
-Config/- copia.env
-BD_ECOMERCE/
+*.sublime-project
+*.sublime-workspace
+
+# ─── Sistema operativo ───────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── Logs ────────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ─── Uploads (opcional — decide si versionarlos o usar storage externo) ───────
+# assets/images/productos/
+# assets/images/clientes/

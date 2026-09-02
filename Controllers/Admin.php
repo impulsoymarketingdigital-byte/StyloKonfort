@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require 'vendor/autoload.php';
 
 use Dompdf\Dompdf;
@@ -12,7 +12,7 @@ class Admin extends Controller
     public function __construct()
     {
         parent::__construct();
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) { session_start(); }
     }
 
     // --- NUEVO: Guardia de Seguridad Centralizado ---

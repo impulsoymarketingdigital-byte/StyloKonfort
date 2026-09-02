@@ -62,7 +62,7 @@ include_once 'Views/template/header-principal.php'; ?>
                                 <div class="row align-items-center">
                                     <div class="col-md-6">
                                         <h3 class="crrt-total-text" id="totalProducto">
-                                            <i class="fa fa-shopping-bag"></i> TOTAL A PAGAR: COP. 0.00
+                                            <i class="fa fa-shopping-bag"></i> TOTAL A PAGAR: <?php echo MONEDA; ?>0.00
                                         </h3>
                                     </div>
                                     <div class="col-md-6 text-end">

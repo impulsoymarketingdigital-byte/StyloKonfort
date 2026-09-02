@@ -1,11 +1,11 @@
-<?php
+﻿<?php
 class Usuarios extends Controller
 {
     private $id_usuario;
     public function __construct()
     {
         parent::__construct();
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) { session_start(); }
         if (empty($_SESSION['id_usuario'])) {
             header('Location: ' . BASE_URL . 'admin');
             exit;

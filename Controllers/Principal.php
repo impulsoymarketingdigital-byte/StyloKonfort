@@ -1,10 +1,10 @@
-<?php
+﻿<?php
 class Principal extends Controller
 {
     public function __construct()
     {
         parent::__construct();
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) { session_start(); }
     }
     
     //vista about

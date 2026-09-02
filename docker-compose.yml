@@ -1,0 +1,103 @@
+services:
+
+  # ─── Aplicación PHP + Apache ─────────────────────────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: stylokonfort_app
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      # ─── Base de Datos ────────────────────────────────────────────────────────
+      DB_HOST: db
+      DB_USER: ${DB_USER:-stylokonfort}
+      DB_PASS: ${DB_PASS:-changeme}
+      DB_NAME: ${DB_NAME:-ecomerce}
+      # ─── Aplicación ──────────────────────────────────────────────────────────
+      APP_URL: ${APP_URL:-http://localhost:8080/}
+      APP_NAME: ${APP_NAME:-Stylo Konfort}
+      APP_MONEDA: ${APP_MONEDA:-COP.}
+      APP_CURRENCY: ${APP_CURRENCY:-COP}
+      APP_POR_PAGINA: ${APP_POR_PAGINA:-12}
+      APP_MAX_PRECIO: ${APP_MAX_PRECIO:-5000000}
+      APP_DEBUG: ${APP_DEBUG:-false}
+      # ─── WOMPI ───────────────────────────────────────────────────────────────
+      WOMPI_ENV: ${WOMPI_ENV:-sandbox}
+      WOMPI_PUBLIC_KEY: ${WOMPI_PUBLIC_KEY:-}
+      WOMPI_PRIVATE_KEY: ${WOMPI_PRIVATE_KEY:-}
+      WOMPI_INTEGRITY_SECRET: ${WOMPI_INTEGRITY_SECRET:-}
+      WOMPI_EVENTS_SECRET: ${WOMPI_EVENTS_SECRET:-}
+      # ─── SMTP ────────────────────────────────────────────────────────────────
+      SMTP_FROM: ${SMTP_FROM:-ventas@stylokonfort.com}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      SMTP_PORT: ${SMTP_PORT:-465}
+      SMTP_HOST: ${SMTP_HOST:-}
+    volumes:
+      # Imágenes persistentes — NO se pierden al recrear el contenedor
+      - uploads_productos:/var/www/html/assets/images/productos
+      - uploads_clientes:/var/www/html/assets/images/clientes
+      - uploads_categorias:/var/www/html/assets/images/categorias
+      - uploads_marcas:/var/www/html/assets/images/marcas
+      - uploads_sliders:/var/www/html/assets/images/sliders
+      - uploads_carrusel:/var/www/html/assets/images/carrusel
+      - uploads_promociones:/var/www/html/assets/images/promociones
+      - uploads_perfil:/var/www/html/assets/images/perfil
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - stylokonfort_net
+
+  # ─── Base de Datos MySQL ──────────────────────────────────────────────────────
+  db:
+    image: mysql:8.0
+    container_name: stylokonfort_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootchangeme}
+      MYSQL_DATABASE: ${DB_NAME:-ecomerce}
+      MYSQL_USER: ${DB_USER:-stylokonfort}
+      MYSQL_PASSWORD: ${DB_PASS:-changeme}
+    volumes:
+      - db_data:/var/lib/mysql
+      # Si existe un dump de BD, se importa automáticamente al crear el contenedor:
+      # - ./migrations/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-rootchangeme}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - stylokonfort_net
+
+# ─── Volúmenes Persistentes ───────────────────────────────────────────────────
+volumes:
+  db_data:
+    driver: local
+  uploads_productos:
+    driver: local
+  uploads_clientes:
+    driver: local
+  uploads_categorias:
+    driver: local
+  uploads_marcas:
+    driver: local
+  uploads_sliders:
+    driver: local
+  uploads_carrusel:
+    driver: local
+  uploads_promociones:
+    driver: local
+  uploads_perfil:
+    driver: local
+
+# ─── Red Interna ─────────────────────────────────────────────────────────────
+networks:
+  stylokonfort_net:
+    driver: bridge

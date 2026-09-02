@@ -5,128 +5,134 @@ class PedidosModel extends Query
     {
         parent::__construct();
     }
-    
-    public function getPedidos($proceso)
+
+    /** FIX: proceso interpolado directamente → prepared statement */
+    public function getPedidos(int $proceso): array
     {
-        $sql = "SELECT * FROM pedidos WHERE proceso = $proceso AND metodo = 'LLEVAR' ORDER BY fecha DESC";
-        return $this->selectAll($sql);
+        $sql = "SELECT * FROM pedidos WHERE proceso = ? AND metodo = 'LLEVAR' ORDER BY fecha DESC";
+        return $this->selectAll($sql, [$proceso]);
     }
-    
-    public function getPedidosEnProceso()
+
+    public function getPedidosEnProceso(): array
     {
-        // Obtener pedidos en proceso 2 (En Preparación)
         $sql = "SELECT * FROM pedidos WHERE proceso = 2 AND metodo = 'LLEVAR' ORDER BY fecha DESC";
         return $this->selectAll($sql);
     }
-    
-    public function actualizarEstado($proceso, $idPedido)
+
+    public function actualizarEstado(int $proceso, int $idPedido): int
     {
-        $sql = "UPDATE pedidos SET proceso=? WHERE id = ?";
-        $array = array($proceso, $idPedido);
-        return $this->save($sql, $array);
+        $sql = "UPDATE pedidos SET proceso = ? WHERE id = ?";
+        return $this->save($sql, [$proceso, $idPedido]);
     }
-    
-    public function actualizarEstadoCompleto($idPedido)
+
+    public function actualizarEstadoCompleto(int $idPedido): int
     {
-        $sql = "UPDATE pedidos SET estado='COMPLETADO' WHERE id = ?";
-        $array = array($idPedido);
-        return $this->save($sql, $array);
+        $sql = "UPDATE pedidos SET estado = 'COMPLETADO' WHERE id = ?";
+        return $this->save($sql, [$idPedido]);
     }
-    
-    public function getPedido($idPedido)
+
+    /** FIX: interpolación directa → prepared statement */
+    public function getPedido(int $idPedido)
     {
-        $sql = "SELECT * FROM pedidos WHERE id = $idPedido";
-        return $this->select($sql);
+        $sql = "SELECT * FROM pedidos WHERE id = ?";
+        return $this->select($sql, [$idPedido]);
     }
-    
-    public function getDetallePedido($idPedido)
+
+    /** FIX: interpolación directa → prepared statement */
+    public function getDetallePedido(int $idPedido): array
     {
-        $sql = "SELECT * FROM detalle_pedidos WHERE id_pedido = $idPedido";
-        return $this->selectAll($sql);
+        $sql = "SELECT * FROM detalle_pedidos WHERE id_pedido = ?";
+        return $this->selectAll($sql, [$idPedido]);
     }
-    
-    public function getTallaColor($id_talla_color)
+
+    /** FIX: interpolación directa → prepared statement */
+    public function getTallaColor(int $id_talla_color)
     {
-        $sql = "SELECT t.nombre as talla, c.nombre as color 
+        $sql = "SELECT t.nombre AS talla, c.nombre AS color 
                 FROM tallas_colores tc 
                 INNER JOIN tallas t ON tc.id_talla = t.id 
                 INNER JOIN colores c ON tc.id_color = c.id 
-                WHERE tc.id = $id_talla_color";
-        return $this->select($sql);
+                WHERE tc.id = ?";
+        return $this->select($sql, [$id_talla_color]);
     }
-    
-    public function getStockDetalle($id_talla_color)
+
+    /** FIX: interpolación directa → prepared statement */
+    public function getStockDetalle(int $id_talla_color)
     {
-        $sql = "SELECT stock FROM tallas_colores WHERE id = $id_talla_color";
-        return $this->select($sql);
+        $sql = "SELECT stock FROM tallas_colores WHERE id = ?";
+        return $this->select($sql, [$id_talla_color]);
     }
-    
-    public function actualizarStockDetalle($stock, $id_talla_color)
+
+    public function actualizarStockDetalle(int $stock, int $id_talla_color): int
     {
         $sql = "UPDATE tallas_colores SET stock = ? WHERE id = ?";
-        $datos = array($stock, $id_talla_color);
-        return $this->save($sql, $datos);
+        return $this->save($sql, [$stock, $id_talla_color]);
     }
-    
+
     public function getConfiguracion()
     {
-        $sql = "SELECT * FROM configuracion";
-        return $this->select($sql);
-    }
-    
-    public function getEmpresa()
-    {
-        $sql = "SELECT * FROM configuracion";
+        $sql = "SELECT * FROM configuracion LIMIT 1";
         return $this->select($sql);
     }
 
-    public function getCliente($idCliente)
-{
-    $sql = "SELECT * FROM clientes WHERE id = $idCliente";
-    return $this->select($sql);
-}
-    
-    public function verificarStockPedido($idPedido)
+    public function getEmpresa()
+    {
+        $sql = "SELECT * FROM configuracion LIMIT 1";
+        return $this->select($sql);
+    }
+
+    /** FIX: interpolación directa → prepared statement */
+    public function getCliente(int $idCliente)
+    {
+        $sql = "SELECT * FROM clientes WHERE id = ?";
+        return $this->select($sql, [$idCliente]);
+    }
+
+    /**
+     * Verifica que todos los productos del pedido tienen stock suficiente.
+     * Retorna array de productos con stock insuficiente (vacío si todo OK).
+     */
+    public function verificarStockPedido(int $idPedido): array
     {
         $detalles = $this->getDetallePedido($idPedido);
-        $productosInvalidos = array();
-        
+        $productosInvalidos = [];
+
         foreach ($detalles as $detalle) {
-            $id_talla_color = $detalle['id_talla_color'];
-            $cantidadRequerida = $detalle['cantidad'];
-            
+            $id_talla_color    = (int) $detalle['id_talla_color'];
+            $cantidadRequerida = (int) $detalle['cantidad'];
+
             $atributo = $this->getStockDetalle($id_talla_color);
-            
+
             if ($atributo) {
-                $stockActual = $atributo['stock'];
-                
+                $stockActual = (int) $atributo['stock'];
                 if ($stockActual < $cantidadRequerida) {
-                    $productoInfo = $this->getProductoInfo($detalle['id_producto'], $id_talla_color);
-                    $productosInvalidos[] = array(
-                        'producto' => $productoInfo['nombre'],
-                        'atributos' => $productoInfo['atributos'],
-                        'stock_disponible' => $stockActual,
-                        'cantidad_requerida' => $cantidadRequerida
-                    );
+                    $productoInfo = $this->getProductoInfo((int) $detalle['id_producto'], $id_talla_color);
+                    $productosInvalidos[] = [
+                        'producto'          => $productoInfo['nombre'],
+                        'atributos'         => $productoInfo['atributos'],
+                        'stock_disponible'  => $stockActual,
+                        'cantidad_requerida'=> $cantidadRequerida,
+                    ];
                 }
             }
         }
-        
+
         return $productosInvalidos;
     }
-    
-    public function getProductoInfo($idProducto, $id_talla_color)
+
+    /** FIX: interpolación directa → prepared statement */
+    public function getProductoInfo(int $idProducto, int $id_talla_color): array
     {
-        $sql = "SELECT p.nombre FROM productos p WHERE p.id = $idProducto";
-        $producto = $this->select($sql);
-        
-        $atributos = $this->getTallaColor($id_talla_color);
+        $sql = "SELECT p.nombre FROM productos p WHERE p.id = ?";
+        $producto = $this->select($sql, [$idProducto]);
+
+        $atributos   = $this->getTallaColor($id_talla_color);
         $atributosStr = ($atributos) ? $atributos['talla'] . ' - ' . $atributos['color'] : '';
-        
-        return array(
-            'nombre' => $producto['nombre'],
-            'atributos' => $atributosStr
-        );
+
+        return [
+            'nombre'   => $producto['nombre'] ?? 'Desconocido',
+            'atributos'=> $atributosStr,
+        ];
     }
 }
 ?>

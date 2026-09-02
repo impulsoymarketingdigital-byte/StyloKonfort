@@ -2,7 +2,11 @@
     "require": {
         "phpmailer/phpmailer": "^6.6",
         "phpoffice/phpspreadsheet": "^1.26",
-        "dompdf/dompdf": "^2.0",
-        "mercadopago/dx-php": "^2.5"
+        "dompdf/dompdf": "^3.0"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
     }
 }
+

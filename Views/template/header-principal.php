@@ -1,41 +1,75 @@
-<?php $empresa = $this->base->getEmpresa(); ?>
+<?php
+$empresa = $this->base->getEmpresa();
+// SEO dinámico
+$pageTitle       = TITLE . ' - ' . ($data['title'] ?? 'Tienda');
+$pageDescription = $data['seo_description'] ?? ($empresa['mensaje'] ?? 'Tienda de moda y calzado. ' . ($empresa['nombre'] ?? TITLE));
+$pageKeywords    = $data['seo_keywords']    ?? 'moda, calzado, ropa, tienda online, Colombia';
+$pageUrl         = BASE_URL . ltrim($_SERVER['REQUEST_URI'] ?? '', '/');
+$pageImage       = BASE_URL . 'assets/images/logo.png';
+?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
-  <title><?php echo TITLE . ' - ' . $data['title']; ?></title>
+  <!-- ─── SEO Básico ────────────────────────────────────────────────────── -->
+  <title><?php echo htmlspecialchars($pageTitle); ?></title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="big-deal">
-  <meta name="keywords" content="big-deal">
-  <meta name="author" content="big-deal">
-  <link rel="icon" href="<?php echo BASE_URL; ?>assets/admin/images/favicon.ico" type="image/png" />
-  <link rel="shortcut icon" href="<?php echo BASE_URL . 'assets/images/favicon.ico'; ?>" type="image/x-icon">
-  <!--Google font-->
-  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
-  <!--icon css-->
+  <meta name="description" content="<?php echo htmlspecialchars($pageDescription); ?>">
+  <meta name="keywords" content="<?php echo htmlspecialchars($pageKeywords); ?>">
+  <meta name="author" content="<?php echo htmlspecialchars($empresa['nombre'] ?? TITLE); ?>">
+  <meta name="robots" content="index, follow">
+
+  <!-- ─── Open Graph / Facebook ─────────────────────────────────────────── -->
+  <meta property="og:type"        content="website">
+  <meta property="og:url"         content="<?php echo htmlspecialchars($pageUrl); ?>">
+  <meta property="og:title"       content="<?php echo htmlspecialchars($pageTitle); ?>">
+  <meta property="og:description" content="<?php echo htmlspecialchars($pageDescription); ?>">
+  <meta property="og:image"       content="<?php echo htmlspecialchars($pageImage); ?>">
+  <meta property="og:locale"      content="es_CO">
+  <meta property="og:site_name"   content="<?php echo htmlspecialchars($empresa['nombre'] ?? TITLE); ?>">
+
+  <!-- ─── Twitter Cards ─────────────────────────────────────────────────── -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="<?php echo htmlspecialchars($pageTitle); ?>">
+  <meta name="twitter:description" content="<?php echo htmlspecialchars($pageDescription); ?>">
+  <meta name="twitter:image"       content="<?php echo htmlspecialchars($pageImage); ?>">
+
+  <!-- ─── Favicons ──────────────────────────────────────────────────────── -->
+  <link rel="icon" href="<?php echo BASE_URL; ?>assets/images/favicon.ico" type="image/x-icon">
+  <link rel="shortcut icon" href="<?php echo BASE_URL; ?>assets/images/favicon.ico" type="image/x-icon">
+
+  <!-- ─── Fuentes Google ────────────────────────────────────────────────── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=Raleway:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- ─── Iconos ────────────────────────────────────────────────────────── -->
   <link rel="stylesheet" type="text/css" href="<?php echo BASE_URL; ?>assets/css/font-awesome.css">
   <link rel="stylesheet" type="text/css" href="<?php echo BASE_URL; ?>assets/css/themify.css">
-  <!--Slick slider css-->
+
+  <!-- ─── Sliders ───────────────────────────────────────────────────────── -->
   <link rel="stylesheet" type="text/css" href="<?php echo BASE_URL; ?>assets/css/slick.css">
   <link rel="stylesheet" type="text/css" href="<?php echo BASE_URL; ?>assets/css/slick-theme.css">
-  <!--Animate css-->
+
+  <!-- ─── Animaciones ───────────────────────────────────────────────────── -->
   <link rel="stylesheet" type="text/css" href="<?php echo BASE_URL; ?>assets/css/animate.css">
-  <!-- Bootstrap css -->
+
+  <!-- ─── Bootstrap ─────────────────────────────────────────────────────── -->
   <link rel="stylesheet" type="text/css" href="<?php echo BASE_URL; ?>assets/css/bootstrap.css">
-  <link rel="stylesheet" href="<?php echo BASE_URL . 'assets/admin/css/jquery-ui.min.css'; ?>">
-  <!-- Theme css -->
-  <link rel="stylesheet" type="text/css" href="<?php echo BASE_URL; ?>assets/css/color4.css" media="screen" id="color">
-  <link rel="stylesheet" type="text/css" href="<?php echo BASE_URL; ?>assets/css/header.css" media="screen" id="color">
-  <link rel="stylesheet" type="text/css" href="<?php echo BASE_URL; ?>assets/css/carrito.css" media="screen" id="color">
-  <link rel="stylesheet" type="text/css" href="<?php echo BASE_URL; ?>assets/css/home.css" media="screen" id="color">
-  <link rel="stylesheet" type="text/css" href="<?php echo BASE_URL; ?>assets/css/app.css" media="screen" id="color">
-  <link rel="stylesheet" type="text/css" href="<?php echo BASE_URL . 'assets/DataTables/datatables.min.css'; ?>">
-  <script
-    src="https://www.paypal.com/sdk/js?client-id=<?php echo CLIENT_ID; ?>&currency=<?php echo CURRENCY; ?>"></script>
-  <script src="https://sdk.mercadopago.com/js/v2"></script>
+  <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/admin/css/jquery-ui.min.css">
+
+  <!-- ─── Tema y estilos personalizados ─────────────────────────────────── -->
+  <link rel="stylesheet" type="text/css" href="<?php echo BASE_URL; ?>assets/css/color4.css"   media="screen">
+  <link rel="stylesheet" type="text/css" href="<?php echo BASE_URL; ?>assets/css/header.css"   media="screen">
+  <link rel="stylesheet" type="text/css" href="<?php echo BASE_URL; ?>assets/css/carrito.css"  media="screen">
+  <link rel="stylesheet" type="text/css" href="<?php echo BASE_URL; ?>assets/css/home.css"     media="screen">
+  <link rel="stylesheet" type="text/css" href="<?php echo BASE_URL; ?>assets/css/app.css"      media="screen">
+  <link rel="stylesheet" type="text/css" href="<?php echo BASE_URL; ?>assets/DataTables/datatables.min.css">
+
+  <!-- NOTA: MercadoPago SDK eliminado. PayPal SDK eliminado.
+       La única pasarela es WOMPI — su SDK se carga solo en la página de checkout. -->
 </head>
 
 <body class="bg-light ">

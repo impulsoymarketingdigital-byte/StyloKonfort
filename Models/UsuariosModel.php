@@ -5,8 +5,8 @@ class UsuariosModel extends Query
     {
         parent::__construct();
     }
-    
-    public function getUsuarios()
+
+    public function getUsuarios(): array
     {
         $sql = "SELECT u.*, a.nombre AS almacen, r.nombre AS rol
             FROM usuarios u
@@ -14,72 +14,100 @@ class UsuariosModel extends Query
             LEFT JOIN roles r ON u.id_rol = r.id";
         return $this->selectAll($sql);
     }
-    
-    public function getDatos($table)
+
+    public function getDatos(string $table): array
     {
+        $tablasPermitidas = ['almacenes', 'roles', 'sucursales'];
+        if (!in_array($table, $tablasPermitidas, true)) {
+            return [];
+        }
         $sql = "SELECT * FROM $table WHERE estado = 1";
         return $this->selectAll($sql);
     }
-    
-    public function registrar($nombre, $apellido, $correo, $clave, $id_almacen, $id_rol)
-    {
+
+    public function registrar(
+        string $nombre,
+        string $apellido,
+        string $correo,
+        string $clave,
+        int    $id_almacen,
+        int    $id_rol
+    ): int {
         $sql = "INSERT INTO usuarios (nombres, apellidos, correo, clave, id_almacen, id_rol) VALUES (?,?,?,?,?,?)";
-        $array = array($nombre, $apellido, $correo, $clave, $id_almacen, $id_rol);
-        return $this->insertar($sql, $array);
-    }
-    
-    public function verificarCorreo($correo)
-    {
-        $sql = "SELECT correo FROM usuarios WHERE correo = '$correo' AND estado = 1";
-        return $this->select($sql);
+        return $this->insertar($sql, [$nombre, $apellido, $correo, $clave, $id_almacen, $id_rol]);
     }
 
-    public function getValidar($campo, $valor, $accion, $id)
+    /** FIX: Eliminada interpolación directa */
+    public function verificarCorreo(string $correo)
     {
-        if ($accion == 'registrar' && $id == 0) {
-            $sql = "SELECT id FROM usuarios WHERE $campo = '$valor'";
-        } else {
-            $sql = "SELECT id FROM usuarios WHERE $campo = '$valor' AND id != $id";
+        $sql = "SELECT correo FROM usuarios WHERE correo = ? AND estado = 1";
+        return $this->select($sql, [$correo]);
+    }
+
+    /**
+     * FIX: Whitelist estricto de campos + prepared statements.
+     */
+    public function getValidar(string $campo, string $valor, string $accion, int $id)
+    {
+        $camposPermitidos = ['correo'];
+        if (!in_array($campo, $camposPermitidos, true)) {
+            return false;
         }
-        return $this->select($sql);
+
+        if ($accion === 'registrar' && $id === 0) {
+            $sql = "SELECT id FROM usuarios WHERE $campo = ?";
+            return $this->select($sql, [$valor]);
+        }
+        $sql = "SELECT id FROM usuarios WHERE $campo = ? AND id != ?";
+        return $this->select($sql, [$valor, $id]);
     }
 
-    public function modificarDatos($nombre, $apellidos, $correo, $perfil, $id_almacen, $id)
-    {
+    public function modificarDatos(
+        string $nombre,
+        string $apellidos,
+        string $correo,
+        string $perfil,
+        int    $id_almacen,
+        int    $id
+    ): int {
         $sql = "UPDATE usuarios SET nombres=?, apellidos=?, correo=?, perfil=?, id_almacen=? WHERE id=?";
-        $array = array($nombre, $apellidos, $correo, $perfil, $id_almacen, $id);
-        return $this->save($sql, $array);
+        return $this->save($sql, [$nombre, $apellidos, $correo, $perfil, $id_almacen, $id]);
     }
 
-    public function eliminar($estado = 0, $idUser)
+    public function eliminar(int $idUser, int $estado = 0): int
     {
         $sql = "UPDATE usuarios SET estado = ? WHERE id = ?";
-        $array = array($estado, $idUser);
-        return $this->save($sql, $array);
+        return $this->save($sql, [$estado, $idUser]);
     }
 
-    public function getUsuario($idUser)
+    /** FIX: Eliminada interpolación directa */
+    public function getUsuario(int $idUser)
     {
-        $sql = "SELECT u.id, u.nombres, u.apellidos, u.correo, u.perfil, u.clave, u.id_almacen, u.id_rol, a.nombre AS almacen, r.nombre AS rol
-            FROM usuarios u
-            LEFT JOIN almacenes a ON u.id_almacen = a.id
-            LEFT JOIN roles r ON u.id_rol = r.id
-            WHERE u.id = $idUser";
-        return $this->select($sql);
+        $sql = "SELECT u.id, u.nombres, u.apellidos, u.correo, u.perfil, u.clave, u.id_almacen, u.id_rol,
+                    a.nombre AS almacen, r.nombre AS rol
+                FROM usuarios u
+                LEFT JOIN almacenes a ON u.id_almacen = a.id
+                LEFT JOIN roles r ON u.id_rol = r.id
+                WHERE u.id = ?";
+        return $this->select($sql, [$idUser]);
     }
 
-    public function modificar($nombre, $apellido, $correo, $id_almacen, $id_rol, $id)
-    {
+    public function modificar(
+        string $nombre,
+        string $apellido,
+        string $correo,
+        int    $id_almacen,
+        int    $id_rol,
+        int    $id
+    ): int {
         $sql = "UPDATE usuarios SET nombres=?, apellidos=?, correo=?, id_almacen=?, id_rol=? WHERE id = ?";
-        $array = array($nombre, $apellido, $correo, $id_almacen, $id_rol, $id);
-        return $this->save($sql, $array);
+        return $this->save($sql, [$nombre, $apellido, $correo, $id_almacen, $id_rol, $id]);
     }
 
-    public function modificarPass($clave, $id)
+    public function modificarPass(string $clave, int $id): int
     {
         $sql = "UPDATE usuarios SET clave=? WHERE id = ?";
-        $array = array($clave, $id);
-        return $this->save($sql, $array);
+        return $this->save($sql, [$clave, $id]);
     }
 }
 ?>
