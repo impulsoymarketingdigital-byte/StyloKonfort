@@ -46,7 +46,7 @@ RUN { \
     echo 'memory_limit=256M'; \
     echo 'max_execution_time=60'; \
     echo 'expose_php=Off'; \
-    echo 'display_errors=On'; \
+    echo 'display_errors=Off'; \
     echo 'log_errors=On'; \
     echo 'error_log=/var/log/apache2/php_errors.log'; \
 } > /usr/local/etc/php/conf.d/stylokonfort.ini
