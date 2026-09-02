@@ -235,7 +235,7 @@ class PrincipalModel extends Query
         return $this->select($sql, $params);
     }
 
-    public function getFiltroProductos($categorias, $precioMin, $precioMax, $colores, $sizes, $marcas, $generos = '', $desde, $hasta)
+    public function getFiltroProductos($categorias, $precioMin, $precioMax, $colores, $sizes, $marcas, $generos, $desde, $hasta)
     {
         $params = [];
         $sql = "SELECT p.*, 
